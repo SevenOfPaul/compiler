@@ -1,2 +1,2 @@
-# complier
-complier for lisp
+# compiler
+compiler for lisp
