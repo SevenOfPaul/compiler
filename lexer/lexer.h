@@ -1,6 +1,6 @@
 #pragma once
-#include <token/token.h>
 #include <string>
+#include <token/token.h>
 using namespace lisp::token;
 
 namespace lisp {
@@ -17,10 +17,10 @@ namespace lisp {
 
             Token new_token(Token::Type type, const string &literal);
 
-        private :
+        private:
             void skip_white_space();
 
-            //读取字符
+            // 读取字符
             void read_char();
 
             void unread_char();

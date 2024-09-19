@@ -28,6 +28,10 @@ namespace lisp {
             void next_error(Token::Type type);
             int get_cur_token_precedence();
             int get_next_token_precedence();
+            //找不到所需的前缀表达式
+            void Parser::no_prefix_parse_fn_error(Token::Type type);
+            //中缀表达式 传入一个表达式
+        std::shared_ptr<ast::Expression> parse_infix(const std::shared_ptr<ast::Expression> &left);
         private:
             std::shared_ptr<lexer::Lexer> lexer;
             //当前的符号 和下一个符号 以保证优先级
