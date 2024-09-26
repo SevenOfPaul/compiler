@@ -79,4 +79,17 @@ int Parser::get_next_token_precedence() {
     }
     return LOWEST;
 }
+void Parser::no_prefix_parse_fn_error(Token::Type type) {
+std::ostringstream oss;
+    oss<<"no_prefix_parse_fn_error"<<type;
+    errors.push_back(oss.str());
+}
+//中缀表达式
+std::shared_ptr<Expression> Parser::parse_infix(const std::shared_ptr<ast::Expression> &left) {
+ std::shared_ptr<Expression> e(new Infix());
+    e->token=cur;
+    e->operation=cur.get_literal();
+    e->left
+
+}
 

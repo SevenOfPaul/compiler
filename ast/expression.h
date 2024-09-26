@@ -24,7 +24,7 @@ namespace lisp {
             ~Infix() {}
             string operation;
             std::shared_ptr<Expression> left;
-            Expression *right;
+            std::shared_ptr<Expression>  right;
         };
     } // namespace ast
 } // namespace lisp
