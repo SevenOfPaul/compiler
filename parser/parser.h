@@ -28,6 +28,9 @@ namespace lisp {
             void next_error(Token::Type type);
             int get_cur_token_precedence();
             int get_next_token_precedence();
+            //解析整数
+            std::shared_ptr<ast::Expression> parse_integer();
+            std::shared_ptr<ast::Expression> parse_group();
         private:
             std::shared_ptr<lexer::Lexer> lexer;
             //当前的符号 和下一个符号 以保证优先级

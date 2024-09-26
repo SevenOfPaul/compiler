@@ -3,6 +3,7 @@
 #include <sstream>
 using namespace lisp::parser;
 using namespace lisp::lexer;
+using namespace lisp::ast;
 Parser::Parser() {}
 Parser::Parser(const std::shared_ptr<Lexer> &lexer) {
     // 调用两次 第一次定义 tokencur  第二次调用获取toen next
@@ -14,10 +15,39 @@ std::unordered_map<Token::Type, int> Parser::precedences = {{Token::TOKEN_PLUS, 
                                                             {Token::TOKEN_MINUS, SUM},
                                                             {Token::TOKEN_ASTERISK, PROODCT},
                                                             {Token::TOKEN_SLASH, PROODCT}};
+std::unordered_map<Token::Type, Parser::prefix_parse_fn> Parser::prefix_parse_fns = {
+    {Token::TOKEN_INTEGER, &Parser::parse_integer},
+{Token::TOKEN_LPAREN, &Parser::parse_group},
+};
+std::unordered_map<Token::Type, Parser::infix_parse_fn> Parser::infix_parse_fns = {
+        {Token::TOKEN_PLUS, &Parser::parse_infix},
+        {Token::TOKEN_MINUS, &Parser::parse_infix},
+        {Token::TOKEN_ASTERISK, &Parser::parse_infix},
+        {Token::TOKEN_SLASH, &Parser::parse_infix}
+};
 void Parser::next_token() {
     cur = next;
     // 调用词法分析的nextToken 生成下一个token
     next = lexer->next_token();
+}
+std::shared_ptr<Expression> Parser::parse_integer() {
+    //声明expression e
+std::shared_ptr<Integer> e(new Integer());
+    e->token=cur;
+    //string转换为int
+    e->val=std::atol(cur.get_literal().c_str());
+   return e;
+}
+std::shared_ptr<Expression> Parser::parse_group() {
+    //声明expression e
+    next_token();
+    // auto e=pars
+    if (!expect_next_token(Token::TOKEN_RPAREN)) {
+        return nullptr;
+    }
+
+
+    return e;
 }
 bool Parser::cur_token_is(Token::Type type) { return cur.get_type() == type; }
 bool Parser::next_token_is(Token::Type type) { return next.get_type() == type; }
