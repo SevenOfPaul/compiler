@@ -1,6 +1,8 @@
-#include <lexer/lexer.h>
+#include <ast/program.h>
 #include <iostream>
+#include <lexer/lexer.h>
 #include <parser/parser.h>
+#include <ast/expression.h>
 #include <sstream>
 using namespace lisp::parser;
 using namespace lisp::lexer;
@@ -51,19 +53,22 @@ std::shared_ptr<Expression> Parser::parse_group() {
 }
 std::shared_ptr<Expression> Parser::parse_expression(int pracedence) {
  auto prefix_fn=prefix_parse_fns.find(cur.get_type());
+    //找不到所需的前缀表达式
     if(prefix_fn==prefix_parse_fns.end()) {
         std::cout<<"当前token未定义";
     }
     //找到了这个符号的表达式生成函数 调用返回表达式
-    std::shared_ptr<Expression> e(this->*prefix_fn->second());
+    std::shared_ptr<Expression> e((this->*prefix_fn->second)());
     //下一个符号的优先级比他小 就说明这是个中缀表达式
     while(!next_token_is(Token::TOKEN_SEMICLON)&&(pracedence<get_next_token_precedence())) {
           auto infix_fn=infix_parse_fns.find(next.get_type());
+        //如果这个中缀表达式在映射表里
               if(infix_fn==infix_parse_fns.end()) {
+                  //找不到所以是前缀表达式
                return e;
               }else {
                   next_token();
-                  e=this->*infix_fn->second();
+                  e=(this->*infix_fn->second)(e);
               }
     }
     return e;
@@ -98,11 +103,6 @@ int Parser::get_next_token_precedence() {
     }
     return LOWEST;
 }
-void Parser::no_prefix_parse_fn_error(Token::Type type) {
-std::ostringstream oss;
-    oss<<"no_prefix_parse_fn_error"<<type;
-    errors.push_back(oss.str());
-}
 //中缀表达式
 std::shared_ptr<Expression> Parser::parse_infix(const std::shared_ptr<Expression> &left) {
  std::shared_ptr<Infix> e(new Infix());
@@ -113,4 +113,24 @@ std::shared_ptr<Expression> Parser::parse_infix(const std::shared_ptr<Expression
     e->right=parse_expression(precedence);
 return e;
 }
-
+std::shared_ptr<Statement> Parser::parse_statment() {
+std::shared_ptr<ExpressionStatement> s(new ExpressionStatement());
+    s->token=cur;
+    s->expression=parse_expression(LOWEST);
+    while (next_token_is(Token::TOKEN_SEMICLON)) {
+        next_token();
+    }
+    return  std::dynamic_pointer_cast<Statement>(s);
+}
+//根节点
+std::shared_ptr<Program> Parser::parse_progam() {
+    std::shared_ptr<Program> p(new Program());
+    while (cur.get_type()!=Token::TOKEN_EOF) {
+         auto stmt=parse_statment();
+        if(stmt) {
+     p->statements.push_back(stmt);
+        }
+        next_token();
+    }
+    return p;
+}

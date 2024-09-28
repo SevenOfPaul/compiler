@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include <token/token.h>
 #include <unordered_map>
 using namespace lisp::token;
@@ -39,16 +38,6 @@ namespace lisp {
 
             ~Statement() {}
         };
-        //把表达式包装成为一条语句 这样就可以存储到根节点了
-        //表达式有值 语句没有
-        class ExpressionStatement : public Node {
-        public:
-            ExpressionStatement(){}
 
-            ExpressionStatement(Type type) : Node(NODE_EXPRESSION_STATEMENT) {}
-
-            ~ExpressionStatement() {}
-            std::shared_ptr<Statement> expression;
-        };
     } // namespace ast
 } // namespace lisp
