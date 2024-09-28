@@ -1,4 +1,5 @@
 #include <lexer/lexer.h>
+#include <iostream>
 #include <parser/parser.h>
 #include <sstream>
 using namespace lisp::parser;
@@ -41,12 +42,30 @@ std::shared_ptr<Integer> e(new Integer());
 std::shared_ptr<Expression> Parser::parse_group() {
     //声明expression e
     next_token();
-    // auto e=pars
+    //这里为什么
+    auto e=parse_expression(LOWEST);
     if (!expect_next_token(Token::TOKEN_RPAREN)) {
         return nullptr;
     }
-
-
+    return e;
+}
+std::shared_ptr<Expression> Parser::parse_expression(int pracedence) {
+ auto prefix_fn=prefix_parse_fns.find(cur.get_type());
+    if(prefix_fn==prefix_parse_fns.end()) {
+        std::cout<<"当前token未定义";
+    }
+    //找到了这个符号的表达式生成函数 调用返回表达式
+    std::shared_ptr<Expression> e(this->*prefix_fn->second());
+    //下一个符号的优先级比他小 就说明这是个中缀表达式
+    while(!next_token_is(Token::TOKEN_SEMICLON)&&(pracedence<get_next_token_precedence())) {
+          auto infix_fn=infix_parse_fns.find(next.get_type());
+              if(infix_fn==infix_parse_fns.end()) {
+               return e;
+              }else {
+                  next_token();
+                  e=this->*infix_fn->second();
+              }
+    }
     return e;
 }
 bool Parser::cur_token_is(Token::Type type) { return cur.get_type() == type; }
@@ -85,11 +104,13 @@ std::ostringstream oss;
     errors.push_back(oss.str());
 }
 //中缀表达式
-std::shared_ptr<Expression> Parser::parse_infix(const std::shared_ptr<ast::Expression> &left) {
- std::shared_ptr<Expression> e(new Infix());
+std::shared_ptr<Expression> Parser::parse_infix(const std::shared_ptr<Expression> &left) {
+ std::shared_ptr<Infix> e(new Infix());
     e->token=cur;
     e->operation=cur.get_literal();
-    e->left
-
+    e->left=left;
+     int precedence=get_cur_token_precedence();
+    e->right=parse_expression(precedence);
+return e;
 }
 

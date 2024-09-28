@@ -31,6 +31,8 @@ namespace lisp {
             //解析整数
             std::shared_ptr<ast::Expression> parse_integer();
             std::shared_ptr<ast::Expression> parse_group();
+            //中缀表达式
+            std::shared_ptr<ast::Expression> Parser::parse_expression(int pracedence);
             //找不到所需的前缀表达式
             void Parser::no_prefix_parse_fn_error(Token::Type type);
             //中缀表达式 传入一个表达式
