@@ -9,10 +9,10 @@ namespace lisp {
         public:
             enum Type {
                 NODE_INEGER = 0,
-                NODE_INFIX,
+                NODE_INFIX,//中缀表达式
                 NODE_EXPRESSION_STATEMENT,
-                NODE_PROGRAM,
-                NODE_PREFIX,
+                NODE_PROGRAM,//根节点
+                NODE_PREFIX,//前缀表达式
             };
 
             Node(){};
