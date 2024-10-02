@@ -8,7 +8,8 @@ using namespace lisp::parser;
 using namespace lisp::lexer;
 using namespace lisp::ast;
 Parser::Parser() {}
-Parser::Parser(const std::shared_ptr<Lexer> &lexer) {
+Parser::Parser(const std::shared_ptr<Lexer> &l) {
+    // lexer=l;
     // 调用两次 第一次定义 tokencur  第二次调用获取toen next
     next_token();
     next_token();
@@ -29,6 +30,7 @@ std::unordered_map<Token::Type, Parser::infix_parse_fn> Parser::infix_parse_fns 
         {Token::TOKEN_SLASH, &Parser::parse_infix}
 };
 void Parser::next_token() {
+    std::cout<<lexer->next_token().get_literal();
     cur = next;
     // 调用词法分析的nextToken 生成下一个token
     next = lexer->next_token();
@@ -51,25 +53,32 @@ std::shared_ptr<Expression> Parser::parse_group() {
     }
     return e;
 }
-std::shared_ptr<Expression> Parser::parse_expression(int pracedence) {
+std::shared_ptr<Expression> Parser::parse_expression(int precedence) {
  auto prefix_fn=prefix_parse_fns.find(cur.get_type());
     //找不到所需的前缀表达式
     if(prefix_fn==prefix_parse_fns.end()) {
-        std::cout<<"当前token未定义";
+        // std::cout<<"dont have this token";
+        return nullptr;
     }
     //找到了这个符号的表达式生成函数 调用返回表达式
     std::shared_ptr<Expression> e((this->*prefix_fn->second)());
     //下一个符号的优先级比他小 就说明这是个中缀表达式
-    while(!next_token_is(Token::TOKEN_SEMICLON)&&(pracedence<get_next_token_precedence())) {
+    // std::cout<<"literal:"<<cur.get_literal()<<"cur_token_is"<<"precedence:"<<precedence<<"cur:"<<get_next_token_precedence()<<std::endl;
+    while(!next_token_is(Token::TOKEN_SEMICLON) && precedence<=get_next_token_precedence()) {
+        // std::cout<<"hello"<<std::endl;
           auto infix_fn=infix_parse_fns.find(next.get_type());
+
         //如果这个中缀表达式在映射表里
               if(infix_fn==infix_parse_fns.end()) {
+                 // std::cout<<(infix_fn==infix_parse_fns.end());
                   //找不到所以是前缀表达式
                return e;
-              }else {
+              }
+                  // std::cout<<cur.get_literal()<<next.get_literal()<<std::endl;
                   next_token();
                   e=(this->*infix_fn->second)(e);
-              }
+        // std::cout<<"e"<<e->get_name();
+
     }
     return e;
 }

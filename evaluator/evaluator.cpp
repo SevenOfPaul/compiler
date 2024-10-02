@@ -3,13 +3,15 @@
 using namespace lisp::evaluator;
 
 shared_ptr<Object> Evaluator::eval(const shared_ptr<ast::Node> &node) {
+    std::cout<<node->token.get_literal();
     switch (node->get_type()) {
         case ast::Node::NODE_PROGRAM: {
             // 将node转换为Program
             return eval_program(std::dynamic_pointer_cast<ast::Program>(node)->statements);
         }
         case ast::Node::NODE_EXPRESSION_STATEMENT: {
-            return eval(std::dynamic_pointer_cast<ast::ExpressionStatement>(node));
+            std:cout<<std::dynamic_pointer_cast<ast::ExpressionStatement>(node)->expression;
+            return eval(std::dynamic_pointer_cast<ast::ExpressionStatement>(node)->expression);
         }
         case ast::Node::NODE_INEGER: {
             return eval_integer(std::dynamic_pointer_cast<ast::Integer>(node));
@@ -39,5 +41,25 @@ shared_ptr<Object> Evaluator::eval_integer(const shared_ptr<lisp::ast::Integer> 
 }
 shared_ptr<Object> Evaluator::eval_infix(const string &op, const std::shared_ptr<Object> &left,
                                          const std::shared_ptr<Object> right) {
-
+    switch (left->get_type()) {
+        case Object::OBJECT_INTEGER: {
+            if (right->get_type() == Object::OBJECT_INTEGER) {
+                auto l = std::dynamic_pointer_cast<Integer>(left)->val;
+                auto r = std::dynamic_pointer_cast<Integer>(right)->val;
+                if (op == "+") {
+                    return shared_ptr<Object>(new Integer(l + r));
+                } else if (op == "-") {
+                    return shared_ptr<Object>(new Integer(l - r));
+                } else if (op == "*") {
+                    return shared_ptr<Object>(new Integer(l * r));
+                } else if (op == "/") {
+                    return shared_ptr<Object>(new Integer(l / r));
+                }
+            }
+        }
+        default: {
+            std::cout << left->get_type() + "dont exist";
+            return shared_ptr<Object>(new Error("unkown type"));
+        }
+}
 }

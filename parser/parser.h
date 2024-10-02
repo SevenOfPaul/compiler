@@ -1,5 +1,6 @@
 #pragma once
 #include <ast/expression.h>
+#include <ast/program.h>
 #include <lexer/lexer.h>
 #include <list>
 #include <memory>
@@ -13,6 +14,7 @@ namespace lisp {
                 PROODCT, //* /
             };
             Parser();
+            // Object(Type type):type(type){}
             Parser(const std::shared_ptr<lexer::Lexer>& lexer);
             ~Parser();
             //定义前缀表达式构建函数 重点 typedef定义了一个函数指针 保证这个指针可以被引用

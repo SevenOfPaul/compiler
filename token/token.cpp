@@ -1,3 +1,4 @@
+#include <iostream>
 #include <token/token.h>
 using namespace lisp::token;
 using std::string;
@@ -8,7 +9,9 @@ unordered_map<Token::Type, string> Token::names = {
         {TOKEN_RPAREN, ")"},        {TOKEN_SEMICLON, ";"}};
 Token::Token() : type(TOKEN_ILLEGAL) {}
 Token::Token(Type type, const string &literal) : type(type), literal(literal) {}
-Token::Type Token::get_type() const { return type; };
+Token::Type Token::get_type() const {
+    return type;
+};
 string Token::get_name() const {
     const auto it = names.find(type);
     if (it != names.end()) {
@@ -16,11 +19,14 @@ string Token::get_name() const {
     }
     return "";
 };
-string Token::get_literal() const { return literal; };
+string Token::get_literal() const {
+    return literal;
+};
 Token &Token::operator=(const Token &other) {
     if (this == &other) {
         return *this;
     }
-    type = other.type;
-    literal = other.literal;
+    type = other.get_type();
+    literal = other.get_literal();
+    return *this;
 }

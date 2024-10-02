@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <token/token.h>
 #include <unordered_map>
 using namespace lisp::token;
@@ -21,7 +22,9 @@ namespace lisp {
 
             virtual ~Node() {}
 
-            Type get_type() const { return type; }
+            Type get_type() const {
+                return type;
+            }
 
             string get_name() const;
             Type type;

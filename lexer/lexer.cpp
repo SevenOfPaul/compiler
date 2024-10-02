@@ -12,7 +12,7 @@ Lexer::Lexer(const string &file) {
     // 读取文件
     const ifstream ifs(file);
     if (!ifs.good()) {
-        cout << "文件读取出现问题" << file << endl;
+        cout << "read file has some error" << file << endl;
         return;
     }
     // 把文件读取到oss中
@@ -33,9 +33,10 @@ void Lexer::read_char() {
         ch = 0;
     } else {
         // 当前为下移，next 指针下移
-        ch = input[++pos];
-        next_pos++;
+        ch = input[next_pos];
     }
+    pos=next_pos;
+    next_pos++;
 }
 void Lexer::unread_char() {
     // 倒回去
@@ -103,6 +104,7 @@ Token Lexer::next_token() {
                 unread_char();
                 return new_token(Token::TOKEN_INTEGER,integer);
           }
+            // std::cout<<ch;
               return new_token(Token::TOKEN_ILLEGAL,"");
         }
     }
