@@ -1,2 +1,2 @@
 # complier
-complier for lisp
+应该是算是lox的方言
