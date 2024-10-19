@@ -4,6 +4,7 @@ mod Run;
 mod Error;
 mod Lexer;
 mod Token;
+mod Scanner;
 
 fn main() {
     let mut args = env::args();

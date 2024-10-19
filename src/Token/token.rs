@@ -1,5 +1,5 @@
-use crate::Lexer;
-use Lexer::lexer::Token_type;
+use crate::Token::token_type::Token_type;
+
 struct Token{
     token_type:Token_type,
     lexeme:String,
