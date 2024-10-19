@@ -12,6 +12,15 @@ pub enum Token_type{
     SEMICOLON,//*
     SLASH,// /
     STAR, // *
+    BANG, // !
+    EQUAL, //=
+    //两个字符构成的token
+    BANG_EQUAL,//！=
+    EQUAL_EQUAL,//==
+    GREATER, //>
+    GREATER_EQUAL, //>=
+    LESS,//<
+    LESS_EQUAL, //<=
     //字面量
     IDENTIFIER, //标识符
     STRING, //字符串
