@@ -1,16 +1,17 @@
 use crate::Token::token_type::Token_type;
-
-struct Token{
+#[derive(Clone)]
+pub(crate) struct Token{
     token_type:Token_type,
     lexeme:String,
-    literal:String,
-    line:i32,
+    literal:Option<String>,
+    line:usize,
 }
 impl Token{
-    fn new(token_type:Token_type,lexeme:String,literal:String,line:i32)->Token{
+    pub fn new(token_type:Token_type,lexeme:String,literal:Option<String>,line:usize)->Token{
         Self{token_type,lexeme,literal,line}
     }
-    fn to_string(&self)->String{
-        self.token_type.to_string()+&self.lexeme+&self.literal+&self.line.to_string()
+    pub fn to_string(&self)->String{
+        let liter=if let Some(l)=&self.literal{l}else{""};
+        self.token_type.to_string()+&self.lexeme+liter+&self.line.to_string()
     }
 }

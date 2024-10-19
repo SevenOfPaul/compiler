@@ -1,8 +1,9 @@
 use crate::Token;
 use Token::token_type::Token_type;
+use Token::token;
 struct Scanner {
       source:Vec<char>,
-      tokens: Vec<Token_type>,
+      tokens: Vec<token::Token>,
     //start是被处理的第一个字符
       start:usize,
     //cur是当前字符 例如let start永远指向l cur可能为 l e t
@@ -17,7 +18,7 @@ impl Scanner {
    /*
    递归整个源文件
    */
-    fn scan_tokens(&mut self) ->Vec<Token_type>{
+    fn scan_tokens(&mut self) ->Vec<token::Token>{
         //没到头
         while !self.is_at_end() {
             //递归下去
@@ -25,6 +26,7 @@ impl Scanner {
         //识别每一个token
         self.scan_token();
         }
+        self.tokens.push(token::Token::new(Token::token_type::Token_type::EOF,String::from(""),None,self.line));
          //添加token
          self.tokens.clone()
     }
@@ -32,27 +34,22 @@ impl Scanner {
         //没到头
        let c=self.advance();
           match c {
-             '('=>addToken(Token_type::LEFT_PAREN),
-             ')'=> addToken(Token_type::RIGHT_PAREN),
-             '{'=> addToken(Token_type::LEFT_BRACE),
-             '}'=> addToken(Token_type::RIGHT_BRACE),
-             ','=> addToken(Token_type::COMMA),
-             '.'=> addToken(Token_type::DOT),
-             '-'=>addToken(Token_type::MINUS),
-             '+'=> addToken(Token_type::PLUS),
-             ';'=>addToken(Token_type::SEMICOLON),
-             '*'=> addToken(Token_type::STAR),
-              _=>addToken(Token_type::EOF)
+             '('=>self.add_token(Token_type::LEFT_PAREN,None),
+             ')'=> self.add_token(Token_type::RIGHT_PAREN,None),
+             '{'=> self.add_token(Token_type::LEFT_BRACE,None),
+             '}'=> self.add_token(Token_type::RIGHT_BRACE,None),
+             ','=> self.add_token(Token_type::COMMA,None),
+             '.'=> self.add_token(Token_type::DOT,None),
+             '-'=>self.add_token(Token_type::MINUS,None),
+             '+'=> self.add_token(Token_type::PLUS,None),
+             ';'=>self.add_token(Token_type::SEMICOLON,None),
+             '*'=> self.add_token(Token_type::STAR,None),
+              _=>self.add_token(Token_type::EOF,None)
         }
     }
-     fn add_token(&mut self ,token_type:Option<Token_type>) {
-         if let Some(token) = token_type {
-
-         }else{
-             let text = &self.source[self.start..=self.cur];
-             // tokens.add(new Token(type, text, literal, line));
-         }
-         // add_token(type, null);
+     fn add_token(&mut self ,token_type:Token_type,literal:Option<String>) {
+             let text = &self.source[self.start..=self.cur].iter().collect::<String>();
+             self.tokens.push(token::Token::new(token_type, text.clone(), literal, self.line));
     }
     fn is_at_end(&self)->bool {
         self.cur >= self.source.len()
