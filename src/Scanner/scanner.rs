@@ -89,11 +89,41 @@ impl Scanner {
                 };
                 self.add_token(tok, None);
             }
+            '/'=>{//说明是注释
+                if self.is_match('/') {
+                   //注释就跳过
+                    while !self.is_at_end()&&self.peek()!='\n'{
+                        //是注释就跳过 等于
+                        // while !self.is_at_end()&&self.is_match{
+                        // self.advance();
+                        //}
+                        self.advance();
+                    }
+               
+                }else{
+                    self.add_token(Token_type::SLASH,None);
+                };
+            }
+            //这几个无意义
+            '\t'=>{}
+             ' '=>{}
+            '\r'=>{}
+            '\n'=>{
+                self.line+=1;
+            }
             //全都没有那就报错把
             _ => {
                 Error::log(self.line, "Unexpected character.");
             }
         }
+    }
+    //看看下个是啥，不会增加cur
+    fn peek(&mut self)->char{
+     if self.is_at_end() {
+          '\0'
+     }else{
+         self.source[self.cur]
+     }
     }
     fn is_match(&mut self, expected: char) -> bool {
         if self.is_at_end() || self.source[self.cur] != expected {
