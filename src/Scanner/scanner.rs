@@ -113,14 +113,14 @@ impl Scanner {
                 self.line += 1;
             }
             '"' => {
-                self.getString();
+                self.get_string();
                 //字符串
             }
             //全都没有那就报错把
             _ => {
                 //看看是不是个数字
                 if Self::is_digit(c){
-
+                 self.get_number();
                 }else {
                     Error::log(
                         self.line,
@@ -151,7 +151,7 @@ impl Scanner {
         c >= '0' && c <= '9'
     }
     //这里得大改
-    fn getNumber(&mut self) {
+    fn get_number(&mut self) {
        while(Self::is_digit(self.peek())){self.advance();}
        if self.peek()=='.'&& Self::is_digit(self.peek_next()){
            self.advance();
@@ -160,7 +160,7 @@ impl Scanner {
         let val: String = self.source[self.start..self.cur].iter().collect();
         self.add_token(Token_type::NUMBER, Some(Object::num(val.parse().unwrap())));
     }
-    fn getString(&mut self) {
+    fn get_string(&mut self) {
         while !self.is_at_end() && self.peek() != '"' {
             //跳过换行
             if self.peek() == '\n' {
