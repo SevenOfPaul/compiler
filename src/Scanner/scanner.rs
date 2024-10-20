@@ -35,7 +35,7 @@ impl Scanner {
             self.scan_token();
         }
         self.tokens.push(token::Token::new(
-            Token::token_type::Token_type::EOF,
+            Token_type::EOF,
             String::from(""),
             None,
             self.line,
@@ -130,6 +130,20 @@ impl Scanner {
             }
         }
     }
+    fn add_token(&mut self, token_type: Token_type, literal: Option<Object>) {
+        let text = &self.source[self.start..self.cur].iter().collect::<String>();
+        self.tokens.push(token::Token::new(
+            token_type,
+            text.clone(),
+            literal,
+            self.line,
+        ));
+    }
+    fn advance(&mut self) -> char {
+        //返回当前指向的字符
+        self.cur += 1;
+        self.source[self.cur - 1]
+    }
     //看看下个是啥，不会增加cur
     fn peek(&mut self) -> char {
         if self.is_at_end() {
@@ -147,16 +161,13 @@ impl Scanner {
             self.source[self.cur + 1]
         }
     }
-    fn is_digit(c:char)->bool{
-        c >= '0' && c <= '9'
-    }
     //这里得大改
     fn get_number(&mut self) {
-       while(Self::is_digit(self.peek())){self.advance();}
+       while Self::is_digit(self.peek()){self.advance();}
        if self.peek()=='.'&& Self::is_digit(self.peek_next()){
            self.advance();
        }
-        while(Self::is_digit(self.peek())){self.advance();}
+        while Self::is_digit(self.peek()){self.advance();}
         let val: String = self.source[self.start..self.cur].iter().collect();
         self.add_token(Token_type::NUMBER, Some(Object::num(val.parse().unwrap())));
     }
@@ -184,21 +195,10 @@ impl Scanner {
             true
         }
     }
-    fn add_token(&mut self, token_type: Token_type, literal: Option<Object>) {
-        let text = &self.source[self.start..self.cur].iter().collect::<String>();
-        self.tokens.push(token::Token::new(
-            token_type,
-            text.clone(),
-            literal,
-            self.line,
-        ));
+    fn is_digit(c:char)->bool{
+        c >= '0' && c <= '9'
     }
     fn is_at_end(&self) -> bool {
         self.cur >= self.source.len()
-    }
-    fn advance(&mut self) -> char {
-        //返回当前指向的字符
-        self.cur += 1;
-        self.source[self.cur - 1]
     }
 }
