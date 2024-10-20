@@ -2,6 +2,7 @@ use crate::Error;
 use crate::Token;
 use Token::token;
 use Token::token_type::Token_type;
+use Token::object::Object;
 pub(crate) struct Scanner {
     source: Vec<char>,
     tokens: Vec<token::Token>,
@@ -164,7 +165,7 @@ impl Scanner {
             return;
         }
         let val: String = self.source[self.start..self.cur].iter().collect();
-        self.add_token(Token_type::NUMBER, Some(val));
+        self.add_token(Token_type::NUMBER, Some(Object::str(val)));
     }
     fn getString(&mut self) {
         while !self.is_at_end() && self.peek() != '"' {
@@ -180,7 +181,7 @@ impl Scanner {
             return;
         }
         let val: String = self.source[self.start..self.cur].iter().collect();
-        self.add_token(Token_type::STRING, Some(val));
+        self.add_token(Token_type::STRING, Some(Object::str(val)));
     }
     fn is_match(&mut self, expected: char) -> bool {
         if self.is_at_end() || self.source[self.cur] != expected {
@@ -190,7 +191,7 @@ impl Scanner {
             true
         }
     }
-    fn add_token(&mut self, token_type: Token_type, literal: Option<String>) {
+    fn add_token(&mut self, token_type: Token_type, literal: Option<Object>) {
         let text = &self.source[self.start..self.cur].iter().collect::<String>();
         self.tokens.push(token::Token::new(
             token_type,
