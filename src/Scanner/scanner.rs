@@ -111,6 +111,9 @@ impl Scanner {
             '\n'=>{
                 self.line+=1;
             }
+            '"'=>{
+                //字符串
+            }
             //全都没有那就报错把
             _ => {
                 Error::log(self.line, &*("Unexpected character".to_owned() + &*c.to_string()));
@@ -124,6 +127,20 @@ impl Scanner {
      }else{
          self.source[self.cur]
      }
+    }
+    fn getString(&mut self){
+        while self.peek()!='"'&&self.is_at_end(){
+            //跳过换行
+            if  self.peek() == '\n' {self.line+=1};
+            self.advance();
+        }
+        //没找到 后面的"
+        if self.is_at_end() {
+            Error::log(self.line, "Unterminated string.");
+            return;
+        }
+        let val:String =self.source[self.start..self.cur].iter().collect();
+        self.add_token(Token_type::STRING,Some(val));
     }
     fn is_match(&mut self, expected: char) -> bool {
         if self.is_at_end() || self.source[self.cur] != expected {

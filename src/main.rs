@@ -1,12 +1,12 @@
 use std::env;
-use std::process::exit;
-mod Run;
-mod Error;
-mod Lexer;
-mod Token;
-mod Scanner;
+    use std::process::exit;
+    mod Run;
+    mod Error;
+    mod Lexer;
+    mod Token;
+    mod Scanner;
 
-fn main() {
+    fn main() {
     let mut args = env::args();
     //获取命令行参数
     // println!("{}",args.nth(1).unwrap());
