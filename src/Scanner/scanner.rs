@@ -2,7 +2,8 @@ use crate::Error;
 use crate::Token;
 use Token::token;
 use Token::token_type::Token_type;
-struct Scanner {
+use Token::object::Object;
+pub(crate) struct Scanner {
     source: Vec<char>,
     tokens: Vec<token::Token>,
     //start是被处理的第一个字符
@@ -12,7 +13,7 @@ struct Scanner {
     line: usize,
 }
 impl Scanner {
-    fn new(source: String) -> Scanner {
+    pub(crate) fn new(source: String) -> Scanner {
         //声明扫描器
         Self {
             source: source.chars().collect(),
@@ -25,7 +26,7 @@ impl Scanner {
     /*
     递归整个源文件
     */
-    fn scan_tokens(&mut self) -> Vec<token::Token> {
+    pub(crate) fn scan_tokens(&mut self) -> Vec<token::Token> {
         //没到头
         while !self.is_at_end() {
             //递归下去
@@ -89,11 +90,98 @@ impl Scanner {
                 };
                 self.add_token(tok, None);
             }
+            '/' => {
+                //说明是注释
+                if self.is_match('/') {
+                    //注释就跳过
+                    while !self.is_at_end() && self.peek() != '\n' {
+                        //是注释就跳过 等于
+                        // while !self.is_at_end()&&self.is_match{
+                        // self.advance();
+                        //}
+                        self.advance();
+                    }
+                } else {
+                    self.add_token(Token_type::SLASH, None);
+                };
+            }
+            //这几个无意义
+            '\t' => {}
+            ' ' => {}
+            '\r' => {}
+            '\n' => {
+                self.line += 1;
+            }
+            '"' => {
+                self.getString();
+                //字符串
+            }
             //全都没有那就报错把
             _ => {
-                Error::log(self.line, "Unexpected character.");
+                //看看是不是个数字
+                if Self::is_digit(c){
+
+                }else {
+                    Error::log(
+                        self.line,
+                        &*("Unexpected character".to_owned() + &*c.to_string()),
+                    );
+                }
             }
         }
+    }
+    //看看下个是啥，不会增加cur
+    fn peek(&mut self) -> char {
+        if self.is_at_end() {
+            '\0'
+        } else {
+            self.source[self.cur]
+        }
+    }
+    //在多看一个
+    fn peek_next(&mut self) -> char {
+        //到头了
+        if self.cur + 1 >= self.source.len() {
+            '\0'
+        } else {
+            self.source[self.cur + 1]
+        }
+    }
+    fn is_digit(c:char)->bool{
+        c >= '0' && c <= '9'
+    }
+    //这里得大改
+    fn getNumber(&mut self) {
+        while !self.is_at_end() && self.peek() != '"' {
+            //跳过换行
+            if self.peek() == '\n' {
+                self.line += 1
+            };
+            self.advance();
+        }
+        //没找到 后面的"
+        if self.is_at_end() {
+            Error::log(self.line, "Unterminated string.");
+            return;
+        }
+        let val: String = self.source[self.start..self.cur].iter().collect();
+        self.add_token(Token_type::NUMBER, Some(Object::str(val)));
+    }
+    fn getString(&mut self) {
+        while !self.is_at_end() && self.peek() != '"' {
+            //跳过换行
+            if self.peek() == '\n' {
+                self.line += 1
+            };
+            self.advance();
+        }
+        //没找到 后面的"
+        if self.is_at_end() {
+            Error::log(self.line, "Unterminated string.");
+            return;
+        }
+        let val: String = self.source[self.start..self.cur].iter().collect();
+        self.add_token(Token_type::STRING, Some(Object::str(val)));
     }
     fn is_match(&mut self, expected: char) -> bool {
         if self.is_at_end() || self.source[self.cur] != expected {
@@ -103,10 +191,8 @@ impl Scanner {
             true
         }
     }
-    fn add_token(&mut self, token_type: Token_type, literal: Option<String>) {
-        let text = &self.source[self.start..=self.cur]
-            .iter()
-            .collect::<String>();
+    fn add_token(&mut self, token_type: Token_type, literal: Option<Object>) {
+        let text = &self.source[self.start..self.cur].iter().collect::<String>();
         self.tokens.push(token::Token::new(
             token_type,
             text.clone(),

@@ -1,1 +1,1 @@
-mod scanner;
+pub(crate) mod scanner;

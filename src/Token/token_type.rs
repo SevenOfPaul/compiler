@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Token_type{
     //自己就是个token
     LEFT_PAREN,//(
@@ -25,6 +25,13 @@ pub enum Token_type{
     IDENTIFIER, //标识符
     STRING, //字符串
     NUMBER, //数字
+    AND, //&&
+    OR, //||
+    //关键字
+    LET, //声明
+    PRINT, //打印
+    FN,//函数
+    NIL, //null
     EOF //结尾符
 }
 impl Token_type{
