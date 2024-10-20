@@ -112,6 +112,7 @@ impl Scanner {
                 self.line+=1;
             }
             '"'=>{
+                self.getString();
                 //字符串
             }
             //全都没有那就报错把
@@ -129,7 +130,7 @@ impl Scanner {
      }
     }
     fn getString(&mut self){
-        while self.peek()!='"'&&self.is_at_end(){
+        while !self.is_at_end()&&self.peek()!='"'{
             //跳过换行
             if  self.peek() == '\n' {self.line+=1};
             self.advance();
@@ -162,7 +163,7 @@ impl Scanner {
         ));
     }
     fn is_at_end(&self) -> bool {
-        self.cur >= self.source.len()
+        self.cur >=self.source.len()
     }
     fn advance(&mut self) -> char {
         //返回当前指向的字符
