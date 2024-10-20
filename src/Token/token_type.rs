@@ -48,9 +48,22 @@ impl Token_type{
             Token_type::SLASH => "SLASH",
             Token_type::STAR => "STAR",
             Token_type::IDENTIFIER => "IDENTIFIER",
+            Token_type::BANG => "BANG",
+            Token_type::EQUAL => "EQUAL",
+            Token_type::BANG_EQUAL => "BANG_EQUAL",
+            Token_type::EQUAL_EQUAL => "EQUAL_EQUAL",
+            Token_type::GREATER => "GREATER",
+            Token_type::GREATER_EQUAL => "GREATER_EQUAL",
+            Token_type::LESS => "LESS",
+            Token_type::LESS_EQUAL => "LESS_EQUAL",
+            Token_type::AND => "AND",
+            Token_type::OR => "OR",
+            Token_type::LET => "LET",
+            Token_type::PRINT => "PRINT",
+            Token_type::FN => "FN",
             Token_type::STRING => "STRING",
             Token_type::NUMBER => "NUMBER",
-            Token_type::EOF => "EOF",
+            Token_type::NIL => "NIL",
             _ => "EOF"
         })
     }
