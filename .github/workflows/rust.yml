@@ -3,7 +3,7 @@ name: Rust CI
 on:
   push:
     branches:
-      - main  # 可以根据需要更改为你的默认分支
+      - master  # 可以根据需要更改为你的默认分支
 
 jobs:
   build:
@@ -42,5 +42,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./target/release/your_binary_name  # Rust 编译生成的可执行文件路径
-        asset_name: your_binary_name  # 发布的文件名
+        asset_name: compiler  # 发布的文件名
         asset_content_type: application/octet-stream
