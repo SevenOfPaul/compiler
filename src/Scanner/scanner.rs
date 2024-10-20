@@ -89,50 +89,73 @@ impl Scanner {
                 };
                 self.add_token(tok, None);
             }
-            '/'=>{//说明是注释
+            '/' => {
+                //说明是注释
                 if self.is_match('/') {
-                   //注释就跳过
-                    while !self.is_at_end()&&self.peek()!='\n'{
+                    //注释就跳过
+                    while !self.is_at_end() && self.peek() != '\n' {
                         //是注释就跳过 等于
                         // while !self.is_at_end()&&self.is_match{
                         // self.advance();
                         //}
                         self.advance();
                     }
-
-                }else{
-                    self.add_token(Token_type::SLASH,None);
+                } else {
+                    self.add_token(Token_type::SLASH, None);
                 };
             }
             //这几个无意义
-            '\t'=>{}
-             ' '=>{}
-            '\r'=>{}
-            '\n'=>{
-                self.line+=1;
+            '\t' => {}
+            ' ' => {}
+            '\r' => {}
+            '\n' => {
+                self.line += 1;
             }
-            '"'=>{
+            '"' => {
                 self.getString();
                 //字符串
             }
             //全都没有那就报错把
             _ => {
-                Error::log(self.line, &*("Unexpected character".to_owned() + &*c.to_string()));
+                //看看是不是个数字
+                if Self::is_digit(c){
+
+                }else {
+                    Error::log(
+                        self.line,
+                        &*("Unexpected character".to_owned() + &*c.to_string()),
+                    );
+                }
             }
         }
     }
     //看看下个是啥，不会增加cur
-    fn peek(&mut self)->char{
-     if self.is_at_end() {
-          '\0'
-     }else{
-         self.source[self.cur]
-     }
+    fn peek(&mut self) -> char {
+        if self.is_at_end() {
+            '\0'
+        } else {
+            self.source[self.cur]
+        }
     }
-    fn getString(&mut self){
-        while !self.is_at_end()&&self.peek()!='"'{
+    //在多看一个
+    fn peek_next(&mut self) -> char {
+        //到头了
+        if self.cur + 1 >= self.source.len() {
+            '\0'
+        } else {
+            self.source[self.cur + 1]
+        }
+    }
+    fn is_digit(c:char)->bool{
+        c >= '0' && c <= '9'
+    }
+    //这里得大改
+    fn getNumber(&mut self) {
+        while !self.is_at_end() && self.peek() != '"' {
             //跳过换行
-            if  self.peek() == '\n' {self.line+=1};
+            if self.peek() == '\n' {
+                self.line += 1
+            };
             self.advance();
         }
         //没找到 后面的"
@@ -140,8 +163,24 @@ impl Scanner {
             Error::log(self.line, "Unterminated string.");
             return;
         }
-        let val:String =self.source[self.start..self.cur].iter().collect();
-        self.add_token(Token_type::STRING,Some(val));
+        let val: String = self.source[self.start..self.cur].iter().collect();
+        self.add_token(Token_type::NUMBER, Some(val));
+    }
+    fn getString(&mut self) {
+        while !self.is_at_end() && self.peek() != '"' {
+            //跳过换行
+            if self.peek() == '\n' {
+                self.line += 1
+            };
+            self.advance();
+        }
+        //没找到 后面的"
+        if self.is_at_end() {
+            Error::log(self.line, "Unterminated string.");
+            return;
+        }
+        let val: String = self.source[self.start..self.cur].iter().collect();
+        self.add_token(Token_type::STRING, Some(val));
     }
     fn is_match(&mut self, expected: char) -> bool {
         if self.is_at_end() || self.source[self.cur] != expected {
@@ -152,9 +191,7 @@ impl Scanner {
         }
     }
     fn add_token(&mut self, token_type: Token_type, literal: Option<String>) {
-        let text = &self.source[self.start..self.cur]
-            .iter()
-            .collect::<String>();
+        let text = &self.source[self.start..self.cur].iter().collect::<String>();
         self.tokens.push(token::Token::new(
             token_type,
             text.clone(),
@@ -163,7 +200,7 @@ impl Scanner {
         ));
     }
     fn is_at_end(&self) -> bool {
-        self.cur >=self.source.len()
+        self.cur >= self.source.len()
     }
     fn advance(&mut self) -> char {
         //返回当前指向的字符
