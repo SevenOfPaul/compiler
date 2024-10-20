@@ -2,7 +2,7 @@ use crate::Error;
 use crate::Token;
 use Token::token;
 use Token::token_type::Token_type;
-struct Scanner {
+pub(crate) struct Scanner {
     source: Vec<char>,
     tokens: Vec<token::Token>,
     //start是被处理的第一个字符
@@ -12,7 +12,7 @@ struct Scanner {
     line: usize,
 }
 impl Scanner {
-    fn new(source: String) -> Scanner {
+    pub(crate) fn new(source: String) -> Scanner {
         //声明扫描器
         Self {
             source: source.chars().collect(),
@@ -25,7 +25,7 @@ impl Scanner {
     /*
     递归整个源文件
     */
-    fn scan_tokens(&mut self) -> Vec<token::Token> {
+    pub(crate) fn scan_tokens(&mut self) -> Vec<token::Token> {
         //没到头
         while !self.is_at_end() {
             //递归下去
@@ -99,7 +99,7 @@ impl Scanner {
                         //}
                         self.advance();
                     }
-               
+
                 }else{
                     self.add_token(Token_type::SLASH,None);
                 };
@@ -113,7 +113,7 @@ impl Scanner {
             }
             //全都没有那就报错把
             _ => {
-                Error::log(self.line, "Unexpected character.");
+                Error::log(self.line, &*("Unexpected character".to_owned() + &*c.to_string()));
             }
         }
     }
@@ -134,7 +134,7 @@ impl Scanner {
         }
     }
     fn add_token(&mut self, token_type: Token_type, literal: Option<String>) {
-        let text = &self.source[self.start..=self.cur]
+        let text = &self.source[self.start..self.cur]
             .iter()
             .collect::<String>();
         self.tokens.push(token::Token::new(

@@ -1,5 +1,5 @@
 use crate::Token::token_type::Token_type;
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) struct Token{
     token_type:Token_type,
     lexeme:String,
