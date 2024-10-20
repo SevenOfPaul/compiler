@@ -1,1 +1,46 @@
-./run.cmd
+name: Rust CI
+
+on:
+  push:
+    branches:
+      - main  # 可以根据需要更改为你的默认分支
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Rust
+      uses: actions/setup-rust@v1
+      with:
+        rust-version: 1.55.0  # 根据你的项目需要设置 Rust 版本
+
+    - name: Build release binary
+      run: cargo build --release
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0  # 设置发布的标签名
+        release_name: Release v1.0.0  # 设置发布的名称
+        body: |
+          Release of version 1.0.0
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/release/your_binary_name  # Rust 编译生成的可执行文件路径
+        asset_name: your_binary_name  # 发布的文件名
+        asset_content_type: application/octet-stream
