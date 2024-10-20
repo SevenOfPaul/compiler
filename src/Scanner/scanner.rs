@@ -82,7 +82,7 @@ impl Scanner {
                 };
                 self.add_token(tok, None);
             }
-            '!' => {
+            '>' => {
                 let tok = if self.is_match('=') {
                     Token_type::GREATER_EQUAL
                 } else {
