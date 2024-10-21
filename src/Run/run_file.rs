@@ -12,7 +12,7 @@ pub fn run_file(path: String) {
         let mut sc =scanner::Scanner::new(bytes);
         println!("{:?}", sc.scan_tokens());
     } else {
-        Error::log(0,"找不到文件");
+        Error::log(0,0,"找不到文件");
         exit(32);
     }
 }

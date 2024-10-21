@@ -118,12 +118,16 @@ impl Scanner {
             }
             //全都没有那就报错把
             _ => {
+                if true{
+                 //看看是不是关键字
+                }
                 //看看是不是个数字
-                if Self::is_digit(c){
+                else if Self::is_digit(c){
                  self.get_number();
                 }else {
                     Error::log(
                         self.line,
+                        self.cur,
                         &*("Unexpected character".to_owned() + &*c.to_string()),
                     );
                 }
@@ -152,6 +156,7 @@ impl Scanner {
             self.source[self.cur]
         }
     }
+
     //在多看一个
     fn peek_next(&mut self) -> char {
         //到头了
@@ -179,12 +184,12 @@ impl Scanner {
             };
             self.advance();
         }
-        self.advance();
         //没找到 后面的"
         if self.is_at_end(){
-            Error::log(self.line, "Unterminated string.");
+            Error::log(self.line,self.cur, "Unterminated string.");
             return;
         }
+        self.advance();
         let val: String = self.source[self.start+1..self.cur-1].iter().collect();
         self.add_token(Token_type::STRING, Some(Object::str(val)));
     }
