@@ -183,6 +183,7 @@ impl Scanner {
         //没找到 后面的"
         if self.is_at_end(){
             Error::log(self.line, "Unterminated string.");
+            return;
         }
         let val: String = self.source[self.start+1..self.cur-1].iter().collect();
         self.add_token(Token_type::STRING, Some(Object::str(val)));
