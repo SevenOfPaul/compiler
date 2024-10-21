@@ -172,19 +172,19 @@ impl Scanner {
         self.add_token(Token_type::NUMBER, Some(Object::num(val.parse().unwrap())));
     }
     fn get_string(&mut self) {
-        while !self.is_at_end() && self.peek() != '"' {
+        while self.peek()!='"'&&!self.is_at_end() {
             //跳过换行
             if self.peek() == '\n' {
                 self.line += 1
             };
             self.advance();
         }
+        self.advance();
         //没找到 后面的"
-        if self.is_at_end() {
+        if self.is_at_end(){
             Error::log(self.line, "Unterminated string.");
-            return;
         }
-        let val: String = self.source[self.start..self.cur].iter().collect();
+        let val: String = self.source[self.start+1..self.cur-1].iter().collect();
         self.add_token(Token_type::STRING, Some(Object::str(val)));
     }
     fn is_match(&mut self, expected: char) -> bool {
