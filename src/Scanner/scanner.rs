@@ -126,7 +126,6 @@ impl Scanner {
                     //看看是不是关键字
                         self.get_identifier();
                 } else {
-                    //看看是不是个数字
                     Error::log(
                         self.line,
                         self.cur,
