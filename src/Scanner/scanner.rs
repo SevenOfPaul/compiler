@@ -225,13 +225,15 @@ impl Scanner {
     }
     fn is_alaph(c: char) -> bool {
         (c >= 'a' && c <= 'z') ||
+    fn is_alaph(c:char)->bool{
+             (c >= 'a' && c <= 'z') ||
                 (c >= 'A' && c <= 'Z') ||
                  //为什么有个_
                 c == '_'
     }
     fn is_alaph_or_digit(c: char) -> bool {
         Self::is_alaph(c) || Self::is_digit(c)
-    }
+      }
     fn is_at_end(&self) -> bool {
         self.cur >= self.source.len()
     }
