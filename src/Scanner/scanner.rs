@@ -3,6 +3,8 @@ use crate::Token;
 use Token::token;
 use Token::token_type::Token_type;
 use Token::object::Object;
+use crate::Token::token::Keywords;
+
 pub(crate) struct Scanner {
     source: Vec<char>,
     tokens: Vec<token::Token>,
@@ -118,13 +120,13 @@ impl Scanner {
             }
             //全都没有那就报错把
             _ => {
-                if true{
-                 //看看是不是关键字
-                }
-                //看看是不是个数字
-                else if Self::is_digit(c){
-                 self.get_number();
-                }else {
+                if Self::is_digit(c){
+                    self.get_number();
+                }else  if Self::is_alaph_or_digit(c) {
+                    //看看是不是关键字
+                        self.get_identifier();
+                } else {
+                    //看看是不是个数字
                     Error::log(
                         self.line,
                         self.cur,
@@ -192,6 +194,14 @@ impl Scanner {
         self.advance();
         let val: String = self.source[self.start+1..self.cur-1].iter().collect();
         self.add_token(Token_type::STRING, Some(Object::str(val)));
+    }
+    fn get_identifier(&mut self){
+        while Self::is_alaph_or_digit(self.peek()) { self.advance();}
+        let text= self.source[self.start..self.cur].iter().collect::<String>();
+        let has_token=Keywords.contains_key(&text);
+           if !has_token {
+               self.add_token(Keywords.get(&text).unwrap().clone(), Some(Object::str(text)));
+           }
     }
     fn is_match(&mut self, expected: char) -> bool {
         if self.is_at_end() || self.source[self.cur] != expected {

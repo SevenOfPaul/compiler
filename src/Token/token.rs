@@ -10,7 +10,7 @@ pub(crate) struct Token {
     line: usize,
 }
 lazy_static! {
-    static ref Keywords: HashMap<String, Token_type> = {HashMap::from([
+   pub (crate) static ref Keywords: HashMap<String, Token_type> = {HashMap::from([
         (String::from("let"), Token_type::LET),
         (String::from("print"), Token_type::PRINT),
         (String::from("fn"), Token_type::FN),
