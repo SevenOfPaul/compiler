@@ -118,8 +118,11 @@ impl Scanner {
             }
             //全都没有那就报错把
             _ => {
+                if true{
+                 //看看是不是关键字
+                }
                 //看看是不是个数字
-                if Self::is_digit(c){
+                else if Self::is_digit(c){
                  self.get_number();
                 }else {
                     Error::log(
