@@ -118,8 +118,11 @@ impl Scanner {
             }
             //全都没有那就报错把
             _ => {
+                if true{
+                 //看看是不是关键字
+                }
                 //看看是不是个数字
-                if Self::is_digit(c){
+                else if Self::is_digit(c){
                  self.get_number();
                 }else {
                     Error::log(
@@ -200,6 +203,15 @@ impl Scanner {
     }
     fn is_digit(c:char)->bool{
         c >= '0' && c <= '9'
+    }
+    fn is_alaph(c:char)->bool{
+             (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                 //为什么有个_
+                c == '_'
+    }
+    fn is_alaph_or_digit(c:char)->bool{
+         Self::is_alaph(c)||Self::is_digit(c)
     }
     fn is_at_end(&self) -> bool {
         self.cur >= self.source.len()
