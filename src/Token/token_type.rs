@@ -22,7 +22,7 @@ pub enum Token_type{
     LESS,//<
     LESS_EQUAL, //<=
     //字面量
-    IDENTIFIER, //标识符
+    IDENTIFIER, //字面量
     STRING, //字符串
     NUMBER, //数字
     AND, //&&

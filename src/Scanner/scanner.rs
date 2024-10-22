@@ -1,9 +1,9 @@
 use crate::Error;
 use crate::Token;
+use crate::Token::token::Keywords;
+use Token::object::Object;
 use Token::token;
 use Token::token_type::Token_type;
-use Token::object::Object;
-use crate::Token::token::Keywords;
 
 pub(crate) struct Scanner {
     source: Vec<char>,
@@ -120,11 +120,11 @@ impl Scanner {
             }
             //全都没有那就报错把
             _ => {
-                if Self::is_digit(c){
+                if Self::is_digit(c) {
                     self.get_number();
-                }else  if Self::is_alaph_or_digit(c) {
+                } else if Self::is_alaph_or_digit(c) {
                     //看看是不是关键字
-                        self.get_identifier();
+                    self.get_identifier();
                 } else {
                     Error::log(
                         self.line,
@@ -169,16 +169,20 @@ impl Scanner {
     }
     //这里得大改
     fn get_number(&mut self) {
-       while Self::is_digit(self.peek()){self.advance();}
-       if self.peek()=='.'&& Self::is_digit(self.peek_next()){
-           self.advance();
-       }
-        while Self::is_digit(self.peek()){self.advance();}
+        while Self::is_digit(self.peek()) {
+            self.advance();
+        }
+        if self.peek() == '.' && Self::is_digit(self.peek_next()) {
+            self.advance();
+        }
+        while Self::is_digit(self.peek()) {
+            self.advance();
+        }
         let val: String = self.source[self.start..self.cur].iter().collect();
         self.add_token(Token_type::NUMBER, Some(Object::num(val.parse().unwrap())));
     }
     fn get_string(&mut self) {
-        while self.peek()!='"'&&!self.is_at_end() {
+        while self.peek() != '"' && !self.is_at_end() {
             //跳过换行
             if self.peek() == '\n' {
                 self.line += 1
@@ -186,21 +190,27 @@ impl Scanner {
             self.advance();
         }
         //没找到 后面的"
-        if self.is_at_end(){
-            Error::log(self.line,self.cur, "Unterminated string.");
+        if self.is_at_end() {
+            Error::log(self.line, self.cur, "Unterminated string.");
             return;
         }
         self.advance();
-        let val: String = self.source[self.start+1..self.cur-1].iter().collect();
+        let val: String = self.source[self.start + 1..self.cur - 1].iter().collect();
         self.add_token(Token_type::STRING, Some(Object::str(val)));
     }
-    fn get_identifier(&mut self){
-        while Self::is_alaph_or_digit(self.peek()) { self.advance();}
-        let text= self.source[self.start..self.cur].iter().collect::<String>();
-        let has_token=Keywords.contains_key(&text);
-           if !has_token {
-               self.add_token(Keywords.get(&text).unwrap().clone(), Some(Object::str(text)));
-           }
+    fn get_identifier(&mut self) {
+        while Self::is_alaph_or_digit(self.peek()) {
+            self.advance();
+        }
+        let text = self.source[self.start..self.cur].iter().collect::<String>();
+        /*
+        这里等待修改
+        */
+        if let Some(token_Type) = Keywords.get(&text) {
+            self.add_token(token_Type.clone(), Some(Object::str(text)));
+        } else {
+            self.add_token(Token_type::IDENTIFIER, Some(Object::str(text)));
+        }
     }
     fn is_match(&mut self, expected: char) -> bool {
         if self.is_at_end() || self.source[self.cur] != expected {
@@ -210,18 +220,20 @@ impl Scanner {
             true
         }
     }
-    fn is_digit(c:char)->bool{
+    fn is_digit(c: char) -> bool {
         c >= '0' && c <= '9'
     }
+    fn is_alaph(c: char) -> bool {
+        (c >= 'a' && c <= 'z') ||
     fn is_alaph(c:char)->bool{
              (c >= 'a' && c <= 'z') ||
                 (c >= 'A' && c <= 'Z') ||
                  //为什么有个_
                 c == '_'
     }
-    fn is_alaph_or_digit(c:char)->bool{
-         Self::is_alaph(c)||Self::is_digit(c)
-    }
+    fn is_alaph_or_digit(c: char) -> bool {
+        Self::is_alaph(c) || Self::is_digit(c)
+      }
     fn is_at_end(&self) -> bool {
         self.cur >= self.source.len()
     }
