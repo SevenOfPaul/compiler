@@ -1,9 +1,8 @@
-use crate::Error;
-use crate::Token;
-use crate::Token::token::Keywords;
-use Token::object::Object;
-use Token::token;
-use Token::token_type::Token_type;
+use crate::error;
+use crate::ast;
+use token::object::Object;
+use token::token;
+use token::token_type::Token_type;
 
 pub(crate) struct Scanner {
     source: Vec<char>,
@@ -126,7 +125,7 @@ impl Scanner {
                     //看看是不是关键字
                     self.get_identifier();
                 } else {
-                    Error::log(
+                    error::log(
                         self.line,
                         self.cur,
                         &*("Unexpected character".to_owned() + &*c.to_string()),
@@ -191,7 +190,7 @@ impl Scanner {
         }
         //没找到 后面的"
         if self.is_at_end() {
-            Error::log(self.line, self.cur, "Unterminated string.");
+            error::log(self.line, self.cur, "Unterminated string.");
             return;
         }
         self.advance();

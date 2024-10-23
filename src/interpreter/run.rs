@@ -1,9 +1,9 @@
 use std::fs::File;
 use std::io::Read;
 use std::process::exit;
-use crate::Error;
-use crate::Scanner::scanner;
-
+use crate::error;
+pub fn run_program(){
+}
 pub fn run_file(path: String) {
     //判断文件是否存在
     let mut bytes = String::new();
@@ -12,7 +12,7 @@ pub fn run_file(path: String) {
         let mut sc =scanner::Scanner::new(bytes);
         println!("{:?}", sc.scan_tokens());
     } else {
-        Error::log(0,0,"找不到文件");
+        error::log(0, 0, "找不到文件");
         exit(32);
     }
 }
