@@ -1,7 +1,9 @@
-use crate::ast::token::object::Object;
-use crate::ast::token::token::{self, Keywords};
-use crate::error;
-use crate::ast::token::token_type::Token_type;
+use crate::Error;
+use crate::Token;
+use crate::Token::token::Keywords;
+use Token::object::Object;
+use Token::token;
+use Token::token_type::Token_type;
 
 pub(crate) struct Scanner {
     source: Vec<char>,
@@ -124,7 +126,7 @@ impl Scanner {
                     //看看是不是关键字
                     self.get_identifier();
                 } else {
-                    error::log(
+                    Error::log(
                         self.line,
                         self.cur,
                         &*("Unexpected character".to_owned() + &*c.to_string()),
@@ -189,7 +191,7 @@ impl Scanner {
         }
         //没找到 后面的"
         if self.is_at_end() {
-            error::log(self.line, self.cur, "Unterminated string.");
+            Error::log(self.line, self.cur, "Unterminated string.");
             return;
         }
         self.advance();
@@ -221,16 +223,16 @@ impl Scanner {
     fn is_digit(c: char) -> bool {
         c >= '0' && c <= '9'
     }
-        fn is_alaph(c:char)->bool{
-            (c >= 'a' && c <= 'z') ||
+    fn is_alaph(c:char)->bool{
+             (c >= 'a' && c <= 'z') ||
                 (c >= 'A' && c <= 'Z') ||
-                //为什么有个_
+                 //为什么有个_
                 c == '_'
-        }
-        fn is_alaph_or_digit(c: char) -> bool {
-            Self::is_alaph(c) || Self::is_digit(c)
-        }
-        fn is_at_end(&self) -> bool {
-            self.cur >= self.source.len()
-        }
     }
+    fn is_alaph_or_digit(c: char) -> bool {
+        Self::is_alaph(c) || Self::is_digit(c)
+      }
+    fn is_at_end(&self) -> bool {
+        self.cur >= self.source.len()
+    }
+}
