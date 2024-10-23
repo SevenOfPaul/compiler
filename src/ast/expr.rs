@@ -34,3 +34,12 @@ impl Binary{
        Self {name,left,right}
     }
 }
+pub trait Visitor<T> {
+   fn visit_assign(&self,expr:&Assign) -> T;
+    fn visit_binary(&self,expr:&Binary) -> T;
+}
+impl Visitor<Expr> for Vec<Expr>{
+    fn visit_assign(&self,expr:Assign) -> Expr{
+
+    }
+}
