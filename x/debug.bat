@@ -1,1 +1,1 @@
-cd ../target/debug&&c.exe ./main.asm
+cd ../target/debug&&c.exe ../../x/main.x
