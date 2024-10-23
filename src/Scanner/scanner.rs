@@ -223,8 +223,6 @@ impl Scanner {
     fn is_digit(c: char) -> bool {
         c >= '0' && c <= '9'
     }
-    fn is_alaph(c: char) -> bool {
-        (c >= 'a' && c <= 'z') ||
     fn is_alaph(c:char)->bool{
              (c >= 'a' && c <= 'z') ||
                 (c >= 'A' && c <= 'Z') ||
