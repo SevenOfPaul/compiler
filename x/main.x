@@ -1,2 +1,1 @@
-let x="hello world!"
-print x;
+let fn
