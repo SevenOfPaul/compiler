@@ -15,6 +15,8 @@ lazy_static! {
         (String::from("print"), Token_type::PRINT),
         (String::from("fn"), Token_type::FN),
         (String::from("nil"), Token_type::NIL),
+          (String::from("true"), Token_type::TRUE),
+          (String::from("false"), Token_type::FALSE),
     ])};
 }
 impl Token {
