@@ -1,7 +1,7 @@
 use crate::Token::object::Object;
 use crate::Token::token_type::Token_type;
-use std::collections::HashMap;
 use lazy_static::lazy_static;
+use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub(crate) struct Token {
     token_type: Token_type,
@@ -10,14 +10,16 @@ pub(crate) struct Token {
     line: usize,
 }
 lazy_static! {
-   pub (crate) static ref Keywords: HashMap<String, Token_type> = {HashMap::from([
-        (String::from("let"), Token_type::LET),
-        (String::from("print"), Token_type::PRINT),
-        (String::from("fn"), Token_type::FN),
-        (String::from("nil"), Token_type::NIL),
-          (String::from("true"), Token_type::TRUE),
-          (String::from("false"), Token_type::FALSE),
-    ])};
+    pub(crate) static ref Keywords: HashMap<String, Token_type> = {
+        HashMap::from([
+            (String::from("let"), Token_type::LET),
+            (String::from("print"), Token_type::PRINT),
+            (String::from("fn"), Token_type::FN),
+            (String::from("nil"), Token_type::NIL),
+            (String::from("true"), Token_type::TRUE),
+            (String::from("false"), Token_type::FALSE),
+        ])
+    };
 }
 impl Token {
     pub fn new(
