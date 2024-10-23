@@ -1,5 +1,5 @@
-use crate::Token::object::Object;
-use crate::Token::token_type::Token_type;
+use crate::token::object::Object;
+use crate::token::token_type::Token_type;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 #[derive(Clone, Debug)]
