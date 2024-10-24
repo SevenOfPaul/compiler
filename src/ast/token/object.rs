@@ -1,7 +1,8 @@
 #[derive(Debug,Clone)]
 pub(crate) enum Object {
     str(String),
-    num(f32)
+    num(f32),
+    boolean(bool),
 }
 impl Object{
    pub(crate) fn to_string(&self)->String{

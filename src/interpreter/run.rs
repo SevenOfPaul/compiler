@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::process::exit;
 use crate::error;
+use crate::interpreter::scanner;
 pub fn run_program(){
 }
 pub fn run_file(path: String) {

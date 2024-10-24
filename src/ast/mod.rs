@@ -1,4 +1,3 @@
-mod ast;
-mod token;
+pub(crate) mod token;
 mod expr;
 mod lexer;

@@ -1,8 +1,7 @@
+use crate::ast::token::object::Object;
+use crate::ast::token::token::{self, Keywords};
 use crate::error;
-use crate::ast;
-use token::object::Object;
-use token::token;
-use token::token_type::Token_type;
+use crate::ast::token::token_type::Token_type;
 
 pub(crate) struct Scanner {
     source: Vec<char>,

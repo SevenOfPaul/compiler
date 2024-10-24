@@ -1,6 +1,6 @@
-use crate::token::object::Object;
-use crate::token::token_type::Token_type;
+use crate::ast::token::token_type::Token_type;
 use lazy_static::lazy_static;
+use crate::ast::token::object::Object;
 use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub(crate) struct Token {

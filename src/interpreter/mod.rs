@@ -1,3 +1,2 @@
-mod interpreter;
-mod run;
+pub(crate) mod run;
 mod scanner;

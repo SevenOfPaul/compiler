@@ -1,6 +1,7 @@
 use std::env;
 use std::process::exit;
 mod error;
+mod ast;
 mod interpreter;
 fn main() {
     let mut args = env::args();
@@ -12,7 +13,7 @@ fn main() {
     }else if args.len()==2{
         //第一个是系统传入 第二个才是
         //interpreter file
-        interpreter::run_file(args.nth(1).unwrap());
+        interpreter::run::run_file(args.nth(1).unwrap());
     }else{
         //interpreter prompt
         error::log(0, 0, "暂不支持命令行");
