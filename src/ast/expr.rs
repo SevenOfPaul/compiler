@@ -1,37 +1,29 @@
-use crate::ast::token::token_type::Token_type;
 use crate::ast::token::object::Object;
+use crate::ast::token::token_type::Token_type;
+use std::fmt::Binary;
 pub(crate) enum Expr {
-    BinaryExpr(Binary),
-    GroupingExpr(Grouping),
+    Binary {
+        operator: Token_type,
+        l_expression: Box<Expr>,
+        r_expression: Box<Expr>,
+    },
+    Grouping {
+        expression: Box<Expr>,
+    },
+    Literal {
+        val: Option<Object>,
+    },
+    Unary {
+        operator: Token_type,
+        r_expression: Box<Expr>,
+    },
 }
-struct Binary {
-    operator: Token_type,
-    l_expression: Box<Expr>,
-    r_expression: Box<Expr>,
-}
-struct Grouping {
-    expression: Box<Expr>,
-}
-struct Literal {
-    val:Option<Object>,
-}
-struct Unary{
-    operator: Token_type,
-    r_expression: Box<Expr>
-}
-impl Binary {
-    fn accept<T>(self, visitor: &dyn Visitor<T>) -> T {
-        visitor.visit_binary(&self)
-    }
-}
-impl Grouping {
-    fn accept<T>(self, visitor: &dyn Visitor<T>) -> T {
-        visitor.visit_grouping(&self)
-    }
-}
+
 pub trait Visitor<T> {
-    fn visit_binary(&self, expr: &Binary) -> T;
-    fn visit_grouping(&self, expr: &Grouping) -> T;
-    fn visit_literal(&self, expr: &Literal) -> T;
-    fn visit_unary(&self, expr: &Unary) -> T;
+    fn visit(&self, expr: &Expr) -> T;
+}
+impl Expr {
+    pub fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
+        visitor.visit(&self)
+    }
 }
