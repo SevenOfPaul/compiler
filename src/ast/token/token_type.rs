@@ -32,6 +32,8 @@ pub enum Token_type{
     PRINT, //打印
     FN,//函数
     NIL, //null
+    TRUE,
+    FALSE,
     EOF //结尾符
 }
 impl Token_type{
