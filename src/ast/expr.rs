@@ -6,8 +6,8 @@ pub(crate) enum Expr {
 }
 struct Binary {
     operator: Token_type,
-    left_expression: Box<Expr>,
-    right_expression: Box<Expr>,
+    l_expression: Box<Expr>,
+    r_expression: Box<Expr>,
 }
 struct Grouping {
     expression: Box<Expr>,
@@ -17,7 +17,7 @@ struct Literal {
 }
 struct Unary{
     operator: Token_type,
-    expression: Box<Expr>
+    r_expression: Box<Expr>
 }
 impl Binary {
     fn accept<T>(self, visitor: &dyn Visitor<T>) -> T {
