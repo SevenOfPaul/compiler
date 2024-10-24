@@ -1,45 +1,38 @@
 use crate::token::token_type::Token_type;
-// abstract class Expr {
-// interface Visitor<R> {
-// R visitAssignExpr(Assign expr);
-// R visitBinaryExpr(Binary expr);
-// R visitCallExpr(Call expr);
-// R visitGetExpr(Get expr);
-// R visitGroupingExpr(Grouping expr);
-// R visitLiteralExpr(Literal expr);
-// R visitLogicalExpr(Logical expr);
-// R visitSetExpr(Set expr);
-// R visitSuperExpr(Super expr);
-// R visitThisExpr(This expr);
-// R visitUnaryExpr(Unary expr);
-// R visitVariableExpr(Variable expr);
-// }
-pub (crate) enum Expr{
+pub(crate) enum Expr {
     AssignExpr(Assign),
     BinaryExpr(Binary),
+    GroupingExpr(Grouping),
 }
-struct Assign{
-    name:Token_type,val:Box<Expr>
+struct Assign {
+    name: Token_type,
+    val: Box<Expr>,
 }
-struct Binary{
-    name:Token_type,left:Box<Expr>,right:Box<Expr>
+struct Binary {
+    name: Token_type,
+    left: Box<Expr>,
+    right: Box<Expr>,
 }
-impl Assign{
-    fn new(name:Token_type, val:Box<Expr>) -> Assign{
-        Self{name,val}
+struct Grouping {
+    expression: Box<Expr>,
+}
+impl Assign {
+    fn accept(self, visitor: &dyn Visitor<T>) -> T {
+        visitor.visit_assign(&self);
     }
 }
-impl Binary{
-    fn new(name:Token_type, left:Box<Expr>,right:Box<Expr>) -> Self{
-       Self {name,left,right}
+impl Binary {
+    fn accept<T>(self, visitor: &dyn Visitor<T>) -> T {
+        visitor.visit_binary(&self);
+    }
+}
+impl Grouping {
+    fn accept<T>(self, visitor: &dyn Visitor<T>) -> T {
+        visitor.visit_grouping(&self);
     }
 }
 pub trait Visitor<T> {
-   fn visit_assign(&self,expr:&Assign) -> T;
-    fn visit_binary(&self,expr:&Binary) -> T;
-}
-impl Visitor<Expr> for Vec<Expr>{
-    fn visit_assign(&self,expr:Assign) -> Expr{
-
-    }
+    fn visit_assign(&self, expr: &Assign) -> T;
+    fn visit_binary(&self, expr: &Binary) -> T;
+    fn visit_grouping(&self, expr: &Grouping) -> T;
 }
