@@ -7,7 +7,7 @@ impl ExprVisitor{
     pub(crate) fn new() ->Self{
         ExprVisitor{} 
     }
-    fn parenthesize(&self, operator:&str, exprs:Vec<&Expr>) ->String{
+    fn parenthesize(&mut self, operator:&str, exprs:Vec<&Expr>) ->String{
         let mut builder = String::from("(");
         builder.push_str(operator);
         for expr in exprs{
@@ -19,7 +19,7 @@ impl ExprVisitor{
     }
 }
 impl Visitor<String> for ExprVisitor {
-    fn visit(&self, expr: &Expr) -> String {
+    fn visit(&mut self, expr: &Expr) -> String {
      match expr {
          Expr::Binary {operator,l_expression,r_expression}=>{
                self.parenthesize(operator.lexeme.as_str(),vec![l_expression,r_expression])
@@ -34,7 +34,7 @@ impl Visitor<String> for ExprVisitor {
            if let Some(value)=val{
                value.to_string()
            }else{
-              String::new()
+              String::from("Nil")
            }
          }
      }

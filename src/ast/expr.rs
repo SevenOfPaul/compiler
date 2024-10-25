@@ -22,11 +22,11 @@ pub(crate) enum Expr {
 }
 
 pub trait Visitor<T> {
-    fn visit(&self, expr: &Expr) -> T;
+    fn visit(&mut self, expr: &Expr) -> T;
 }
 impl Expr {
     pub fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
-        visitor.visit(&self)
+        visitor.visit(self)
     }
 }
 /*
