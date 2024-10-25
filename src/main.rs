@@ -3,12 +3,13 @@ use std::process::exit;
 mod error;
 mod ast;
 mod interpreter;
+pub(crate) mod tools;
+
 use ast::expr::*;
-use ast::token::*;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_type;
-use crate::ast::tools::println;
+use tools::println;
 fn main() {
     let mut args = env::args();
     //获取命令行参数
