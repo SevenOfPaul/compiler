@@ -5,7 +5,7 @@ use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub(crate) struct Token {
     token_type: Token_type,
-    lexeme: String,
+    pub(crate) lexeme: String,
     literal: Option<Object>,
     line: usize,
 }

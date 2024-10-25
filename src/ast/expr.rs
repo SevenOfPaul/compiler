@@ -1,9 +1,11 @@
 use crate::ast::token::object::Object;
 use crate::ast::token::token_type::Token_type;
 use std::fmt::Binary;
+use crate::ast::token::token::Token;
+
 pub(crate) enum Expr {
     Binary {
-        operator: Token_type,
+        operator: Token,
         l_expression: Box<Expr>,
         r_expression: Box<Expr>,
     },
@@ -14,7 +16,7 @@ pub(crate) enum Expr {
         val: Option<Object>,
     },
     Unary {
-        operator: Token_type,
+        operator: Token,
         r_expression: Box<Expr>,
     },
 }
@@ -27,3 +29,13 @@ impl Expr {
         visitor.visit(&self)
     }
 }
+/*
+impl Expr{
+pub fn accept<T>(&self,visitor:&dyn Visitor<T>)->T{
+visitor.visit(self)
+}
+pub fn accept<T,F>(&self,vsiit:&dyn visit:F)->T
+where F:Fn(expr:&Expr)->T{
+vsiit(self)
+}
+*/
