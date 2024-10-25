@@ -2,7 +2,7 @@ use crate::ast::expr::{Expr, Visitor};
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_type;
 
-pub (crate)struct ExprVisitor {}
+pub (crate) struct ExprVisitor {}
 impl ExprVisitor{
     pub(crate) fn new() ->Self{
         ExprVisitor{} 

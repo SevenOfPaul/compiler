@@ -1,5 +1,6 @@
 pub(crate) mod token;
-mod expr;
+pub(crate) mod expr;
 mod lexer;
 
-mod expr_visitor;
+pub(crate) mod expr_visitor;
+pub (crate)  mod tools;
