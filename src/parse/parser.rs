@@ -29,6 +29,16 @@ impl Parser{
             (*self.peek()).token_type == token_type
         }
     }
+
+    fn fulfill(&mut self, types:Vec<Token_type>) ->bool{
+        for t in types{
+         if  self.check(t){
+             self.advance();
+            return true;
+         }
+        }
+          false
+    }
     fn is_end(&self)->bool{
         (*self.previous()).token_type==Token_type::EOF
     }
@@ -42,3 +52,4 @@ impl Parser{
     }
 
 }
+
