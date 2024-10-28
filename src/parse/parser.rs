@@ -1,5 +1,6 @@
 use crate::ast::expr::Expr;
 use crate::ast::token::token::Token;
+use crate::ast::token::token_type::Token_type;
 
 pub(crate) struct Parser{
     tokens: Vec<Token>,
@@ -14,5 +15,14 @@ impl Parser{
     }
     fn equality(&self)->Expr{
 
+    }
+    fn is_end(&self)->bool{
+        (*self.previous()).token_type==Token_type::EOF
+    }
+    fn previous(&self)->&Token{
+        &self.tokens[self.pos - 1]
+    }
+    fn peek(&self)->&Token{
+        &self.tokens[self.pos]
     }
 }
