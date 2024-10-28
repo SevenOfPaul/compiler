@@ -1,4 +1,4 @@
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Token_type{
     //自己就是个token
     LEFT_PAREN,//(
