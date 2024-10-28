@@ -16,13 +16,29 @@ impl Parser{
     fn equality(&self)->Expr{
 
     }
+    fn advance(&mut self)->&Token{
+        if !self.is_end(){
+            self.pos += 1;
+        }
+         self.previous()
+    }
+    fn check(&self,token_type:Token_type)->bool{
+        if self.is_end(){
+              false
+        }else {
+            (*self.peek()).token_type == token_type
+        }
+    }
     fn is_end(&self)->bool{
         (*self.previous()).token_type==Token_type::EOF
     }
-    fn previous(&self)->&Token{
-        &self.tokens[self.pos - 1]
-    }
+    //当前token
     fn peek(&self)->&Token{
         &self.tokens[self.pos]
     }
+    //前一个token
+    fn previous(&self)->&Token{
+        &self.tokens[self.pos - 1]
+    }
+
 }
