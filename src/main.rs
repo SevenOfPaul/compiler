@@ -4,6 +4,7 @@ mod error;
 mod ast;
 mod interpreter;
 pub(crate) mod tools;
+mod parse;
 
 use ast::expr::*;
 use crate::ast::token::object::Object;
