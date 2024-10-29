@@ -6,10 +6,16 @@ pub(crate) enum Object {
 }
 impl Object{
    pub(crate) fn to_string(&self)->String{
-        if let Object::num(n) = self{
-            n.to_string()
-        }else{
-            self.to_string()
-        }
+       match self {
+           Object::num(n)=>{
+               n.to_string()
+           },Object::boolean(b)=>{
+               b.to_string()
+           }
+           _=>{
+               self.to_string()
+           }
+          
+       }
     }
 }
