@@ -1,5 +1,5 @@
 use crate::ast::expr::Expr;
-use crate::ast::token::object::Object;
+use crate::ast::token::object::{Get, Object};
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_type;
 
@@ -97,17 +97,14 @@ impl Parser {
         } else if self.fulfill(vec![Token_type::NUMBER]) {
             Expr::Literal {
                 val: Some(Object::num(
-                    self.previous()
-                        .literal
-                        .unwrap()
-                        .to_string()
-                        .parse::<f32>()
-                        .unwrap(),
+                    self.previous().literal.unwrap().get_value().unwrap(),
                 )),
             }
         } else if self.fulfill(vec![Token_type::STRING]) {
             Expr::Literal {
-                val: Some(Object::str(self.previous().literal.unwrap().to_string())),
+                val: Some(Object::str(
+                    self.previous().literal.unwrap().get_value().unwrap(),
+                )),
             }
         } else if self.fulfill(vec![Token_type::LEFT_PAREN]) {
             Expr::Grouping {
