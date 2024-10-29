@@ -15,7 +15,23 @@ impl Object{
            _=>{
                self.to_string()
            }
-          
+
        }
+    }
+    /*
+    需要先修改
+    */
+    pub(crate) fn get_value(&self)->String{
+        match self {
+            Object::num(n)=>{
+                n.to_string()
+            },Object::boolean(b)=>{
+                b.to_string()
+            }
+            _=>{
+                self.to_string()
+            }
+
+        }
     }
 }

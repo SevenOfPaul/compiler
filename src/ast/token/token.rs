@@ -6,7 +6,7 @@ use std::collections::HashMap;
 pub(crate) struct Token {
     pub(crate) token_type: Token_type,
     pub(crate) lexeme: String,
-    literal: Option<Object>,
+    pub(crate) literal: Option<Object>,
     line: usize,
 }
 lazy_static! {

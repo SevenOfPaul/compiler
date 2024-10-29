@@ -201,9 +201,6 @@ impl Scanner {
             self.advance();
         }
         let text = self.source[self.start..self.cur].iter().collect::<String>();
-        /*
-        这里等待修改
-        */
         if let Some(token_Type) = Keywords.get(&text) {
             self.add_token(token_Type.clone(), Some(Object::str(text)));
         } else {

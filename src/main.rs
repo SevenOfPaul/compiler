@@ -1,3 +1,5 @@
+extern crate core;
+
 use std::env;
 use std::process::exit;
 mod ast;
@@ -13,7 +15,7 @@ use ast::expr::*;
 use tools::println;
 fn main() {
     let expr = Expr::Binary {
-        operator: Token::new(Token_type::MINUS, "-".to_string(), None, 0),
+        operator: Token::new(Token_type::MINUS, "-".to_owned(), None, 0),
         l_expression: Box::new(Expr::Literal {
             val: Some(Object::num(1.0)),
         }),
