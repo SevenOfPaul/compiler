@@ -16,18 +16,24 @@ impl Parser{
     fn equality(&mut self) ->Expr{
         let mut  expr=   self.comparison();
         while self.fulfill(vec![Token_type::BANG_EQUAL,Token_type::EQUAL_EQUAL]) {
-            let operator = self.previous();
+            let operator = self.previous().clone();
             let r = self.comparison();
             expr = Expr::Binary {
                 l_expression: Box::from(expr),
-                operator: operator.clone(),
+                operator,
                 r_expression: Box::from(r)
             }
         }
         expr
     }
-    fn comparison(&self)->Expr{
-
+    fn comparison(&mut self) ->Expr{
+     let mut  expr=self.term();
+        while self.fulfill(vec![]) {
+            let operator = self.previous().clone();
+            let r_expression=self.term();
+            expr=Expr::Binary {l_expression:expr,operator,r_expression}
+        }
+        expr
     }
     fn advance(&mut self)->&Token{
         if !self.is_end(){
@@ -43,6 +49,7 @@ impl Parser{
         }
     }
     fn fulfill(&mut self, types:Vec<Token_type>) ->bool{
+        //当前的token 必须是需要的 才能继续
         for t in types{
             if  self.check(t){
                 self.advance();

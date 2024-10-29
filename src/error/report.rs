@@ -1,5 +1,5 @@
 use color_string::Font::*;
-use color_string::{cs, fonts, pcs, wcs, wf, Colored, FontTool};
+use color_string::{cs, fonts};
 pub fn log(line :usize,pos:usize, message:&str){
  report(line,pos,message);
 }
