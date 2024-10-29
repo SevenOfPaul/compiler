@@ -10,6 +10,7 @@ impl Parser{
     fn new(tokens:Vec<Token>)->Self{
         Self{tokens,pos:0}
     }
+    /**/
     fn expression(&mut self) ->Expr{
         self.equality()
     }
@@ -17,24 +18,46 @@ impl Parser{
         let mut  expr=   self.comparison();
         while self.fulfill(vec![Token_type::BANG_EQUAL,Token_type::EQUAL_EQUAL]) {
             let operator = self.previous().clone();
-            let r = self.comparison();
+            let r_expression =Box::from( self.comparison());
             expr = Expr::Binary {
                 l_expression: Box::from(expr),
                 operator,
-                r_expression: Box::from(r)
+                r_expression
             }
         }
         expr
     }
     fn comparison(&mut self) ->Expr{
      let mut  expr=self.term();
-        while self.fulfill(vec![]) {
+        while self.fulfill(vec![Token_type::LESS,Token_type::GREATER,Token_type::LESS_EQUAL,Token_type::GREATER_EQUAL]) {
             let operator = self.previous();
-            let r_expression=self.term();
-            expr=Expr::Binary {l_expression:expr,operator,r_expression}
+            let r_expression=Box::from(self.term());
+            expr=Expr::Binary {l_expression:Box::from(expr),operator,r_expression}
         }
         expr
     }
+    fn term(&mut self)->Expr{
+        let mut expr=self.factor();
+        while self.fulfill(vec![Token_type::MINUS,Token_type::PLUS]) {
+           let operator = self.previous();
+            let r_expression=Box::from(self.factor());
+            expr=Expr::Binary {l_expression: Box::from(expr),operator,r_expression}
+        }
+        expr
+    }
+    fn factor(&mut self)->Expr{
+    let mut expr=Expr::Unary { operator: Token::new(Token_type::NIL,String::new(),None,0),
+        r_expression:Box::from(Expr::Literal{val:None}) };
+        while self.fulfill(vec![Token_type::SLASH,Token_type::STAR]){
+            let operator = self.previous();
+            let r_expression=Box::from(Expr::Unary { operator: Token::new(Token_type::NIL,String::new(),None,0), 
+                r_expression:Box::from(Expr::Literal{val:None}) });
+            expr=Expr::Binary {l_expression: Box::from(expr),operator,r_expression};
+
+        }
+    expr
+    }
+    /*止*/
     fn advance(&mut self)->Token{
         if !self.is_end(){
             self.pos += 1;
