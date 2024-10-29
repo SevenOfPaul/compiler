@@ -29,13 +29,13 @@ impl Parser{
     fn comparison(&mut self) ->Expr{
      let mut  expr=self.term();
         while self.fulfill(vec![]) {
-            let operator = self.previous().clone();
+            let operator = self.previous();
             let r_expression=self.term();
             expr=Expr::Binary {l_expression:expr,operator,r_expression}
         }
         expr
     }
-    fn advance(&mut self)->&Token{
+    fn advance(&mut self)->Token{
         if !self.is_end(){
             self.pos += 1;
         }
@@ -59,15 +59,15 @@ impl Parser{
         false
     }
     fn is_end(&self)->bool{
-        (*self.previous()).token_type==Token_type::EOF
+        self.previous().token_type==Token_type::EOF
     }
     //当前token
     fn peek(&self)->&Token{
         &self.tokens[self.pos]
     }
     //前一个token
-    fn previous(&self)->&Token{
-        &self.tokens[self.pos - 1]
+    fn previous(&self)->Token{
+        self.tokens[self.pos - 1].clone()
     }
 
 }
