@@ -7,7 +7,17 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="提交equality函数" />
+    <list default="true" id="7cefd800-8b65-4b6f-9c83-35c0d34cfa70" name="更改" comment="提交多个parser的函数">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/rust.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/rust.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ast/token/object.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/token/object.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ast/token/token.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/token/token.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/interpreter/scanner.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpreter/scanner.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parse/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parse/parser.rs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,13 +32,19 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="rust_work" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
+    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -38,27 +54,20 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/SevenOfPaul/complier.git&quot;,
-    &quot;accountId&quot;: &quot;585d2ec6-ad53-483e-beb2-733a9f8908be&quot;
-  },
-  &quot;recentNewPullRequestHead&quot;: {
-    &quot;server&quot;: {
-      &quot;useHttp&quot;: false,
-      &quot;host&quot;: &quot;github.com&quot;,
-      &quot;port&quot;: null,
-      &quot;suffix&quot;: null
-    },
-    &quot;owner&quot;: &quot;SevenOfPaul&quot;,
-    &quot;repository&quot;: &quot;complier&quot;
+    &quot;url&quot;: &quot;https://github.com/SevenOfPaul/compiler.git&quot;,
+    &quot;accountId&quot;: &quot;a42fa4cb-b57c-4929-a446-cdca6ece5a9a&quot;
   }
 }</component>
   <component name="MacroExpansionManager">
-    <option name="directoryName" value="dclglo6e" />
+    <option name="directoryName" value="w7ajp3xm" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
+  &quot;associatedIndex&quot;: 5
 }</component>
-  <component name="ProjectId" id="2mCUZgM4emo7yw5GZxAeoVxj0t0" />
+  <component name="ProjectId" id="2nb4l802EGAbgISD0tUsVf3rbKR" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
@@ -66,50 +75,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Cargo.Run.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "E:/complier/target/debug",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.disableDetachedFileInspectionE:/complier/src/lib/run.rs": "true",
-    "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
-  },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mongo",
-      "mysql"
-    ]
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Cargo.Run.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/my/compiler&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/ast/expr.rs&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/ast/lexer.rs&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/ast/token/mod.rs&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/ast/token/object.rs&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/ast/token/token.rs&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/ast/token/token_type.rs&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/ast/tools.rs&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspectionC:/Users/my/compiler/src/interpreter/run.rs&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\complier\target\debug" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\complier\src\ast\tools" />
-      <recent name="E:\complier\src" />
+      <recent name="C:\Users\my\compiler\src" />
+      <recent name="C:\Users\my\compiler\test" />
+      <recent name="C:\Users\my\compiler\target" />
+      <recent name="C:\Users\my\compiler\src\interpreter" />
+      <recent name="C:\Users\my\compiler" />
     </key>
   </component>
   <component name="RsExternalLinterProjectSettings">
     <option name="runOnTheFly" value="true" />
   </component>
   <component name="RunManager">
-    <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
-      <option name="command" value="run" />
+    <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="run --package c --bin c" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
       <option name="emulateTerminal" value="true" />
@@ -127,256 +134,290 @@
     </configuration>
   </component>
   <component name="RustProjectSettings">
-    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="toolchainHomeDirectory" value="$PROJECT_DIR$/../.cargo/bin" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
-      <changelist id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="" />
-      <created>1726580108352</created>
+      <changelist id="7cefd800-8b65-4b6f-9c83-35c0d34cfa70" name="更改" comment="" />
+      <created>1729228589328</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1726580108352</updated>
-      <workItem from="1726580109385" duration="107000" />
-      <workItem from="1726580339360" duration="103000" />
-      <workItem from="1726924349667" duration="141000" />
-      <workItem from="1727923326868" duration="3248000" />
-      <workItem from="1727936374142" duration="2789000" />
-      <workItem from="1727939587833" duration="432000" />
-      <workItem from="1727942194135" duration="51000" />
-      <workItem from="1728090664309" duration="539000" />
-      <workItem from="1728091218529" duration="32000" />
-      <workItem from="1728651310013" duration="1406000" />
-      <workItem from="1728816042453" duration="121000" />
-      <workItem from="1728816273609" duration="666000" />
-      <workItem from="1728821045003" duration="3234000" />
-      <workItem from="1728824992444" duration="575000" />
-      <workItem from="1729001052998" duration="88000" />
-      <workItem from="1729001175384" duration="218000" />
-      <workItem from="1729250344965" duration="734000" />
-      <workItem from="1729296413216" duration="6003000" />
-      <workItem from="1729303620570" duration="246000" />
-      <workItem from="1729303880060" duration="600000" />
-      <workItem from="1729304698097" duration="3735000" />
-      <workItem from="1729316174994" duration="35000" />
-      <workItem from="1729328091402" duration="3505000" />
-      <workItem from="1729351014681" duration="1941000" />
-      <workItem from="1729353003683" duration="59000" />
-      <workItem from="1729387642286" duration="2004000" />
-      <workItem from="1729400341595" duration="187000" />
-      <workItem from="1729401140412" duration="113000" />
-      <workItem from="1729410581822" duration="1306000" />
-      <workItem from="1729421527278" duration="2371000" />
-      <workItem from="1729437312250" duration="1336000" />
-      <workItem from="1729520863058" duration="3725000" />
-      <workItem from="1729598646205" duration="2144000" />
-      <workItem from="1729770091547" duration="339000" />
-      <workItem from="1729770440782" duration="3726000" />
-      <workItem from="1729915284775" duration="260000" />
-      <workItem from="1730049089281" duration="51000" />
-      <workItem from="1730116366567" duration="209000" />
-      <workItem from="1730123155732" duration="779000" />
+      <updated>1729228589328</updated>
+      <workItem from="1729228590353" duration="2383000" />
+      <workItem from="1729482001764" duration="6398000" />
+      <workItem from="1729502316616" duration="1736000" />
+      <workItem from="1729504068325" duration="369000" />
+      <workItem from="1729582563912" duration="5127000" />
+      <workItem from="1729647485022" duration="7877000" />
+      <workItem from="1729665790491" duration="7233000" />
+      <workItem from="1729673974048" duration="50000" />
+      <workItem from="1729674047123" duration="3515000" />
+      <workItem from="1729739400685" duration="8454000" />
+      <workItem from="1729759653847" duration="13000" />
+      <workItem from="1729759685217" duration="10000" />
+      <workItem from="1729759735196" duration="15000" />
+      <workItem from="1729759777846" duration="23000" />
+      <workItem from="1729760591174" duration="1322000" />
+      <workItem from="1729819715631" duration="16486000" />
+      <workItem from="1730077948638" duration="11335000" />
+      <workItem from="1730100956674" duration="2728000" />
+      <workItem from="1730163440995" duration="2934000" />
+      <workItem from="1730167292090" duration="5606000" />
     </task>
-    <task id="LOCAL-00001" summary="初始化项目">
+    <task id="LOCAL-00001" summary="初始化">
       <option name="closed" value="true" />
-      <created>1726580247231</created>
+      <created>1729228874865</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1726580247231</updated>
+      <updated>1729228874865</updated>
     </task>
-    <task id="LOCAL-00002" summary="构建运行模块和错误模块">
+    <task id="LOCAL-00002" summary="修改bug,处理获取string的错误">
       <option name="closed" value="true" />
-      <created>1729314275933</created>
+      <created>1729501639475</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1729314275933</updated>
+      <updated>1729501639477</updated>
     </task>
-    <task id="LOCAL-00003" summary="缩减代码">
+    <task id="LOCAL-00003" summary="修改bug,处理获取string的错误">
       <option name="closed" value="true" />
-      <created>1729316204608</created>
+      <created>1729501859009</created>
       <option name="number" value="00003" />
       <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
-      <updated>1729316204608</updated>
+      <updated>1729501859009</updated>
     </task>
-    <task id="LOCAL-00004" summary="提交扫描器">
+    <task id="LOCAL-00004" summary="修改详细报错">
       <option name="closed" value="true" />
-      <created>1729330726928</created>
+      <created>1729503787543</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1729330726929</updated>
+      <updated>1729503787543</updated>
     </task>
-    <task id="LOCAL-00005" summary="提交扫描器">
+    <task id="LOCAL-00005" summary="修改详细报错">
       <option name="closed" value="true" />
-      <created>1729331591938</created>
+      <created>1729583285094</created>
       <option name="number" value="00005" />
       <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1729331591938</updated>
+      <updated>1729583285094</updated>
     </task>
-    <task id="LOCAL-00006" summary="提交双字符的token">
+    <task id="LOCAL-00006" summary="完善关键字模块">
       <option name="closed" value="true" />
-      <created>1729352957478</created>
+      <created>1729583926506</created>
       <option name="number" value="00006" />
       <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
-      <updated>1729352957478</updated>
+      <updated>1729583926506</updated>
     </task>
-    <task id="LOCAL-00007" summary="提交双字符的token">
+    <task id="LOCAL-00007" summary="完善关键字模块">
       <option name="closed" value="true" />
-      <created>1729353032376</created>
+      <created>1729645785694</created>
       <option name="number" value="00007" />
       <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
-      <updated>1729353032377</updated>
+      <updated>1729645785694</updated>
     </task>
-    <task id="LOCAL-00008" summary="增加识别空白符">
+    <task id="LOCAL-00008" summary="增加true和false">
       <option name="closed" value="true" />
-      <created>1729388459529</created>
+      <created>1729652361985</created>
       <option name="number" value="00008" />
       <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1729388459529</updated>
+      <updated>1729652361985</updated>
     </task>
-    <task id="LOCAL-00009" summary="增加识别空白符">
+    <task id="LOCAL-00009" summary="修改样式">
       <option name="closed" value="true" />
-      <created>1729389629668</created>
+      <created>1729652624384</created>
       <option name="number" value="00009" />
       <option name="presentableId" value="LOCAL-00009" />
       <option name="project" value="LOCAL" />
-      <updated>1729389629668</updated>
+      <updated>1729652624384</updated>
     </task>
-    <task id="LOCAL-00010" summary="增加字符串的识别">
+    <task id="LOCAL-00010" summary="臭狗代码存储">
       <option name="closed" value="true" />
-      <created>1729411209664</created>
+      <created>1729670109321</created>
       <option name="number" value="00010" />
       <option name="presentableId" value="LOCAL-00010" />
       <option name="project" value="LOCAL" />
-      <updated>1729411209664</updated>
+      <updated>1729670109321</updated>
     </task>
-    <task id="LOCAL-00011" summary="可以识别字符串啦">
+    <task id="LOCAL-00011" summary="提交名称修正">
       <option name="closed" value="true" />
-      <created>1729411554544</created>
+      <created>1729670481494</created>
       <option name="number" value="00011" />
       <option name="presentableId" value="LOCAL-00011" />
       <option name="project" value="LOCAL" />
-      <updated>1729411554544</updated>
+      <updated>1729670481494</updated>
     </task>
-    <task id="LOCAL-00012" summary="可以识别字符串啦">
+    <task id="LOCAL-00012" summary="修改名字">
       <option name="closed" value="true" />
-      <created>1729411895568</created>
+      <created>1729670947308</created>
       <option name="number" value="00012" />
       <option name="presentableId" value="LOCAL-00012" />
       <option name="project" value="LOCAL" />
-      <updated>1729411895568</updated>
+      <updated>1729670947308</updated>
     </task>
-    <task id="LOCAL-00013" summary="增加object 代码更合理">
+    <task id="LOCAL-00013" summary="提交代码">
       <option name="closed" value="true" />
-      <created>1729422974674</created>
+      <created>1729673925642</created>
       <option name="number" value="00013" />
       <option name="presentableId" value="LOCAL-00013" />
       <option name="project" value="LOCAL" />
-      <updated>1729422974674</updated>
+      <updated>1729673925642</updated>
     </task>
-    <task id="LOCAL-00014" summary="增加对数字的解析">
+    <task id="LOCAL-00014" summary="提交测试">
       <option name="closed" value="true" />
-      <created>1729423534039</created>
+      <created>1729674421028</created>
       <option name="number" value="00014" />
       <option name="presentableId" value="LOCAL-00014" />
       <option name="project" value="LOCAL" />
-      <updated>1729423534039</updated>
+      <updated>1729674421028</updated>
     </task>
-    <task id="LOCAL-00015" summary="修改命名格式">
+    <task id="LOCAL-00015" summary="添加有限几个expr">
       <option name="closed" value="true" />
-      <created>1729423823573</created>
+      <created>1729758843341</created>
       <option name="number" value="00015" />
       <option name="presentableId" value="LOCAL-00015" />
       <option name="project" value="LOCAL" />
-      <updated>1729423823573</updated>
+      <updated>1729758843341</updated>
     </task>
-    <task id="LOCAL-00016" summary="修改错误">
+    <task id="LOCAL-00016" summary="修改大量错误，为昨天的修改模块划分填坑">
       <option name="closed" value="true" />
-      <created>1729423896474</created>
+      <created>1729760674090</created>
       <option name="number" value="00016" />
       <option name="presentableId" value="LOCAL-00016" />
       <option name="project" value="LOCAL" />
-      <updated>1729423896474</updated>
+      <updated>1729760674090</updated>
     </task>
-    <task id="LOCAL-00017" summary="修改顺序方便查找">
+    <task id="LOCAL-00017" summary="修改字段名">
       <option name="closed" value="true" />
-      <created>1729437360422</created>
+      <created>1729761136738</created>
       <option name="number" value="00017" />
       <option name="presentableId" value="LOCAL-00017" />
       <option name="project" value="LOCAL" />
-      <updated>1729437360422</updated>
+      <updated>1729761136738</updated>
     </task>
-    <task id="LOCAL-00018" summary="添加对应的token 字符串">
+    <task id="LOCAL-00018" summary="提交打印器">
       <option name="closed" value="true" />
-      <created>1729437550963</created>
+      <created>1729835303205</created>
       <option name="number" value="00018" />
       <option name="presentableId" value="LOCAL-00018" />
       <option name="project" value="LOCAL" />
-      <updated>1729437550963</updated>
+      <updated>1729835303207</updated>
     </task>
-    <task id="LOCAL-00019" summary="提交关键字">
+    <task id="LOCAL-00019" summary="提交打印器">
       <option name="closed" value="true" />
-      <created>1729524229258</created>
+      <created>1729837717223</created>
       <option name="number" value="00019" />
       <option name="presentableId" value="LOCAL-00019" />
       <option name="project" value="LOCAL" />
-      <updated>1729524229258</updated>
+      <updated>1729837717223</updated>
     </task>
-    <task id="LOCAL-00020" summary="完成token识别">
+    <task id="LOCAL-00020" summary="完成打印器">
       <option name="closed" value="true" />
-      <created>1729600176456</created>
+      <created>1729838825639</created>
       <option name="number" value="00020" />
       <option name="presentableId" value="LOCAL-00020" />
       <option name="project" value="LOCAL" />
-      <updated>1729600176456</updated>
+      <updated>1729838825639</updated>
     </task>
-    <task id="LOCAL-00021" summary="完成token识别">
+    <task id="LOCAL-00021" summary="设置不可变提高运行速度">
       <option name="closed" value="true" />
-      <created>1729784022936</created>
+      <created>1729839232168</created>
       <option name="number" value="00021" />
       <option name="presentableId" value="LOCAL-00021" />
       <option name="project" value="LOCAL" />
-      <updated>1729784022936</updated>
+      <updated>1729839232168</updated>
     </task>
-    <task id="LOCAL-00022" summary="提交打印">
+    <task id="LOCAL-00022" summary="修改工具文件的位置">
       <option name="closed" value="true" />
-      <created>1729784164823</created>
+      <created>1729845935947</created>
       <option name="number" value="00022" />
       <option name="presentableId" value="LOCAL-00022" />
       <option name="project" value="LOCAL" />
-      <updated>1729784164823</updated>
+      <updated>1729845935947</updated>
     </task>
-    <task id="LOCAL-00023" summary="提交equality">
+    <task id="LOCAL-00023" summary="提交新文件夹">
       <option name="closed" value="true" />
-      <created>1730123667617</created>
+      <created>1730083477990</created>
       <option name="number" value="00023" />
       <option name="presentableId" value="LOCAL-00023" />
       <option name="project" value="LOCAL" />
-      <updated>1730123667617</updated>
+      <updated>1730083477990</updated>
     </task>
-    <task id="LOCAL-00024" summary="提交equality函数">
+    <task id="LOCAL-00024" summary="提交Parser结构体">
       <option name="closed" value="true" />
-      <created>1730123933229</created>
+      <created>1730093599175</created>
       <option name="number" value="00024" />
       <option name="presentableId" value="LOCAL-00024" />
       <option name="project" value="LOCAL" />
-      <updated>1730123933229</updated>
+      <updated>1730093599175</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="提交Parser结构体">
+      <option name="closed" value="true" />
+      <created>1730096092821</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1730096092821</updated>
+    </task>
+    <task id="LOCAL-00026" summary="增加工具函数">
+      <option name="closed" value="true" />
+      <created>1730096414407</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1730096414407</updated>
+    </task>
+    <task id="LOCAL-00027" summary="增加工具函数">
+      <option name="closed" value="true" />
+      <created>1730099535366</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1730099535366</updated>
+    </task>
+    <task id="LOCAL-00028" summary="提交comparison函数">
+      <option name="closed" value="true" />
+      <created>1730165487756</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1730165487756</updated>
+    </task>
+    <task id="LOCAL-00029" summary="去除引用">
+      <option name="closed" value="true" />
+      <created>1730166357636</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1730166357636</updated>
+    </task>
+    <task id="LOCAL-00030" summary="提交parser完成">
+      <option name="closed" value="true" />
+      <created>1730168473126</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1730168473126</updated>
+    </task>
+    <task id="LOCAL-00031" summary="修改object tostring bug">
+      <option name="closed" value="true" />
+      <created>1730170201131</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1730170201131</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="UnknownFeatures">
-    <option featureType="com.intellij.fileTypeFactory" implementationName="*.asm" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -390,32 +431,31 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="初始化项目" />
-    <MESSAGE value="构建运行模块和错误模块" />
-    <MESSAGE value="缩减代码" />
-    <MESSAGE value="提交扫描器" />
-    <MESSAGE value="修改readme" />
-    <MESSAGE value="修改readme" />
-    <MESSAGE value="增加识别空白符" />
-    <MESSAGE value="增加字符串的识别" />
-    <MESSAGE value="可以识别字符串啦" />
-    <MESSAGE value="增加object 代码更合理" />
-    <MESSAGE value="增加对数字的解析" />
-    <MESSAGE value="修改命名格式" />
-    <MESSAGE value="修改错误" />
-    <MESSAGE value="修改顺序方便查找" />
-    <MESSAGE value="添加对应的token 字符串" />
-    <MESSAGE value="提交关键字" />
-    <MESSAGE value="rust的响应者模式" />
-    <MESSAGE value="rust的响应者模式" />
-    <MESSAGE value="提交打印" />
-    <MESSAGE value="提交equality" />
-    <MESSAGE value="提交equality函数" />
-    <option name="LAST_COMMIT_MESSAGE" value="提交equality函数" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
+    <MESSAGE value="修改bug,处理获取string的错误" />
+    <MESSAGE value="修改详细报错" />
+    <MESSAGE value="完善关键字模块" />
+    <MESSAGE value="增加true和false" />
+    <MESSAGE value="修改样式" />
+    <MESSAGE value="臭狗代码存储" />
+    <MESSAGE value="提交名称修正" />
+    <MESSAGE value="修改名字" />
+    <MESSAGE value="提交代码" />
+    <MESSAGE value="提交测试" />
+    <MESSAGE value="添加有限几个expr" />
+    <MESSAGE value="修改大量错误，为昨天的修改模块划分填坑" />
+    <MESSAGE value="修改字段名" />
+    <MESSAGE value="提交打印器" />
+    <MESSAGE value="完成打印器" />
+    <MESSAGE value="设置不可变提高运行速度" />
+    <MESSAGE value="修改工具文件的位置" />
+    <MESSAGE value="提交新文件夹" />
+    <MESSAGE value="提交Parser结构体" />
+    <MESSAGE value="增加工具函数" />
+    <MESSAGE value="提交comparison函数" />
+    <MESSAGE value="去除引用" />
+    <MESSAGE value="提交parser完成" />
+    <MESSAGE value="修改object tostring bug" />
+    <MESSAGE value="提交多个parser的函数" />
+    <option name="LAST_COMMIT_MESSAGE" value="提交多个parser的函数" />
   </component>
 </project>
