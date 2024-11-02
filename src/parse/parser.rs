@@ -11,10 +11,13 @@ impl Parser {
     fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, pos: 0 }
     }
-    /**/
+    /*
+    执行单操作符
+    */
     fn expression(&mut self) -> Expr {
         self.equality()
     }
+    //看看等号的运算符
     fn equality(&mut self) -> Expr {
         let mut expr = self.comparison();
         while self.match_token(&[Token_type::BANG_EQUAL, Token_type::EQUAL_EQUAL]) {
@@ -28,7 +31,7 @@ impl Parser {
         }
         expr
     }
-    
+    //或大或小
     fn comparison(&mut self) -> Expr {
         let mut expr = self.term();
         while self.match_token(&[
@@ -47,6 +50,7 @@ impl Parser {
         }
         expr
     }
+    //是不是加减
     fn term(&mut self) -> Expr {
         let mut expr = self.factor();
         while self.match_token(&[Token_type::MINUS, Token_type::PLUS]) {
@@ -60,6 +64,7 @@ impl Parser {
         }
         expr
     }
+    //是不是乘除
     fn factor(&mut self) -> Expr {
         let mut expr = self.unary();
         while self.match_token(&[Token_type::SLASH, Token_type::STAR]) {
@@ -73,6 +78,7 @@ impl Parser {
         }
         expr
     }
+    //
     fn unary(&mut self) -> Expr {
         if self.match_token(&[Token_type::BANG, Token_type::MINUS]) {
             let operator = self.previous();
@@ -84,6 +90,8 @@ impl Parser {
         }
         self.primary()
     }
+    //非运算符的情况下
+    //进行递归
     fn primary(&mut self) -> Expr {
         if self.match_token(&[Token_type::NIL]) {
             Expr::Literal { val: None }
