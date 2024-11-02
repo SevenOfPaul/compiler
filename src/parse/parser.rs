@@ -17,7 +17,7 @@ impl Parser {
     }
     fn equality(&mut self) -> Expr {
         let mut expr = self.comparison();
-        while self.fulfill(vec![Token_type::BANG_EQUAL, Token_type::EQUAL_EQUAL]) {
+        while self.match_token(&[Token_type::BANG_EQUAL, Token_type::EQUAL_EQUAL]) {
             let operator = self.previous().clone();
             let r_expression = Box::from(self.comparison());
             expr = Expr::Binary {
@@ -28,9 +28,10 @@ impl Parser {
         }
         expr
     }
+    
     fn comparison(&mut self) -> Expr {
         let mut expr = self.term();
-        while self.fulfill(vec![
+        while self.match_token(&[
             Token_type::LESS,
             Token_type::GREATER,
             Token_type::LESS_EQUAL,
@@ -48,7 +49,7 @@ impl Parser {
     }
     fn term(&mut self) -> Expr {
         let mut expr = self.factor();
-        while self.fulfill(vec![Token_type::MINUS, Token_type::PLUS]) {
+        while self.match_token(&[Token_type::MINUS, Token_type::PLUS]) {
             let operator = self.previous();
             let r_expression = Box::from(self.factor());
             expr = Expr::Binary {
@@ -61,7 +62,7 @@ impl Parser {
     }
     fn factor(&mut self) -> Expr {
         let mut expr = self.unary();
-        while self.fulfill(vec![Token_type::SLASH, Token_type::STAR]) {
+        while self.match_token(&[Token_type::SLASH, Token_type::STAR]) {
             let operator = self.previous();
             let r_expression = Box::from(self.unary());
             expr = Expr::Binary {
@@ -73,7 +74,7 @@ impl Parser {
         expr
     }
     fn unary(&mut self) -> Expr {
-        if self.fulfill(vec![Token_type::BANG, Token_type::MINUS]) {
+        if self.match_token(&[Token_type::BANG, Token_type::MINUS]) {
             let operator = self.previous();
             let r_expression = Box::from(self.unary());
             Expr::Unary {
@@ -84,29 +85,29 @@ impl Parser {
         self.primary()
     }
     fn primary(&mut self) -> Expr {
-        if self.fulfill(vec![Token_type::NIL]) {
+        if self.match_token(&[Token_type::NIL]) {
             Expr::Literal { val: None }
-        } else if self.fulfill(vec![Token_type::TRUE]) {
+        } else if self.match_token(&[Token_type::TRUE]) {
             Expr::Literal {
                 val: Some(Object::boolean(true)),
             }
-        } else if self.fulfill(vec![Token_type::FALSE]) {
+        } else if self.match_token(&[Token_type::FALSE]) {
             Expr::Literal {
                 val: Some(Object::boolean(false)),
             }
-        } else if self.fulfill(vec![Token_type::NUMBER]) {
+        } else if self.match_token(&[Token_type::NUMBER]) {
             Expr::Literal {
                 val: Some(Object::num(
                     self.previous().literal.unwrap().get_value().unwrap(),
                 )),
             }
-        } else if self.fulfill(vec![Token_type::STRING]) {
+        } else if self.match_token(&[Token_type::STRING]) {
             Expr::Literal {
                 val: Some(Object::str(
                     self.previous().literal.unwrap().get_value().unwrap(),
                 )),
             }
-        } else if self.fulfill(vec![Token_type::LEFT_PAREN]) {
+        } else if self.match_token(&[Token_type::LEFT_PAREN]) {
             Expr::Grouping {
                 expression: Box::from(self.expression()),
             }
@@ -121,14 +122,14 @@ impl Parser {
         }
         self.previous()
     }
-    fn check(&self, token_type: Token_type) -> bool {
+    fn check(&self, token_type: &Token_type) -> bool {
         if self.is_end() {
             false
         } else {
-            (*self.peek()).token_type == token_type
+            (*self.peek()).token_type == *token_type
         }
     }
-    fn fulfill(&mut self, types: Vec<Token_type>) -> bool {
+    fn match_token(&mut self, types: &[Token_type]) -> bool {
         //当前的token 必须是需要的 才能继续
         for t in types {
             if self.check(t) {
