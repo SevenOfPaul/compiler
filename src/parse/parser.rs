@@ -94,7 +94,7 @@ impl Parser {
     //进行递归
     fn primary(&mut self) -> Expr {
         if self.match_token(&[Token_type::NIL]) {
-            Expr::Literal { val: None }
+            Expr::Literal { val: Some(Object::nil) }
         } else if self.match_token(&[Token_type::TRUE]) {
             Expr::Literal {
                 val: Some(Object::boolean(true)),
