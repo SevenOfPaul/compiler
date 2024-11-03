@@ -3,6 +3,7 @@ pub(crate) enum Object {
     str(String),
     num(f32),
     boolean(bool),
+    nil
 }
 impl Object{
    pub(crate) fn to_string(&self)->String{
@@ -27,7 +28,7 @@ pub(crate)  trait Get<T>{
 
 impl Get<String> for Object {
    fn get_value(&self) ->Option<String> {
-     return match self {
+      match self {
           Object::str(s)=>Some(s.clone()),
         _=>None
       }
