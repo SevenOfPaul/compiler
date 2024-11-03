@@ -7,7 +7,7 @@ pub(crate) struct Token {
     pub(crate) token_type: Token_type,
     pub(crate) lexeme: String,
     pub(crate) literal: Option<Object>,
-    line: usize,
+    pub(crate) line: usize,
 }
 lazy_static! {
     pub(crate) static ref Keywords: HashMap<String, Token_type> = {

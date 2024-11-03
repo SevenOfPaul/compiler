@@ -1,7 +1,9 @@
+use crate::error;
 use crate::ast::expr::Expr;
 use crate::ast::token::object::{Get, Object};
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_type;
+use crate::parse::err::Parse_Err;
 
 pub(crate) struct Parser {
     tokens: Vec<Token>,
@@ -147,6 +149,14 @@ impl Parser {
         }
         false
     }
+    //判断错误
+    fn cosume(&mut self,token_type: &Token_type,mes:String)->Result<Token,Parse_Err>{
+        if self.check(&token_type) {
+            Ok(self.advance())
+        }else {
+            Err(self.error(mes))
+        }
+    }
     fn is_end(&self) -> bool {
         self.previous().token_type == Token_type::EOF
     }
@@ -157,5 +167,10 @@ impl Parser {
     //前一个token
     fn previous(&self) -> Token {
         self.tokens[self.pos - 1].clone()
+    }
+    fn error(&mut self,mes:String)->Parse_Err{
+        let token=self.peek();
+        error::log(token.line,&token.lexeme,&mes);
+         Parse_Err::new(token.clone(),mes)
     }
 }

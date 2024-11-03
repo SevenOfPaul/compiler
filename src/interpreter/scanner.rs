@@ -126,7 +126,7 @@ impl Scanner {
                 } else {
                     error::log(
                         self.line,
-                        self.cur,
+                        &self.peek().to_string(),
                         &*("Unexpected character".to_owned() + &*c.to_string()),
                     );
                 }
@@ -189,7 +189,7 @@ impl Scanner {
         }
         //没找到 后面的"
         if self.is_at_end() {
-            error::log(self.line, self.cur, "Unterminated string.");
+            error::log(self.line, &self.peek().to_string(), "Unterminated string.");
             return;
         }
         self.advance();
