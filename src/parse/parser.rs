@@ -13,28 +13,35 @@ impl Parser {
     fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, pos: 0 }
     }
+    fn parse(&mut self) ->Expr{
+      if let Ok(expr)=self.expression(){
+          expr
+      }else{
+         Expr::Literal {val:Some(Object::nil)}
+      }
+    }
     /*
     执行单操作符
     */
-    fn expression(&mut self) -> Expr {
+    fn expression(&mut self) -> Result<Expr,Parse_Err>  {
         self.equality()
     }
     //看看等号的运算符
-    fn equality(&mut self) -> Expr {
+    fn equality(&mut self) -> Result<Expr,Parse_Err>  {
         let mut expr = self.comparison();
         while self.match_token(&[Token_type::BANG_EQUAL, Token_type::EQUAL_EQUAL]) {
             let operator = self.previous().clone();
-            let r_expression = Box::from(self.comparison());
-            expr = Expr::Binary {
-                l_expression: Box::from(expr),
+            let r_expression = Box::from(self.comparison()?);
+            expr = Ok(Expr::Binary {
+                l_expression: Box::from(expr?),
                 operator,
                 r_expression,
-            }
+            })
         }
         expr
     }
     //或大或小
-    fn comparison(&mut self) -> Expr {
+    fn comparison(&mut self) -> Result<Expr,Parse_Err>  {
         let mut expr = self.term();
         while self.match_token(&[
             Token_type::LESS,
@@ -43,86 +50,88 @@ impl Parser {
             Token_type::GREATER_EQUAL,
         ]) {
             let operator = self.previous();
-            let r_expression = Box::from(self.term());
-            expr = Expr::Binary {
-                l_expression: Box::from(expr),
+            let r_expression = Box::from(self.term()?);
+            expr = Ok(Expr::Binary {
+                l_expression: Box::from(expr?),
                 operator,
                 r_expression,
-            }
+            })
         }
         expr
     }
     //是不是加减
-    fn term(&mut self) -> Expr {
+    fn term(&mut self) -> Result<Expr,Parse_Err>  {
         let mut expr = self.factor();
         while self.match_token(&[Token_type::MINUS, Token_type::PLUS]) {
             let operator = self.previous();
-            let r_expression = Box::from(self.factor());
-            expr = Expr::Binary {
-                l_expression: Box::from(expr),
+            let r_expression = Box::from(self.factor()?);
+            expr = Ok(Expr::Binary {
+                l_expression: Box::from(expr?),
                 operator,
                 r_expression,
-            }
+            })
         }
         expr
     }
     //是不是乘除
-    fn factor(&mut self) -> Expr {
+    fn factor(&mut self) -> Result<Expr,Parse_Err>  {
         let mut expr = self.unary();
         while self.match_token(&[Token_type::SLASH, Token_type::STAR]) {
             let operator = self.previous();
-            let r_expression = Box::from(self.unary());
-            expr = Expr::Binary {
-                l_expression: Box::from(expr),
+            let r_expression = Box::from(self.unary()?);
+            expr = Ok(Expr::Binary {
+                l_expression: Box::from(expr?),
                 operator,
                 r_expression,
-            };
+            });
         }
         expr
     }
     //
-    fn unary(&mut self) -> Expr {
+    fn unary(&mut self) -> Result<Expr,Parse_Err>  {
         if self.match_token(&[Token_type::BANG, Token_type::MINUS]) {
             let operator = self.previous();
-            let r_expression = Box::from(self.unary());
-            Expr::Unary {
+            let r_expression = Box::from(self.unary()?);
+           return Ok(Expr::Unary {
                 operator,
                 r_expression,
-            };
+            });
         }
         self.primary()
     }
     //非运算符的情况下
     //进行递归
-    fn primary(&mut self) -> Expr {
+    fn primary(&mut self) -> Result<Expr,Parse_Err> {
         if self.match_token(&[Token_type::NIL]) {
-            Expr::Literal { val: Some(Object::nil) }
+            Ok(Expr::Literal { val: Some(Object::nil) })
         } else if self.match_token(&[Token_type::TRUE]) {
-            Expr::Literal {
+             Ok(Expr::Literal {
                 val: Some(Object::boolean(true)),
-            }
+            })
         } else if self.match_token(&[Token_type::FALSE]) {
-            Expr::Literal {
+             Ok(Expr::Literal {
                 val: Some(Object::boolean(false)),
-            }
+            })
         } else if self.match_token(&[Token_type::NUMBER]) {
-            Expr::Literal {
+             Ok(Expr::Literal {
                 val: Some(Object::num(
                     self.previous().literal.unwrap().get_value().unwrap(),
                 )),
-            }
+            })
         } else if self.match_token(&[Token_type::STRING]) {
-            Expr::Literal {
+            Ok( Expr::Literal {
                 val: Some(Object::str(
                     self.previous().literal.unwrap().get_value().unwrap(),
                 )),
-            }
+            })
         } else if self.match_token(&[Token_type::LEFT_PAREN]) {
-            Expr::Grouping {
-                expression: Box::from(self.expression()),
-            }
+             let expr=Expr::Grouping {
+                expression: Box::from(self.expression()?),
+            };
+       self.cosume(&Token_type::RIGHT_PAREN, String::from("需要一个)"))?;
+             Ok(expr)
         } else {
-            Expr::Literal { val: None }
+               Err(self.error(String::from("无效的表达式")))
         }
     }
     /*止*/
