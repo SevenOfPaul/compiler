@@ -4,16 +4,17 @@ use std::env;
 use std::process::exit;
 mod ast;
 mod error;
-mod interpreter;
+mod runner;
 mod parse;
 pub(crate) mod tools;
+mod interpret;
 
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_type;
 use ast::expr::*;
 use tools::println;
-use crate::interpreter::run::run_file;
+use crate::runner::run::run_file;
 
 fn main() {
 
@@ -26,11 +27,11 @@ fn main() {
         exit(64);
     } else if args.len() == 2 {
         //第一个是系统传入 第二个才是
-        //interpreter file
+        //runner file
         run_file(args.nth(1).unwrap());
     } else {
         run_file("".parse().unwrap());
-        //interpreter prompt
+        //runner prompt
         error::log(0, "", "暂不支持命令行");
     }
 }

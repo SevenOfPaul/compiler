@@ -3,7 +3,7 @@ use std::io::Read;
 use std::process::exit;
 use crate::error;
 use crate::parse::parser::Parser;
-use crate::interpreter::scanner;
+use crate::runner::scanner;
 use crate::tools::println;
 
 pub fn run_program(){
