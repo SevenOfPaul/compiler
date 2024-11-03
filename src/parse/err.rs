@@ -1,5 +1,6 @@
 use crate::ast::token::token::Token;
 
+#[derive(Debug)]
 pub(crate) struct Parse_Err{
     token:Token,
     mes:String

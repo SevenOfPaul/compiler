@@ -10,10 +10,10 @@ pub(crate) struct Parser {
     pos: usize,
 }
 impl Parser {
-    fn new(tokens: Vec<Token>) -> Self {
+    pub(crate) fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, pos: 0 }
     }
-    fn parse(&mut self) ->Expr{
+    pub(crate) fn parse(&mut self) ->Expr{
       if let Ok(expr)=self.expression(){
           expr
       }else{
@@ -114,15 +114,15 @@ impl Parser {
             })
         } else if self.match_token(&[Token_type::NUMBER]) {
              Ok(Expr::Literal {
-                val: Some(Object::num(
-                    self.previous().literal.unwrap().get_value().unwrap(),
-                )),
+                val: Some(
+                    self.previous().literal.unwrap()
+                ),
             })
         } else if self.match_token(&[Token_type::STRING]) {
             Ok( Expr::Literal {
-                val: Some(Object::str(
-                    self.previous().literal.unwrap().get_value().unwrap(),
-                )),
+                val: Some(
+                    self.previous().literal.unwrap()
+                ),
             })
         } else if self.match_token(&[Token_type::LEFT_PAREN]) {
              let expr=Expr::Grouping {
@@ -167,7 +167,7 @@ impl Parser {
         }
     }
     fn is_end(&self) -> bool {
-        self.previous().token_type == Token_type::EOF
+        self.peek().token_type == Token_type::EOF
     }
     //当前token
     fn peek(&self) -> &Token {
@@ -175,7 +175,7 @@ impl Parser {
     }
     //前一个token
     fn previous(&self) -> Token {
-        self.tokens[self.pos - 1].clone()
+        self.tokens[self.pos-1].clone()
     }
     fn error(&mut self,mes:String)->Parse_Err{
         let token=self.peek();

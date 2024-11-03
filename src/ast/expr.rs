@@ -3,6 +3,7 @@ use crate::ast::token::token_type::Token_type;
 use std::fmt::Binary;
 use crate::ast::token::token::Token;
 
+#[derive(Debug)]
 pub(crate) enum Expr {
     Binary {
         operator: Token,

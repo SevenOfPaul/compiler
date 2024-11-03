@@ -37,7 +37,7 @@ impl Scanner {
         self.tokens.push(token::Token::new(
             Token_type::EOF,
             String::from(""),
-            None,
+            Some(Object::nil),
             self.line,
         ));
         //添加token
@@ -47,16 +47,16 @@ impl Scanner {
         //没到头
         let c = self.advance();
         match c {
-            '(' => self.add_token(Token_type::LEFT_PAREN, None),
-            ')' => self.add_token(Token_type::RIGHT_PAREN, None),
-            '{' => self.add_token(Token_type::LEFT_BRACE, None),
-            '}' => self.add_token(Token_type::RIGHT_BRACE, None),
-            ',' => self.add_token(Token_type::COMMA, None),
-            '.' => self.add_token(Token_type::DOT, None),
-            '-' => self.add_token(Token_type::MINUS, None),
-            '+' => self.add_token(Token_type::PLUS, None),
-            ';' => self.add_token(Token_type::SEMICOLON, None),
-            '*' => self.add_token(Token_type::STAR, None),
+            '(' => self.add_token(Token_type::LEFT_PAREN,Some(Object::nil)),
+            ')' => self.add_token(Token_type::RIGHT_PAREN, Some(Object::nil)),
+            '{' => self.add_token(Token_type::LEFT_BRACE, Some(Object::nil)),
+            '}' => self.add_token(Token_type::RIGHT_BRACE, Some(Object::nil)),
+            ',' => self.add_token(Token_type::COMMA, Some(Object::nil)),
+            '.' => self.add_token(Token_type::DOT, Some(Object::nil)),
+            '-' => self.add_token(Token_type::MINUS, Some(Object::nil)),
+            '+' => self.add_token(Token_type::PLUS, Some(Object::nil)),
+            ';' => self.add_token(Token_type::SEMICOLON, Some(Object::nil)),
+            '*' => self.add_token(Token_type::STAR, Some(Object::nil)),
             //以上为单字符 还有双字符
             '!' => {
                 let tok = if self.is_match('=') {
@@ -64,7 +64,7 @@ impl Scanner {
                 } else {
                     Token_type::BANG
                 };
-                self.add_token(tok, None);
+                self.add_token(tok, Some(Object::nil));
             }
             '=' => {
                 let tok = if self.is_match('=') {
@@ -72,7 +72,7 @@ impl Scanner {
                 } else {
                     Token_type::EQUAL
                 };
-                self.add_token(tok, None);
+                self.add_token(tok, Some(Object::nil));
             }
             '<' => {
                 let tok = if self.is_match('=') {
@@ -80,7 +80,7 @@ impl Scanner {
                 } else {
                     Token_type::LESS
                 };
-                self.add_token(tok, None);
+                self.add_token(tok, Some(Object::nil));
             }
             '>' => {
                 let tok = if self.is_match('=') {
@@ -88,7 +88,7 @@ impl Scanner {
                 } else {
                     Token_type::GREATER
                 };
-                self.add_token(tok, None);
+                self.add_token(tok, Some(Object::nil));
             }
             '/' => {
                 //说明是注释
@@ -102,7 +102,7 @@ impl Scanner {
                         self.advance();
                     }
                 } else {
-                    self.add_token(Token_type::SLASH, None);
+                    self.add_token(Token_type::SLASH, Some(Object::nil));
                 };
             }
             //这几个无意义
