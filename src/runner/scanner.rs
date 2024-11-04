@@ -1,7 +1,7 @@
 use crate::ast::token::object::Object;
 use crate::ast::token::token::{self, Keywords};
 use crate::error;
-use crate::ast::token::token_type::Token_type;
+use crate::ast::token::token_type::Token_Type;
 
 pub(crate) struct Scanner {
     source: Vec<char>,
@@ -35,7 +35,7 @@ impl Scanner {
             self.scan_token();
         }
         self.tokens.push(token::Token::new(
-            Token_type::EOF,
+            Token_Type::EOF,
             String::from(""),
             Some(Object::nil),
             self.line,
@@ -47,46 +47,46 @@ impl Scanner {
         //没到头
         let c = self.advance();
         match c {
-            '(' => self.add_token(Token_type::LEFT_PAREN,Some(Object::nil)),
-            ')' => self.add_token(Token_type::RIGHT_PAREN, Some(Object::nil)),
-            '{' => self.add_token(Token_type::LEFT_BRACE, Some(Object::nil)),
-            '}' => self.add_token(Token_type::RIGHT_BRACE, Some(Object::nil)),
-            ',' => self.add_token(Token_type::COMMA, Some(Object::nil)),
-            '.' => self.add_token(Token_type::DOT, Some(Object::nil)),
-            '-' => self.add_token(Token_type::MINUS, Some(Object::nil)),
-            '+' => self.add_token(Token_type::PLUS, Some(Object::nil)),
-            ';' => self.add_token(Token_type::SEMICOLON, Some(Object::nil)),
-            '*' => self.add_token(Token_type::STAR, Some(Object::nil)),
+            '(' => self.add_token(Token_Type::LEFT_PAREN, Some(Object::nil)),
+            ')' => self.add_token(Token_Type::RIGHT_PAREN, Some(Object::nil)),
+            '{' => self.add_token(Token_Type::LEFT_BRACE, Some(Object::nil)),
+            '}' => self.add_token(Token_Type::RIGHT_BRACE, Some(Object::nil)),
+            ',' => self.add_token(Token_Type::COMMA, Some(Object::nil)),
+            '.' => self.add_token(Token_Type::DOT, Some(Object::nil)),
+            '-' => self.add_token(Token_Type::MINUS, Some(Object::nil)),
+            '+' => self.add_token(Token_Type::PLUS, Some(Object::nil)),
+            ';' => self.add_token(Token_Type::SEMICOLON, Some(Object::nil)),
+            '*' => self.add_token(Token_Type::STAR, Some(Object::nil)),
             //以上为单字符 还有双字符
             '!' => {
                 let tok = if self.is_match('=') {
-                    Token_type::BANG_EQUAL
+                    Token_Type::BANG_EQUAL
                 } else {
-                    Token_type::BANG
+                    Token_Type::BANG
                 };
                 self.add_token(tok, Some(Object::nil));
             }
             '=' => {
                 let tok = if self.is_match('=') {
-                    Token_type::EQUAL_EQUAL
+                    Token_Type::EQUAL_EQUAL
                 } else {
-                    Token_type::EQUAL
+                    Token_Type::EQUAL
                 };
                 self.add_token(tok, Some(Object::nil));
             }
             '<' => {
                 let tok = if self.is_match('=') {
-                    Token_type::LESS_EQUAL
+                    Token_Type::LESS_EQUAL
                 } else {
-                    Token_type::LESS
+                    Token_Type::LESS
                 };
                 self.add_token(tok, Some(Object::nil));
             }
             '>' => {
                 let tok = if self.is_match('=') {
-                    Token_type::GREATER_EQUAL
+                    Token_Type::GREATER_EQUAL
                 } else {
-                    Token_type::GREATER
+                    Token_Type::GREATER
                 };
                 self.add_token(tok, Some(Object::nil));
             }
@@ -102,7 +102,7 @@ impl Scanner {
                         self.advance();
                     }
                 } else {
-                    self.add_token(Token_type::SLASH, Some(Object::nil));
+                    self.add_token(Token_Type::SLASH, Some(Object::nil));
                 };
             }
             //这几个无意义
@@ -133,7 +133,7 @@ impl Scanner {
             }
         }
     }
-    fn add_token(&mut self, token_type: Token_type, literal: Option<Object>) {
+    fn add_token(&mut self, token_type: Token_Type, literal: Option<Object>) {
         let text = &self.source[self.start..self.cur].iter().collect::<String>();
         self.tokens.push(token::Token::new(
             token_type,
@@ -177,7 +177,7 @@ impl Scanner {
             self.advance();
         }
         let val: String = self.source[self.start..self.cur].iter().collect();
-        self.add_token(Token_type::NUMBER, Some(Object::num(val.parse().unwrap())));
+        self.add_token(Token_Type::NUMBER, Some(Object::num(val.parse().unwrap())));
     }
     fn get_string(&mut self) {
         while self.peek() != '"' && !self.is_at_end() {
@@ -194,17 +194,17 @@ impl Scanner {
         }
         self.advance();
         let val: String = self.source[self.start + 1..self.cur - 1].iter().collect();
-        self.add_token(Token_type::STRING, Some(Object::str(val)));
+        self.add_token(Token_Type::STRING, Some(Object::str(val)));
     }
     fn get_identifier(&mut self) {
         while Self::is_alaph_or_digit(self.peek()) {
             self.advance();
         }
         let text = self.source[self.start..self.cur].iter().collect::<String>();
-        if let Some(token_Type) = Keywords.get(&text) {
-            self.add_token(token_Type.clone(), Some(Object::str(text)));
+        if let Some(token_type) = Keywords.get(&text) {
+            self.add_token(token_type.clone(), Some(Object::str(text)));
         } else {
-            self.add_token(Token_type::IDENTIFIER, Some(Object::str(text)));
+            self.add_token(Token_Type::IDENTIFIER, Some(Object::str(text)));
         }
     }
     fn is_match(&mut self, expected: char) -> bool {

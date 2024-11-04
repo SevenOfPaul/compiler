@@ -1,5 +1,5 @@
 use crate::ast::token::object::Object;
-use crate::ast::token::token_type::Token_type;
+use crate::ast::token::token_type::Token_Type;
 use std::fmt::Binary;
 use crate::ast::token::token::Token;
 

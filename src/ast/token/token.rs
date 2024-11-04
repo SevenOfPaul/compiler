@@ -1,29 +1,29 @@
-use crate::ast::token::token_type::Token_type;
+use crate::ast::token::token_type::Token_Type;
 use lazy_static::lazy_static;
 use crate::ast::token::object::Object;
 use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub(crate) struct Token {
-    pub(crate) token_type: Token_type,
+    pub(crate) token_type: Token_Type,
     pub(crate) lexeme: String,
     pub(crate) literal: Option<Object>,
     pub(crate) line: usize,
 }
 lazy_static! {
-    pub(crate) static ref Keywords: HashMap<String, Token_type> = {
+    pub(crate) static ref Keywords: HashMap<String, Token_Type> = {
         HashMap::from([
-            (String::from("let"), Token_type::LET),
-            (String::from("print"), Token_type::PRINT),
-            (String::from("fn"), Token_type::FN),
-            (String::from("nil"), Token_type::NIL),
-            (String::from("true"), Token_type::TRUE),
-            (String::from("false"), Token_type::FALSE),
+            (String::from("let"), Token_Type::LET),
+            (String::from("print"), Token_Type::PRINT),
+            (String::from("fn"), Token_Type::FN),
+            (String::from("nil"), Token_Type::NIL),
+            (String::from("true"), Token_Type::TRUE),
+            (String::from("false"), Token_Type::FALSE),
         ])
     };
 }
 impl Token {
     pub fn new(
-        token_type: Token_type,
+        token_type: Token_Type,
         lexeme: String,
         literal: Option<Object>,
         line: usize,

@@ -1,5 +1,5 @@
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Token_type{
+pub enum Token_Type {
     //自己就是个token
     LEFT_PAREN,//(
     RIGHT_PAREN,//)
@@ -36,36 +36,36 @@ pub enum Token_type{
     FALSE,
     EOF //结尾符
 }
-impl Token_type{
+impl Token_Type {
     pub(crate) fn to_string(&self) ->String{
         String::from(match self {
-            Token_type::LEFT_PAREN => "LEFT_PAREN",
-            Token_type::RIGHT_PAREN => "RIGHT_PAREN",
-            Token_type::LEFT_BRACE => "LEFT_BRACE",
-            Token_type::RIGHT_BRACE => "RIGHT_BRACE",
-            Token_type::COMMA => "COMMA",
-            Token_type::MINUS => "MINUS",
-            Token_type::PLUS => "PLUS",
-            Token_type::SEMICOLON => "SEMICOLON",
-            Token_type::SLASH => "SLASH",
-            Token_type::STAR => "STAR",
-            Token_type::IDENTIFIER => "IDENTIFIER",
-            Token_type::BANG => "BANG",
-            Token_type::EQUAL => "EQUAL",
-            Token_type::BANG_EQUAL => "BANG_EQUAL",
-            Token_type::EQUAL_EQUAL => "EQUAL_EQUAL",
-            Token_type::GREATER => "GREATER",
-            Token_type::GREATER_EQUAL => "GREATER_EQUAL",
-            Token_type::LESS => "LESS",
-            Token_type::LESS_EQUAL => "LESS_EQUAL",
-            Token_type::AND => "AND",
-            Token_type::OR => "OR",
-            Token_type::LET => "LET",
-            Token_type::PRINT => "PRINT",
-            Token_type::FN => "FN",
-            Token_type::STRING => "STRING",
-            Token_type::NUMBER => "NUMBER",
-            Token_type::NIL => "NIL",
+            Token_Type::LEFT_PAREN => "LEFT_PAREN",
+            Token_Type::RIGHT_PAREN => "RIGHT_PAREN",
+            Token_Type::LEFT_BRACE => "LEFT_BRACE",
+            Token_Type::RIGHT_BRACE => "RIGHT_BRACE",
+            Token_Type::COMMA => "COMMA",
+            Token_Type::MINUS => "MINUS",
+            Token_Type::PLUS => "PLUS",
+            Token_Type::SEMICOLON => "SEMICOLON",
+            Token_Type::SLASH => "SLASH",
+            Token_Type::STAR => "STAR",
+            Token_Type::IDENTIFIER => "IDENTIFIER",
+            Token_Type::BANG => "BANG",
+            Token_Type::EQUAL => "EQUAL",
+            Token_Type::BANG_EQUAL => "BANG_EQUAL",
+            Token_Type::EQUAL_EQUAL => "EQUAL_EQUAL",
+            Token_Type::GREATER => "GREATER",
+            Token_Type::GREATER_EQUAL => "GREATER_EQUAL",
+            Token_Type::LESS => "LESS",
+            Token_Type::LESS_EQUAL => "LESS_EQUAL",
+            Token_Type::AND => "AND",
+            Token_Type::OR => "OR",
+            Token_Type::LET => "LET",
+            Token_Type::PRINT => "PRINT",
+            Token_Type::FN => "FN",
+            Token_Type::STRING => "STRING",
+            Token_Type::NUMBER => "NUMBER",
+            Token_Type::NIL => "NIL",
             _ => "EOF"
         })
     }

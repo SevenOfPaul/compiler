@@ -1,6 +1,6 @@
 use crate::ast::expr::{Expr, Visitor};
 use crate::ast::token::token::Token;
-use crate::ast::token::token_type::Token_type;
+use crate::ast::token::token_type::Token_Type;
 
 pub (crate) struct ExprVisitor {}
 impl ExprVisitor{
