@@ -2,7 +2,7 @@
 pub(crate) enum Object {
     str(String),
     num(f32),
-    boolean(bool),
+    bool(bool),
     nil
 }
 impl Object{
@@ -10,7 +10,7 @@ impl Object{
        match self {
            Object::num(n)=>{
                n.to_string()
-           },Object::boolean(b)=>{
+           },Object::bool(b)=>{
                b.to_string()
            }
            _=>{
@@ -46,7 +46,7 @@ impl Get<f32> for Object {
 impl Get<bool> for Object {
     fn get_value(&self) ->Option<bool> {
         return match self {
-            Object::boolean(b)=>Some(*b),
+            Object::bool(b)=>Some(*b),
             _=>None
         }
     }

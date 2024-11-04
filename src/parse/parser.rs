@@ -106,11 +106,11 @@ impl Parser {
             Ok(Expr::Literal { val: Some(Object::nil) })
         } else if self.match_token(&[Token_Type::TRUE]) {
              Ok(Expr::Literal {
-                val: Some(Object::boolean(true)),
+                val: Some(Object::bool(true)),
             })
         } else if self.match_token(&[Token_Type::FALSE]) {
              Ok(Expr::Literal {
-                val: Some(Object::boolean(false)),
+                val: Some(Object::bool(false)),
             })
         } else if self.match_token(&[Token_Type::NUMBER]) {
              Ok(Expr::Literal {
