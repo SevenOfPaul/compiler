@@ -1,8 +1,8 @@
-use crate::error;
 use crate::ast::expr::Expr;
 use crate::ast::token::object::{Get, Object};
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
+use crate::error;
 use crate::parse::err::Parse_Err;
 
 pub(crate) struct Parser {
@@ -13,21 +13,21 @@ impl Parser {
     pub(crate) fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, pos: 0 }
     }
-    pub(crate) fn parse(&mut self) ->Expr{
-      if let Ok(expr)=self.expression(){
-          expr
-      }else{
-         Expr::Literal {val:Some(Object::nil)}
-      }
+    pub(crate) fn parse(&mut self) -> Expr {
+        if let Ok(expr) = self.expression() {
+            expr
+        } else {
+            Expr::Literal { val: Object::nil }
+        }
     }
     /*
     执行单操作符
     */
-    fn expression(&mut self) -> Result<Expr,Parse_Err>  {
+    fn expression(&mut self) -> Result<Expr, Parse_Err> {
         self.equality()
     }
     //看看等号的运算符
-    fn equality(&mut self) -> Result<Expr,Parse_Err>  {
+    fn equality(&mut self) -> Result<Expr, Parse_Err> {
         let mut expr = self.comparison();
         while self.match_token(&[Token_Type::BANG_EQUAL, Token_Type::EQUAL_EQUAL]) {
             let operator = self.previous().clone();
@@ -41,7 +41,7 @@ impl Parser {
         expr
     }
     //或大或小
-    fn comparison(&mut self) -> Result<Expr,Parse_Err>  {
+    fn comparison(&mut self) -> Result<Expr, Parse_Err> {
         let mut expr = self.term();
         while self.match_token(&[
             Token_Type::LESS,
@@ -60,7 +60,7 @@ impl Parser {
         expr
     }
     //是不是加减
-    fn term(&mut self) -> Result<Expr,Parse_Err>  {
+    fn term(&mut self) -> Result<Expr, Parse_Err> {
         let mut expr = self.factor();
         while self.match_token(&[Token_Type::MINUS, Token_Type::PLUS]) {
             let operator = self.previous();
@@ -74,7 +74,7 @@ impl Parser {
         expr
     }
     //是不是乘除
-    fn factor(&mut self) -> Result<Expr,Parse_Err>  {
+    fn factor(&mut self) -> Result<Expr, Parse_Err> {
         let mut expr = self.unary();
         while self.match_token(&[Token_Type::SLASH, Token_Type::STAR]) {
             let operator = self.previous();
@@ -88,11 +88,11 @@ impl Parser {
         expr
     }
     //
-    fn unary(&mut self) -> Result<Expr,Parse_Err>  {
+    fn unary(&mut self) -> Result<Expr, Parse_Err> {
         if self.match_token(&[Token_Type::BANG, Token_Type::MINUS]) {
             let operator = self.previous();
             let r_expression = Box::from(self.unary()?);
-           return Ok(Expr::Unary {
+            return Ok(Expr::Unary {
                 operator,
                 r_expression,
             });
@@ -101,37 +101,33 @@ impl Parser {
     }
     //非运算符的情况下
     //进行递归
-    fn primary(&mut self) -> Result<Expr,Parse_Err> {
+    fn primary(&mut self) -> Result<Expr, Parse_Err> {
         if self.match_token(&[Token_Type::NIL]) {
-            Ok(Expr::Literal { val: Some(Object::nil) })
+            Ok(Expr::Literal { val: Object::nil })
         } else if self.match_token(&[Token_Type::TRUE]) {
-             Ok(Expr::Literal {
-                val: Some(Object::bool(true)),
+            Ok(Expr::Literal {
+                val: Object::bool(true),
             })
         } else if self.match_token(&[Token_Type::FALSE]) {
-             Ok(Expr::Literal {
-                val: Some(Object::bool(false)),
+            Ok(Expr::Literal {
+                val: Object::bool(false),
             })
         } else if self.match_token(&[Token_Type::NUMBER]) {
-             Ok(Expr::Literal {
-                val: Some(
-                    self.previous().literal.unwrap()
-                ),
+            Ok(Expr::Literal {
+                val: self.previous().literal.unwrap(),
             })
         } else if self.match_token(&[Token_Type::STRING]) {
-            Ok( Expr::Literal {
-                val: Some(
-                    self.previous().literal.unwrap()
-                ),
+            Ok(Expr::Literal {
+                val: self.previous().literal.unwrap(),
             })
         } else if self.match_token(&[Token_Type::LEFT_PAREN]) {
-             let expr=Expr::Grouping {
+            let expr = Expr::Grouping {
                 expression: Box::from(self.expression()?),
             };
-       self.cosume(&Token_Type::RIGHT_PAREN, String::from("需要一个)"))?;
-             Ok(expr)
+            self.cosume(&Token_Type::RIGHT_PAREN, String::from("需要一个)"))?;
+            Ok(expr)
         } else {
-               Err(self.error(String::from("无效的表达式")))
+            Err(self.error(String::from("无效的表达式")))
         }
     }
     /*止*/
@@ -159,10 +155,10 @@ impl Parser {
         false
     }
     //判断错误
-    fn cosume(&mut self, token_type: &Token_Type, mes:String) ->Result<Token,Parse_Err>{
+    fn cosume(&mut self, token_type: &Token_Type, mes: String) -> Result<Token, Parse_Err> {
         if self.check(&token_type) {
             Ok(self.advance())
-        }else {
+        } else {
             Err(self.error(mes))
         }
     }
@@ -175,11 +171,11 @@ impl Parser {
     }
     //前一个token
     fn previous(&self) -> Token {
-        self.tokens[self.pos-1].clone()
+        self.tokens[self.pos - 1].clone()
     }
-    fn error(&mut self,mes:String)->Parse_Err{
-        let token=self.peek();
-        error::log(token.line,&token.lexeme,&mes);
-         Parse_Err::new(token.clone(),mes)
+    fn error(&mut self, mes: String) -> Parse_Err {
+        let token = self.peek();
+        error::log(token.line, &token.lexeme, &mes);
+        Parse_Err::new(token.clone(), mes)
     }
 }

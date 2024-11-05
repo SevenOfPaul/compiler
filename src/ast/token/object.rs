@@ -13,8 +13,11 @@ impl Object{
            },Object::bool(b)=>{
                b.to_string()
            }
-           _=>{
-               self.to_string()
+           Object::nil=>{
+              String::from("Nil")
+           }
+           Object::str(s)=>{
+               s.clone()
            }
        }
     }

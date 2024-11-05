@@ -28,12 +28,8 @@ impl Visitor<String> for ExprVisitor {
         self.parenthesize("group",vec![expression])
     }
 
-    fn visit_literal(&mut self, value: &Option<Object>) -> String {
-            if let Some(val)=value{
-                val.to_string()
-            }else{
-                String::from("Nil")
-            }
+    fn visit_literal(&mut self, value: &Object) -> String {
+      value.to_string()
     }
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> String {
         self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
