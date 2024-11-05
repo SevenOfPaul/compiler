@@ -6,38 +6,42 @@ use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 
 struct Interpreter {}
-impl Visitor<Result<Value,Run_Err>> for Interpreter {
-    fn visit_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> Result<Value, Run_Err> {
+impl Visitor<Result<Value, Run_Err>> for Interpreter {
+    fn visit_binary(
+        &mut self,
+        operator: &Token,
+        l_expression: &Expr,
+        r_expression: &Expr,
+    ) -> Result<Value, Run_Err> {
         todo!()
     }
 
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
-       // self.evaluate(e)
-        todo!()
+        self.evaluate(expr)
     }
 
     fn visit_literal(&mut self, value: &Object) -> Result<Value, Run_Err> {
-      Ok(match value {
-          Object::str(s)=>{
-              Value::str(s.clone())
-          }
-          Object::num(n)=>{
-              Value::num(*n)
-          }
-          Object::bool(b)=>{
-              Value::bool(*b)
-          }
-          _=>{
-              Value::nil
-          }
-      })
+        Ok(match value {
+            Object::str(s) => Value::str(s.clone()),
+            Object::num(n) => Value::num(*n),
+            Object::bool(b) => Value::bool(*b),
+            _ => Value::nil,
+        })
     }
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, Run_Err> {
         todo!()
     }
 }
 impl Interpreter {
-    fn evaluate(&mut self,expr: Expr){
-
+    fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
+        expr.accept(self)
+    }
+    fn is_truthy(&self, value: Value) -> bool {
+        return match value {
+            Value::nil => false,
+            Value::num(v) => v == 0.0,
+            Value::str(s) => false,
+            Value::bool(b) => b,
+        };
     }
 }
