@@ -46,7 +46,7 @@ impl Interpreter {
       if let Ok(v)=value{
            match v{
                Value::nil => false,
-               Value::num(v) => v == 0.0,
+               Value::num(v) => v != 0.0,
                Value::str(s) => false,
                Value::bool(b) => b,
            }
