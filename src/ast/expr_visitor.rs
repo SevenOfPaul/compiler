@@ -1,4 +1,5 @@
 use crate::ast::expr::{Expr, Visitor};
+use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 
@@ -7,7 +8,7 @@ impl ExprVisitor{
     pub(crate) fn new() ->Self{
         ExprVisitor{} 
     }
-    fn parenthesize(&self, operator:&str, exprs:Vec<&Expr>) ->String{
+    fn parenthesize(&mut self, operator:&str, exprs:Vec<&Expr>) ->String{
         let mut builder = String::from("(");
         builder.push_str(operator);
         for expr in exprs{
@@ -19,24 +20,22 @@ impl ExprVisitor{
     }
 }
 impl Visitor<String> for ExprVisitor {
-    fn visit(&self, expr: &Expr) -> String {
-     match expr {
-         Expr::Binary {operator,l_expression,r_expression}=>{
-               self.parenthesize(operator.lexeme.as_str(),vec![l_expression,r_expression])
-         }
-         Expr::Grouping {expression}=>{
-             self.parenthesize("group",vec![expression])
-         }
-         Expr::Unary {operator,r_expression}=>{
-             self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
-         }
-         Expr::Literal {val}=>{
-           if let Some(value)=val{
-               value.to_string()
-           }else{
-              String::from("Nil")
-           }
-         }
-     }
+    fn visit_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> String {
+        self.parenthesize(operator.lexeme.as_str(),vec![l_expression,r_expression])
+    }
+
+    fn visit_grouping(&mut self, expression: &Expr) -> String {
+        self.parenthesize("group",vec![expression])
+    }
+
+    fn visit_literal(&mut self, value: &Option<Object>) -> String {
+            if let Some(val)=value{
+                val.to_string()
+            }else{
+                String::from("Nil")
+            }
+    }
+    fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> String {
+        self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
     }
 }
