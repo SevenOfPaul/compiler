@@ -32,7 +32,7 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, Run_Err> {
         let r_value = self.evaluate(r_expression);
         match operator.token_type {
-            Token_Type::MINUS => Ok(r_value.unwrap()),
+            Token_Type::MINUS => Ok(-r_value?),
             Token_Type::BANG=>Ok(Value::bool(!self.is_truthy(r_value))),
             _ => Ok(Value::nil),
         }
