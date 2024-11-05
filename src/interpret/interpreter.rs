@@ -11,19 +11,33 @@ impl Visitor<Result<Value,Run_Err>> for Interpreter {
         todo!()
     }
 
-    fn visit_grouping(&mut self, expression: &Expr) -> Result<Value, Run_Err> {
+    fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
+       // self.evaluate(e)
         todo!()
     }
 
     fn visit_literal(&mut self, value: &Object) -> Result<Value, Run_Err> {
-        todo!()
+      Ok(match value {
+          Object::str(s)=>{
+              Value::str(s.clone())
+          }
+          Object::num(n)=>{
+              Value::num(*n)
+          }
+          Object::bool(b)=>{
+              Value::bool(*b)
+          }
+          _=>{
+              Value::nil
+          }
+      })
     }
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, Run_Err> {
         todo!()
     }
 }
 impl Interpreter {
-    fn visit_literal(&self,expr: &Expr){
-        // expr.val
+    fn evaluate(&mut self,expr: Expr){
+
     }
 }
