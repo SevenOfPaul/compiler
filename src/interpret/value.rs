@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::ops::{Neg, Not};
 
 pub (crate) enum Value{
@@ -24,5 +25,27 @@ impl Not  for Value{
             Value::bool(n)=>!n,
             _=>panic!("不支持取反操作")
         })
+    }
+}
+
+impl PartialEq<Self> for Value {
+    fn eq(&self, other: &Self) -> bool {
+         if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return n1==n2;
+            }
+        }
+        panic!("类型错误，不支持此类型比较");
+    }
+}
+
+impl PartialOrd  for Value{
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return n1.partial_cmp(n2);
+            }
+        }
+        panic!("类型错误，不支持此类型比较");
     }
 }
