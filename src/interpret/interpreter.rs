@@ -1,6 +1,7 @@
 use crate::ast::expr::{Expr, Visitor};
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
+use crate::ast::token::token_type::Token_Type;
 use crate::ast::token::token_type::Token_Type::NIL;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
@@ -29,19 +30,28 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
         })
     }
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, Run_Err> {
-        todo!()
+        let r_value = self.evaluate(r_expression);
+        match operator.token_type {
+            Token_Type::MINUS => Ok(-r_value?),
+            Token_Type::BANG=>Ok(Value::bool(!self.is_truthy(r_value))),
+            _ => Ok(Value::nil),
+        }
     }
 }
 impl Interpreter {
     fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
     }
-    fn is_truthy(&self, value: Value) -> bool {
-        return match value {
-            Value::nil => false,
-            Value::num(v) => v == 0.0,
-            Value::str(s) => false,
-            Value::bool(b) => b,
-        };
+    fn is_truthy(&self, value: Result<Value,Run_Err>) -> bool {
+      if let Ok(v)=value{
+           match v{
+               Value::nil => false,
+               Value::num(v) => v != 0.0,
+               Value::str(s) => false,
+               Value::bool(b) => b,
+           }
+       }else{
+           false
+       }
     }
 }
