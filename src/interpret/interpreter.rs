@@ -33,7 +33,7 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
         let r_value = self.evaluate(r_expression);
         match operator.token_type {
             Token_Type::MINUS => Ok(-r_value?),
-            Token_Type::BANG=>Ok(Value::bool(!self.is_truthy(r_value))),
+            Token_Type::BANG=>Ok(!r_value?),
             _ => Ok(Value::nil),
         }
     }
@@ -41,17 +41,5 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
 impl Interpreter {
     fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
-    }
-    fn is_truthy(&self, value: Result<Value,Run_Err>) -> bool {
-      if let Ok(v)=value{
-           match v{
-               Value::nil => false,
-               Value::num(v) => v != 0.0,
-               Value::str(s) => false,
-               Value::bool(b) => b,
-           }
-       }else{
-           false
-       }
     }
 }
