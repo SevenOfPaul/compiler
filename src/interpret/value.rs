@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::ops::{Add, Neg, Not};
+use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 
 pub (crate) enum Value{
     str(String),
@@ -46,6 +46,30 @@ impl Sub for Value{
         if let Value::num(n1)=self{
             if let Value::num(n2)=other{
                 return Value::num(n1-n2);
+            }
+        }
+        panic!("不支持此类型加法操作");
+    }
+}
+impl Mul for Value{
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self::Output {
+        if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return Value::num(n1*n2);
+            }
+        }
+        panic!("不支持此类型加法操作");
+    }
+}
+impl Div for Value{
+    type Output = Self;
+
+    fn div(self, other: Self) -> Self::Output {
+        if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return Value::num(n1/n2);
             }
         }
         panic!("不支持此类型加法操作");
