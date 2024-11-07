@@ -2,7 +2,6 @@ use crate::ast::expr::{Expr, Visitor};
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::ast::token::token_type::Token_Type::NIL;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 
@@ -14,7 +13,15 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
         l_expression: &Expr,
         r_expression: &Expr,
     ) -> Result<Value, Run_Err> {
-        todo!()
+        let l = self.evaluate(l_expression)?;
+        let r = self.evaluate(r_expression)?;
+        Ok(match operator.token_type {
+            Token_Type::PLUS => l + r,
+            Token_Type::MINUS => l + r,
+            Token_Type::SEMICOLON => l * r,
+            Token_Type::SLASH => l / r,
+            _ => panic!("操作符错误"),
+        })
     }
 
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
@@ -33,7 +40,7 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
         let r_value = self.evaluate(r_expression);
         match operator.token_type {
             Token_Type::MINUS => Ok(-r_value?),
-            Token_Type::BANG=>Ok(!r_value?),
+            Token_Type::BANG => Ok(!r_value?),
             _ => Ok(Value::nil),
         }
     }
