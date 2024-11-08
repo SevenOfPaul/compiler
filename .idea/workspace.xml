@@ -7,19 +7,14 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="修改启动器错误，修改运行bug">
-      <change afterPath="$PROJECT_DIR$/src/interpret/interpreter.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/interpret/mod.rs" afterDir="false" />
+    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="提交加减乘除">
       <change beforePath="$PROJECT_DIR$/.github/workflows/rust.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/rust.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/_2024_10_21_23_24____.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/_2024_10_29_09_03____.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/___.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/在变基之前未提交的更改_[更改]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/在进行更新之前于_2024_10_29_09_03_取消提交了更改_[更改]/shelved.patch" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpreter/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/runner/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpreter/run.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/runner/run.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpreter/scanner.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/runner/scanner.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x/main.x" beforeDir="false" afterPath="$PROJECT_DIR$/x/main.x" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +187,17 @@
       <workItem from="1730552075984" duration="490000" />
       <workItem from="1730606180562" duration="6002000" />
       <workItem from="1730624590997" duration="5384000" />
-      <workItem from="1730631067917" duration="338000" />
+      <workItem from="1730631067917" duration="440000" />
+      <workItem from="1730647639021" duration="16000" />
+      <workItem from="1730724424529" duration="3768000" />
+      <workItem from="1730803498153" duration="65000" />
+      <workItem from="1730811157698" duration="1668000" />
+      <workItem from="1730814182846" duration="622000" />
+      <workItem from="1730894753845" duration="4846000" />
+      <workItem from="1730983929719" duration="1489000" />
+      <workItem from="1730985535117" duration="140000" />
+      <workItem from="1731055946415" duration="17000" />
+      <workItem from="1731056114523" duration="61000" />
     </task>
     <task id="LOCAL-00001" summary="初始化项目">
       <option name="closed" value="true" />
@@ -450,7 +455,103 @@
       <option name="project" value="LOCAL" />
       <updated>1730629605127</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="修改名字 增加interpreter">
+      <option name="closed" value="true" />
+      <created>1730631435657</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1730631435658</updated>
+    </task>
+    <task id="LOCAL-00034" summary="修改名字 增加interpreter">
+      <option name="closed" value="true" />
+      <created>1730631442787</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1730631442787</updated>
+    </task>
+    <task id="LOCAL-00035" summary="增加values结构体">
+      <option name="closed" value="true" />
+      <created>1730733798529</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1730733798529</updated>
+    </task>
+    <task id="LOCAL-00036" summary="提交注释">
+      <option name="closed" value="true" />
+      <created>1730733855946</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1730733855946</updated>
+    </task>
+    <task id="LOCAL-00037" summary="完成一元操作符">
+      <option name="closed" value="true" />
+      <created>1730811884841</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1730811884841</updated>
+    </task>
+    <task id="LOCAL-00038" summary="实现符号trait">
+      <option name="closed" value="true" />
+      <created>1730813890841</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1730813890841</updated>
+    </task>
+    <task id="LOCAL-00039" summary="提交是否真实">
+      <option name="closed" value="true" />
+      <created>1730814323514</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1730814323514</updated>
+    </task>
+    <task id="LOCAL-00040" summary="重载取反">
+      <option name="closed" value="true" />
+      <created>1730894986624</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1730894986624</updated>
+    </task>
+    <task id="LOCAL-00041" summary="重载比较符">
+      <option name="closed" value="true" />
+      <created>1730902512375</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1730902512375</updated>
+    </task>
+    <task id="LOCAL-00042" summary="为value实现加减法操作">
+      <option name="closed" value="true" />
+      <created>1730984715733</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1730984715733</updated>
+    </task>
+    <task id="LOCAL-00043" summary="为value实现加减乘除操作">
+      <option name="closed" value="true" />
+      <created>1730984814607</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1730984814607</updated>
+    </task>
+    <task id="LOCAL-00044" summary="提交加减乘除">
+      <option name="closed" value="true" />
+      <created>1730985414142</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1730985414142</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -472,17 +573,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="提交扫描器" />
-    <MESSAGE value="修改readme" />
-    <MESSAGE value="修改readme" />
-    <MESSAGE value="增加识别空白符" />
-    <MESSAGE value="增加字符串的识别" />
-    <MESSAGE value="可以识别字符串啦" />
-    <MESSAGE value="增加object 代码更合理" />
-    <MESSAGE value="增加对数字的解析" />
-    <MESSAGE value="修改命名格式" />
-    <MESSAGE value="修改错误" />
-    <MESSAGE value="修改顺序方便查找" />
     <MESSAGE value="添加对应的token 字符串" />
     <MESSAGE value="提交关键字" />
     <MESSAGE value="rust的响应者模式" />
@@ -497,7 +587,18 @@
     <MESSAGE value="增加报错处理" />
     <MESSAGE value="将报错函数嵌入到解析中" />
     <MESSAGE value="修改启动器错误，修改运行bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改启动器错误，修改运行bug" />
+    <MESSAGE value="修改名字 增加interpreter" />
+    <MESSAGE value="增加values结构体" />
+    <MESSAGE value="提交注释" />
+    <MESSAGE value="完成一元操作符" />
+    <MESSAGE value="实现符号trait" />
+    <MESSAGE value="提交是否真实" />
+    <MESSAGE value="重载取反" />
+    <MESSAGE value="重载比较符" />
+    <MESSAGE value="为value实现加减法操作" />
+    <MESSAGE value="为value实现加减乘除操作" />
+    <MESSAGE value="提交加减乘除" />
+    <option name="LAST_COMMIT_MESSAGE" value="提交加减乘除" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
