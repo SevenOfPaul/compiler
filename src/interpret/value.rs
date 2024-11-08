@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::ops::{Neg, Not};
+use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 
 pub (crate) enum Value{
     str(String),
@@ -15,6 +15,64 @@ impl Neg  for Value{
          Value::num(n)=>-n,
          _=>panic!("不支持负号操作")
      })
+    }
+}
+impl Add for Value{
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self::Output {
+        if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return Value::num(n1+n2);
+            }else{
+                panic!("不支持此类型加法操作");
+            }
+        }else if let Value::str(s1)=self{
+            if let Value::str(s2)=other{
+          return  Value::str(s1+ &s2);
+        }else if let Value::num(n2)=other{
+          return Value::str(s1+&n2.to_string());
+        }else{
+                panic!("不支持此类型加法操作");
+            }
+        }
+        panic!("不支持此类型加法操作");
+    }
+}
+impl Sub for Value{
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return Value::num(n1-n2);
+            }
+        }
+        panic!("不支持此类型加法操作");
+    }
+}
+impl Mul for Value{
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self::Output {
+        if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return Value::num(n1*n2);
+            }
+        }
+        panic!("不支持此类型加法操作");
+    }
+}
+impl Div for Value{
+    type Output = Self;
+
+    fn div(self, other: Self) -> Self::Output {
+        if let Value::num(n1)=self{
+            if let Value::num(n2)=other{
+                return Value::num(n1/n2);
+            }
+        }
+        panic!("不支持此类型加法操作");
     }
 }
 impl Not  for Value{
