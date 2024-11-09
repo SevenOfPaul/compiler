@@ -101,7 +101,21 @@ impl Scanner {
                         //}
                         self.advance();
                     }
-                } else {
+                } else if self.is_match('*'){
+                    //多行注释
+                    while !self.is_at_end() {
+                        println!("{:?}",self.peek());
+                        if self.is_match( '*') && self.peek()== '/' {
+                            break;
+                        }
+                        self.advance();
+                    }
+                    //因为下一个是 / 所以还需要再走一步
+                    self.advance();
+                    if self.is_at_end(){
+                        error::log(self.line, &self.peek().to_string(), "需要*/");
+                    }
+                }else{
                     self.add_token(Token_Type::SLASH, Some(Object::nil));
                 };
             }

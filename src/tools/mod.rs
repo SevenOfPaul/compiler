@@ -1,5 +1,5 @@
-use crate::ast::expr::{Expr, Visitor};
-use crate::ast::expr_visitor::ExprVisitor;
+use crate::ast::expression::expr::{Expr, Visitor};
+use crate::ast::expression::expr_visitor::ExprVisitor;
 
 pub(crate) fn println(expr:&Expr){
     let mut ev =ExprVisitor::new();

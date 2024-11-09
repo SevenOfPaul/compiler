@@ -1,11 +1,12 @@
-use crate::ast::expr::{Expr, Visitor};
+use crate::ast::expression::expr::{Expr, Visitor};
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
+use crate::error;
 
-struct Interpreter {}
+pub (crate) struct Interpreter {}
 impl Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_binary(
         &mut self,
@@ -18,8 +19,14 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
         Ok(match operator.token_type {
             Token_Type::PLUS => l + r,
             Token_Type::MINUS => l + r,
-            Token_Type::SEMICOLON => l * r,
+            Token_Type::STAR => l * r,
             Token_Type::SLASH => l / r,
+            Token_Type::GREATER=>Value::bool(l>r),
+             Token_Type::LESS=>Value::bool(l<r),
+            Token_Type::GREATER_EQUAL=>Value::bool(l>=r),
+            Token_Type::EQUAL_EQUAL=>Value::bool(l==r),
+            Token_Type::BANG_EQUAL=>Value::bool(l!=r),
+            Token_Type::LESS_EQUAL=>Value::bool(l<=r),
             _ => panic!("操作符错误"),
         })
     }
@@ -46,7 +53,17 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
     }
 }
 impl Interpreter {
-    fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
+    pub(crate) fn new()->Self{
+        Self{}
+    }
+   pub(crate) fn interpret(&mut self,expr:&Expr)->Value{
+        let res = self.evaluate(expr);
+        res.unwrap_or_else(|e| {
+            error::log(0, "", &*e.mes);
+            Value::nil
+        })
+    }
+    pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
     }
 }

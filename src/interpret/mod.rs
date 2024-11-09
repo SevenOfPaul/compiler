@@ -1,3 +1,3 @@
-mod interpreter;
+pub (crate) mod interpreter;
 mod value;
 mod error;

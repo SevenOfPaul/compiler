@@ -3,7 +3,8 @@ use std::io::Read;
 use std::process::exit;
 use crate::error;
 use crate::parse::parser::Parser;
-use crate::runner::scanner;
+use crate::ast::scanner;
+use crate::interpret::interpreter::Interpreter;
 use crate::tools::println;
 
 pub fn run_program(){
@@ -14,10 +15,13 @@ pub fn run_file(path: String) {
     if let Ok(mut res) = File::open(path) {
         res.read_to_string(&mut bytes).unwrap();
         let mut sc =scanner::Scanner::new(bytes);
-        println!("{:?}",sc.scan_tokens());
         let mut parser =Parser::new(sc.scan_tokens());
-       let expr=parser.parse();
-        println!("{:?}",expr);
+       let mut  expr=&parser.parse();
+        println(expr);
+      let mut inter =Interpreter::new();
+        let res=inter.interpret(expr);
+        println!("{:?}",res);
+
     } else {
         error::log(0, "", "找不到文件");
         exit(32);
