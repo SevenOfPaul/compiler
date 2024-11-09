@@ -2,7 +2,7 @@ use crate::ast::token::token::Token;
 
 #[derive(Debug)]
 pub(crate) struct Run_Err{
-    token:Token,
+    pub(crate) token:Token,
     pub(crate) mes:String
 }
 impl Run_Err{

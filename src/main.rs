@@ -9,10 +9,6 @@ mod parse;
 pub(crate) mod tools;
 mod interpret;
 
-use crate::ast::token::object::Object;
-use crate::ast::token::token::Token;
-use crate::ast::token::token_type::Token_Type;
-use tools::println;
 use crate::runner::run::run_file;
 fn main() {
 

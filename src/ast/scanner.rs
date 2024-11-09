@@ -104,7 +104,6 @@ impl Scanner {
                 } else if self.is_match('*'){
                     //多行注释
                     while !self.is_at_end() {
-                        println!("{:?}",self.peek());
                         if self.is_match( '*') && self.peek()== '/' {
                             break;
                         }

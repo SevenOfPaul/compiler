@@ -18,6 +18,20 @@ impl Neg  for Value{
      })
     }
 }
+impl Value{
+    pub(crate) fn is_num(&self) ->bool{
+        match self{
+            Value::num(n)=>true
+            ,_=>false
+        }
+    }
+    pub(crate) fn is_str(&self) ->bool{
+        match self{
+            Value::str(s)=>true
+            ,_=>false
+        }
+    }
+}
 impl Add for Value{
     type Output = Self;
 
@@ -49,7 +63,7 @@ impl Sub for Value{
                 return Value::num(n1-n2);
             }
         }
-        panic!("不支持此类型加法操作");
+        panic!("不支持此类型减法操作");
     }
 }
 impl Mul for Value{
@@ -61,7 +75,7 @@ impl Mul for Value{
                 return Value::num(n1*n2);
             }
         }
-        panic!("不支持此类型加法操作");
+        panic!("不支持此类型乘法操作");
     }
 }
 impl Div for Value{
@@ -73,7 +87,7 @@ impl Div for Value{
                 return Value::num(n1/n2);
             }
         }
-        panic!("不支持此类型加法操作");
+        panic!("不支持此类型法操作");
     }
 }
 impl Not  for Value{

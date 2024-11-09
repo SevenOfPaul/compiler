@@ -2,11 +2,11 @@ use crate::ast::expression::expr::{Expr, Visitor};
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
+use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
-use crate::error;
 
-pub (crate) struct Interpreter {}
+pub(crate) struct Interpreter {}
 impl Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_binary(
         &mut self,
@@ -14,21 +14,58 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
         l_expression: &Expr,
         r_expression: &Expr,
     ) -> Result<Value, Run_Err> {
-        let l = self.evaluate(l_expression)?;
-        let r = self.evaluate(r_expression)?;
-        Ok(match operator.token_type {
-            Token_Type::PLUS => l + r,
-            Token_Type::MINUS => l + r,
-            Token_Type::STAR => l * r,
-            Token_Type::SLASH => l / r,
-            Token_Type::GREATER=>Value::bool(l>r),
-             Token_Type::LESS=>Value::bool(l<r),
-            Token_Type::GREATER_EQUAL=>Value::bool(l>=r),
-            Token_Type::EQUAL_EQUAL=>Value::bool(l==r),
-            Token_Type::BANG_EQUAL=>Value::bool(l!=r),
-            Token_Type::LESS_EQUAL=>Value::bool(l<=r),
-            _ => panic!("操作符错误"),
-        })
+        //判断是否出错
+        let l = self.evaluate(l_expression).unwrap_or_else(|e| {
+            error::log(e.token.line, &e.token.lexeme, &e.mes);
+            Value::nil
+        });
+        let r = self.evaluate(r_expression).unwrap_or_else(|e| {
+            error::log(e.token.line, &e.token.lexeme, &e.mes);
+            Value::nil
+        });
+        match operator.token_type {
+            Token_Type::PLUS => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(l + r)
+            }
+            Token_Type::MINUS => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(l + r)
+            }
+            Token_Type::STAR => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(l * r)
+            }
+            Token_Type::SLASH => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(l / r)
+            }
+            Token_Type::GREATER => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(Value::bool(l > r))
+            }
+            Token_Type::LESS => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(Value::bool(l < r))
+            }
+            Token_Type::GREATER_EQUAL => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(Value::bool(l >= r))
+            }
+            Token_Type::EQUAL_EQUAL => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(Value::bool(l == r))
+            }
+            Token_Type::BANG_EQUAL => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(Value::bool(l != r))
+            }
+            Token_Type::LESS_EQUAL => {
+                self.check_num_operands(operator, &l, &r)?;
+                Ok(Value::bool(l <= r))
+            }
+            _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
+        }
     }
 
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
@@ -48,20 +85,40 @@ impl Visitor<Result<Value, Run_Err>> for Interpreter {
         match operator.token_type {
             Token_Type::MINUS => Ok(-r_value?),
             Token_Type::BANG => Ok(!r_value?),
-            _ => Ok(Value::nil),
+            _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
 }
 impl Interpreter {
-    pub(crate) fn new()->Self{
-        Self{}
+    pub(crate) fn new() -> Self {
+        Self {}
     }
-   pub(crate) fn interpret(&mut self,expr:&Expr)->Value{
+    pub(crate) fn interpret(&mut self, expr: &Expr) -> Value {
         let res = self.evaluate(expr);
         res.unwrap_or_else(|e| {
-            error::log(0, "", &*e.mes);
+            error::log(e.token.line, &e.token.lexeme, &e.mes);
             Value::nil
         })
+    }
+    pub(crate) fn check_num_operands(
+        &self,
+        oper: &Token,
+        l: &Value,
+        r: &Value,
+    ) -> Result<(), Run_Err> {
+        //加法操作支持str+num
+        if oper.token_type == Token_Type::AND
+            && ((l.is_num() && r.is_num()) || l.is_str() && r.is_num())
+        {
+            Ok(())
+        } else if l.is_num() && r.is_num() {
+            Ok(())
+        } else {
+            Err(Run_Err::new(
+                oper.clone(),
+                format!("此类型不支持{}操作", oper.lexeme),
+            ))
+        }
     }
     pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
