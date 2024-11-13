@@ -1,3 +1,5 @@
 /target
-/.idea
-/.github
+.idea
+.github/*
+.idea/workspace.xml
+.github/workflows/rust.yml

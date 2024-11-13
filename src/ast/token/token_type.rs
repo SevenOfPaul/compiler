@@ -9,9 +9,9 @@ pub enum Token_Type {
     DOT,//.
     MINUS, //-
     PLUS,//+
-    SEMICOLON,//*
     SLASH,// /
     STAR, // *
+    SEMICOLON,//;
     BANG, // !
     EQUAL, //=
     //两个字符构成的token
@@ -34,6 +34,12 @@ pub enum Token_Type {
     NIL, //null
     TRUE,
     FALSE,
+    /*
+    注释不进入parse 这里只是方便理解
+    COMMENT_START,// /*
+    COMMENT_END, // */
+    COMMENTED, // //
+    */
     EOF //结尾符
 }
 impl Token_Type {

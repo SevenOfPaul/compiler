@@ -13,9 +13,9 @@
     ARCHIVE_TYPES: # optional
     # Full name of archive to upload (you must specify file extension and change this if building multiple targets)
     ARCHIVE_NAME: # optional
-    # Relative path of script to interpreter before building
+    # Relative path of script to runner before building
     PRE_BUILD: # optional
-    # Relative path of script to interpreter after building
+    # Relative path of script to runner after building
     POST_BUILD: # optional
     # If set to "true", the resulting binary will be stripped and compressed by UPX. ("false" by default)
     MINIFY: # optional

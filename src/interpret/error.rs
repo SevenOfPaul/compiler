@@ -2,8 +2,8 @@ use crate::ast::token::token::Token;
 
 #[derive(Debug)]
 pub(crate) struct Run_Err{
-    token:Token,
-    mes:String
+    pub(crate) token:Token,
+    pub(crate) mes:String
 }
 impl Run_Err{
     pub(crate) fn new(token:Token, mes:String) ->Self{
