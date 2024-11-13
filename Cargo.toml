@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 color-string = "0.1.6"
 lazy_static = "*"
+paste="*"
