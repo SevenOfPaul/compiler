@@ -1,8 +1,8 @@
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::impl_expr_accept;
+use paste::paste;
 use std::fmt::Binary;
-
 #[derive(Debug)]
 pub(crate) enum Expr {
     Binary {
@@ -48,8 +48,8 @@ pub trait Visitor<T> {
 //       }
 //     }
 // }
-impl_expr_accept! {(Literal,visit_literal,{val,}),(
-    Grouping,visit_grouping,{expression,}
-),(Binary,visit_binary,{operator,l_expression,r_expression,}),(
-    Unary,visit_unary,{operator,r_expression,}
+impl_expr_accept! {(Literal,literal,{val,}),(
+    Grouping,grouping,{expression,}
+),(Binary,binary,{operator,l_expression,r_expression,}),(
+    Unary,unary,{operator,r_expression,}
 ),}
