@@ -1,3 +1,3 @@
 pub (crate) mod interpreter;
-mod value;
+pub (crate)  mod value;
 mod error;

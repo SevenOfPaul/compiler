@@ -3,7 +3,7 @@ use crate::ast::token::token::Token;
 use crate::impl_expr_accept;
 use paste::paste;
 use std::fmt::Binary;
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub(crate) enum Expr {
     Binary {
         operator: Token,
