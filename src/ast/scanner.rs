@@ -140,7 +140,7 @@ impl Scanner {
                     error::log(
                         self.line,
                         &self.peek().to_string(),
-                        &*("Unexpected character".to_owned() + &*c.to_string()),
+                        &*("无效字符".to_owned() + &*c.to_string()),
                     );
                 }
             }
