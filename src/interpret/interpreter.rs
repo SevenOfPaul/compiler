@@ -8,6 +8,7 @@ use crate::ast::token::token_type::Token_Type;
 use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
+use crate::tools::printf;
 
 pub(crate) struct Interpreter {}
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
@@ -146,7 +147,7 @@ impl stmt::Visitor<()> for Interpreter {
     }
     fn visit_print(&mut self, expr: &Expr){
             let res= self.evaluate(expr);
-        println!("{:?}",res.unwrap());
+        printf(res.unwrap());
     }
 }
 //执行

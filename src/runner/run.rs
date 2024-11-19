@@ -5,7 +5,6 @@ use crate::error;
 use crate::parse::parser::Parser;
 use crate::ast::scanner;
 use crate::interpret::interpreter::Interpreter;
-use crate::tools::println;
 
 pub fn run_program(){
 }
