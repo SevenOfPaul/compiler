@@ -1,4 +1,7 @@
-use crate::ast::expression::expr::{Expr, Visitor};
+use crate::ast::expression::expr::{Expr};
+use crate::ast::expression::expr;
+use crate::ast::statment::stmt::{Stmt};
+use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
@@ -7,7 +10,7 @@ use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 
 pub(crate) struct Interpreter {}
-impl Visitor<Result<Value, Run_Err>> for Interpreter {
+impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_binary(
         &mut self,
         operator: &Token,
@@ -93,6 +96,18 @@ impl Interpreter {
     pub(crate) fn new() -> Self {
         Self {}
     }
+    /*
+    这里改成执行语句vec
+    */
+    pub(crate) fn run(&mut self, stmts:Vec<Stmt>) {
+       for stmt in stmts {
+           self.execute(stmt);
+       }
+
+    }
+    fn execute(&mut self,stmt:Stmt){
+         stmt.accept(self)
+    }
     pub(crate) fn interpret(&mut self, expr: &Expr) -> Value {
         let res = self.evaluate(expr);
         res.unwrap_or_else(|e| {
@@ -123,4 +138,15 @@ impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
     }
+    //这里其实可以复写
 }
+impl stmt::Visitor<()> for Interpreter {
+    fn visit_expr(&mut self, expr: &Expr){
+            self.evaluate(expr);
+    }
+    fn visit_print(&mut self, expr: &Expr){
+            let res= self.evaluate(expr);
+        println!("{:?}",res.unwrap());
+    }
+}
+//执行

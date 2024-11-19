@@ -3,6 +3,7 @@ use crate::ast::token::object::{Get, Object};
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::error;
+use crate::ast::statment::stmt::Stmt;
 use crate::parse::err::Parse_Err;
 
 pub(crate) struct Parser {
@@ -13,18 +14,31 @@ impl Parser {
     pub(crate) fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, pos: 0 }
     }
-    pub(crate) fn parse(&mut self) -> Expr {
-        if let Ok(expr) = self.expression() {
+    pub(crate) fn parse(&mut self) -> Vec<Stmt> {
+        let mut stmts = vec![];
+        while !self.is_end() {
+            stmts.push(self.statement())
+        }
+        stmts
+    }
+    /*
+    执行单操作符
+    */
+    fn expression(&mut self) -> Expr{
+        if let Ok(expr) =self.equality() {
             expr
         } else {
             Expr::Literal { val: Object::nil }
         }
     }
-    /*
-    执行单操作符
-    */
-    fn expression(&mut self) -> Result<Expr, Parse_Err> {
-        self.equality()
+    //把表达式转为语句
+    fn statement(&mut self) ->Stmt{
+      if self.match_token(&[Token_Type::PRINT]){
+         self.printStmt()
+      }else{
+          self.exprStmt()
+      }
+
     }
     //看看等号的运算符
     fn equality(&mut self) -> Result<Expr, Parse_Err> {
@@ -122,7 +136,7 @@ impl Parser {
             })
         } else if self.match_token(&[Token_Type::LEFT_PAREN]) {
             let expr = Expr::Grouping {
-                expression: Box::from(self.expression()?),
+                expression: Box::from(self.expression()),
             };
             self.cosume(&Token_Type::RIGHT_PAREN, String::from("需要一个)"))?;
             Ok(expr)
@@ -159,9 +173,11 @@ impl Parser {
         if self.check(&token_type) {
             Ok(self.advance())
         } else {
+            //应该报错
             Err(self.error(mes))
         }
     }
+
     fn is_end(&self) -> bool {
         self.peek().token_type == Token_Type::EOF
     }
@@ -177,5 +193,20 @@ impl Parser {
         let token = self.peek();
         error::log(token.line, &token.lexeme, &mes);
         Parse_Err::new(token.clone(), mes)
+    }
+    //下面是表达式转语句的代码
+    fn exprStmt(&mut self) ->Stmt{
+        let val=self.expression();
+        if let Err(e)= self.cosume(&Token_Type::SEMICOLON, String::from("此处应有分号")){
+            self.error(e.mes);
+        }
+        Stmt::Expression { expr: Box::from(val) }
+    }
+    fn printStmt(&mut self) ->Stmt{
+       let val=self.expression();
+       if let Err(e)= self.cosume(&Token_Type::SEMICOLON, String::from("此处应有分号")){
+           self.error(e.mes);
+       }
+        Stmt::Print { expr: Box::from(val) }
     }
 }
