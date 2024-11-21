@@ -1,9 +1,9 @@
 use crate::ast::expression::expr::Expr;
+use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::{Get, Object};
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::error;
-use crate::ast::statment::stmt::Stmt;
 use crate::parse::err::Parse_Err;
 
 pub(crate) struct Parser {
@@ -17,28 +17,55 @@ impl Parser {
     pub(crate) fn parse(&mut self) -> Vec<Stmt> {
         let mut stmts = vec![];
         while !self.is_end() {
-            stmts.push(self.statement())
+           let stmt=self.statement();
+            if let Ok(stmt) = stmt {
+                stmts.push(stmt);
+            }
         }
         stmts
     }
     /*
     执行单操作符
     */
-    fn expression(&mut self) -> Expr{
-        if let Ok(expr) =self.equality() {
+    fn expression(&mut self) -> Expr {
+        if let Ok(expr) = self.equality() {
             expr
         } else {
             Expr::Literal { val: Object::nil }
         }
     }
+    fn declaration(&mut self) -> Result<Stmt, Parse_Err> {
+        if self.match_token(&[Token_Type::LET]) {
+            self.let_declaration()
+        } else {
+            self.statement()
+        }
+    }
+    //声明变量的规则
+    fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
+        let name = self.consume(
+            &Token_Type::IDENTIFIER,
+            String::from("这个单词不允许作为声明"),
+        )?;
+        let mut expr;
+        if self.match_token(&[Token_Type::EQUAL]) {
+            expr = self.expression();
+            self.consume(&Token_Type::SEMICOLON, String::from("此处应有分号结尾"))?;
+            Ok(Stmt::LET {
+                name,
+                expr: Box::new(expr),
+            })
+        } else {
+            Err(self.error(String::from("此处声明出错")))
+        }
+    }
     //把表达式转为语句
-    fn statement(&mut self) ->Stmt{
-      if self.match_token(&[Token_Type::PRINT]){
-         self.printStmt()
-      }else{
-          self.exprStmt()
-      }
-
+    fn statement(&mut self) -> Result<Stmt, Parse_Err> {
+        if self.match_token(&[Token_Type::PRINT]) {
+            self.print_stmt()
+        } else {
+            self.expr_stmt()
+        }
     }
     //看看等号的运算符
     fn equality(&mut self) -> Result<Expr, Parse_Err> {
@@ -138,7 +165,7 @@ impl Parser {
             let expr = Expr::Grouping {
                 expression: Box::from(self.expression()),
             };
-            self.cosume(&Token_Type::RIGHT_PAREN, String::from("需要一个)"))?;
+            self.consume(&Token_Type::RIGHT_PAREN, String::from("需要一个)"))?;
             Ok(expr)
         } else {
             Err(self.error(String::from("无效的表达式")))
@@ -169,7 +196,7 @@ impl Parser {
         false
     }
     //判断错误
-    fn cosume(&mut self, token_type: &Token_Type, mes: String) -> Result<Token, Parse_Err> {
+    fn consume(&mut self, token_type: &Token_Type, mes: String) -> Result<Token, Parse_Err> {
         if self.check(&token_type) {
             Ok(self.advance())
         } else {
@@ -195,18 +222,24 @@ impl Parser {
         Parse_Err::new(token.clone(), mes)
     }
     //下面是表达式转语句的代码
-    fn exprStmt(&mut self) ->Stmt{
-        let val=self.expression();
-        if let Err(e)= self.cosume(&Token_Type::SEMICOLON, String::from("此处应有分号")){
-            self.error(e.mes);
+    fn expr_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        let val = self.expression();
+        if let Err(e) = self.consume(&Token_Type::SEMICOLON, String::from("此处应有分号")) {
+            Err(self.error(e.mes))
+        } else {
+            Ok(Stmt::Expression {
+                expr: Box::from(val),
+            })
         }
-        Stmt::Expression { expr: Box::from(val) }
     }
-    fn printStmt(&mut self) ->Stmt{
-       let val=self.expression();
-       if let Err(e)= self.cosume(&Token_Type::SEMICOLON, String::from("此处应有分号")){
-           self.error(e.mes);
-       }
-        Stmt::Print { expr: Box::from(val) }
+    fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        let val = self.expression();
+        if let Err(e) = self.consume(&Token_Type::SEMICOLON, String::from("此处应有分号")) {
+            Err(self.error(e.mes))
+        } else {
+            Ok(Stmt::Print {
+                expr: Box::from(val),
+            })
+        }
     }
 }
