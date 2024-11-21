@@ -14,6 +14,7 @@ pub (crate) enum Stmt {
 pub trait Visitor<T> {
     fn visit_expr(&mut self, expr: &Expr);
     fn visit_print(&mut self, expr: &Expr);
+    fn visit_let(&mut self,name:&Token,expr:&Expr);
 }
 
 impl Stmt{
@@ -25,7 +26,10 @@ impl Stmt{
               Stmt::Print {expr}=>{
                   visitor.visit_print(expr.as_ref());
               }
-              _=>{}
+                  Stmt::LET {name,expr}=>{
+                    visitor.visit_let(name,expr.as_ref());
+                  }
+
           }
 
     }

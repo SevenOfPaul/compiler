@@ -92,6 +92,9 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
+    fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
+        todo!()
+    }
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
@@ -148,6 +151,9 @@ impl stmt::Visitor<()> for Interpreter {
     fn visit_print(&mut self, expr: &Expr){
             let res= self.evaluate(expr);
         printf(res.unwrap());
+    }
+    fn visit_let(&mut self,name:&Token,expr:&Expr){
+           //添加到变量池中
     }
 }
 //执行

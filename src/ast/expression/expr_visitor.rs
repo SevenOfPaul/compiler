@@ -34,4 +34,7 @@ impl Visitor<String> for ExprVisitor {
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> String {
         self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
     }
+    fn visit_variable(&mut self, name: &Token) -> String {
+        todo!()
+    }
 }

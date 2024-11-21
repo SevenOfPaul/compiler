@@ -161,6 +161,10 @@ impl Parser {
             Ok(Expr::Literal {
                 val: self.previous().literal.unwrap(),
             })
+        }else if self.match_token(&[Token_Type::IDENTIFIER]) {
+                  Ok(Expr::Variable{
+                      name:self.previous(),
+                  })
         } else if self.match_token(&[Token_Type::LEFT_PAREN]) {
             let expr = Expr::Grouping {
                 expression: Box::from(self.expression()),

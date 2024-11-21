@@ -20,6 +20,9 @@ pub(crate) enum Expr {
         operator: Token,
         r_expression: Box<Expr>,
     },
+    Variable {
+        name:Token
+    }
 }
 
 pub trait Visitor<T> {
@@ -27,7 +30,7 @@ pub trait Visitor<T> {
     fn visit_grouping(&mut self, expression: &Expr) -> T;
     fn visit_literal(&mut self, value: &Object) -> T;
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
-    // fn visit_variable(&mut self, name: &Token) -> T;
+    fn visit_variable(&mut self, name: &Token) -> T;
     // fn visit_assign(&mut self, name: &Token, value: &Expr) -> T;
 }
 /**
@@ -54,4 +57,4 @@ impl_expr_accept! {(Literal,literal,{val,}),(
     Grouping,grouping,{expression,}
 ),(Binary,binary,{operator,l_expression,r_expression,}),(
     Unary,unary,{operator,r_expression,}
-),}
+),(Variable,variable,{name,}),}
