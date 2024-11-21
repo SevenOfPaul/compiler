@@ -12,9 +12,9 @@ pub (crate) enum Stmt {
     }
 }
 pub trait Visitor<T> {
-    fn visit_expr(&mut self, expr: &Expr);
-    fn visit_print(&mut self, expr: &Expr);
-    fn visit_let(&mut self,name:&Token,expr:&Expr);
+    fn visit_expr(&mut self, expr: &Expr)->T;
+    fn visit_print(&mut self, expr: &Expr)->T;
+    fn visit_let(&mut self,name:&Token,expr:&Expr)->T;
 }
 
 impl Stmt{

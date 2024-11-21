@@ -17,7 +17,7 @@ impl Parser {
     pub(crate) fn parse(&mut self) -> Vec<Stmt> {
         let mut stmts = vec![];
         while !self.is_end() {
-           let stmt=self.statement();
+           let stmt=self.declaration();
             if let Ok(stmt) = stmt {
                 stmts.push(stmt);
             }

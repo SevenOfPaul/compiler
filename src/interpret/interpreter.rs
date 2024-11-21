@@ -9,7 +9,7 @@ use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
-
+use crate::interpret::env::Environment;
 pub(crate) struct Interpreter {}
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_binary(
@@ -144,16 +144,27 @@ impl Interpreter {
     }
     //这里其实可以复写
 }
-impl stmt::Visitor<()> for Interpreter {
-    fn visit_expr(&mut self, expr: &Expr){
-            self.evaluate(expr);
+impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
+    fn visit_expr(&mut self, expr: &Expr)->Result<(),Run_Err>{
+       self.evaluate(expr);
+        Ok(())
     }
-    fn visit_print(&mut self, expr: &Expr){
+    fn visit_print(&mut self, expr: &Expr)->Result<(),Run_Err>{
             let res= self.evaluate(expr);
-        printf(res.unwrap());
+          printf(res.unwrap());
+        Ok(())
+
     }
-    fn visit_let(&mut self,name:&Token,expr:&Expr){
+    fn visit_let(&mut self,name:&Token,expr:&Expr)->Result<(),Run_Err>{
            //添加到变量池中
+        let res=self.evaluate(expr);
+        if let Ok(val) = res {
+            Environment.lock().unwrap().get_mut().insert(name.lexeme.clone(),val);
+            println!("{:?}",Environment.lock().unwrap());
+            Ok(())
+        }else{
+              Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
+        }
     }
 }
 //执行
