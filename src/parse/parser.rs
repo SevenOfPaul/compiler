@@ -20,6 +20,8 @@ impl Parser {
            let stmt=self.declaration();
             if let Ok(stmt) = stmt {
                 stmts.push(stmt);
+            }else{
+                self.advance();
             }
         }
         stmts
