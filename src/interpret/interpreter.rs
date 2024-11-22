@@ -10,7 +10,7 @@ use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
 use crate::interpret::env::Environment;
-use crate::env_add;
+use crate::{env_add,env_get};
 pub(crate) struct Interpreter {}
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_binary(
@@ -94,7 +94,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
     }
     fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
-        todo!()
+        env_get!(name)
     }
 }
 impl Interpreter {
@@ -152,7 +152,7 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
     }
     fn visit_print(&mut self, expr: &Expr)->Result<(),Run_Err>{
             let res= self.evaluate(expr);
-          printf(res.unwrap());
+          printf(res?);
         Ok(())
 
     }

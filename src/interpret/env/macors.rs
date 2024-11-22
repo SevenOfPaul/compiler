@@ -15,4 +15,17 @@ macro_rules! env_add(
     }
   }}
 );
+#[macro_export]
+macro_rules! env_get(
+($key:ident)=>{
+{
+
+    let key=$key.lexeme.clone();
+    if let Some(v)=Environment.lock().unwrap().borrow().get(&key){
+        return Ok(v.clone());
+    }else{
+     Err(Run_Err::new($key.clone(),String::from(key+"未定义")))
+    }
+  }}
+);
 

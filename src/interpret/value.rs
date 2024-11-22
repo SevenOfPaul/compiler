@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub (crate) enum Value{
     str(String),
     num(f32),

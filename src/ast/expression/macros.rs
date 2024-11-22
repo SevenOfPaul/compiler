@@ -17,8 +17,6 @@
 //     }
 // }
 
-use crate::ast::expression::expr::Expr;
-use paste::paste;
 
 #[macro_export]
 macro_rules! impl_expr_accept {

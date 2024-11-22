@@ -15,13 +15,11 @@ pub fn run_file(path: String) {
         res.read_to_string(&mut bytes).unwrap();
         let mut sc =scanner::Scanner::new(bytes);
         let mut parser =Parser::new(sc.scan_tokens());
-        // println!("{:?}",sc.scan_tokens());
         let stmts=parser.parse();
-        println!("{:?}",stmts.clone());
       let mut inter =Interpreter::new();
+        println!("{:?}",stmts);
         //调用解析出来的语句
         inter.run(stmts.clone());
-        // println!("{:?}",res);
 
     } else {
         error::log(0, "", "找不到文件");
