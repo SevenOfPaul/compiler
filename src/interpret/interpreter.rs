@@ -10,6 +10,7 @@ use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
 use crate::interpret::env::Environment;
+use crate::env_add;
 pub(crate) struct Interpreter {}
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_binary(
@@ -159,9 +160,7 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
            //添加到变量池中
         let res=self.evaluate(expr);
         if let Ok(val) = res {
-            Environment.lock().unwrap().get_mut().insert(name.lexeme.clone(),val);
-            println!("{:?}",Environment.lock().unwrap());
-            Ok(())
+            env_add!(name,val)
         }else{
               Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
         }
