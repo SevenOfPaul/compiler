@@ -30,11 +30,12 @@ impl Parser {
     执行单操作符
     */
     fn expression(&mut self) -> Expr {
-        if let Ok(expr) = self.equality() {
+        if let Ok(expr) = self.assign_stmt() {
             expr
         } else {
             Expr::Literal { val: Object::nil }
         }
+
     }
     fn declaration(&mut self) -> Result<Stmt, Parse_Err> {
         if self.match_token(&[Token_Type::LET]) {
@@ -47,12 +48,12 @@ impl Parser {
     fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
         let name = self.consume(
             &Token_Type::IDENTIFIER,
-            String::from("这个单词不允许作为声明"),
+            "这个单词不允许作为声明",
         )?;
         let mut expr;
         if self.match_token(&[Token_Type::EQUAL]) {
             expr = self.expression();
-            self.consume(&Token_Type::SEMICOLON, String::from("此处应有分号结尾"))?;
+            self.consume(&Token_Type::SEMICOLON, "此处应有分号结尾")?;
             Ok(Stmt::LET {
                 name,
                 expr: Box::new(expr),
@@ -171,7 +172,7 @@ impl Parser {
             let expr = Expr::Grouping {
                 expression: Box::from(self.expression()),
             };
-            self.consume(&Token_Type::RIGHT_PAREN, String::from("需要一个)"))?;
+            self.consume(&Token_Type::RIGHT_PAREN, "需要一个)")?;
             Ok(expr)
         } else {
             Err(self.error(String::from("无效的表达式")))
@@ -202,12 +203,12 @@ impl Parser {
         false
     }
     //判断错误
-    fn consume(&mut self, token_type: &Token_Type, mes: String) -> Result<Token, Parse_Err> {
+    fn consume(&mut self, token_type: &Token_Type, mes: &str) -> Result<Token, Parse_Err> {
         if self.check(&token_type) {
             Ok(self.advance())
         } else {
             //应该报错
-            Err(self.error(mes))
+            Err(self.error(String::from(mes)))
         }
     }
 
@@ -225,12 +226,12 @@ impl Parser {
     fn error(&mut self, mes: String) -> Parse_Err {
         let token = self.peek();
         error::log(token.line, &token.lexeme, &mes);
-        Parse_Err::new(token.clone(), mes)
+        Parse_Err::new(token.clone(),mes)
     }
     //下面是表达式转语句的代码
     fn expr_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         let val = self.expression();
-        if let Err(e) = self.consume(&Token_Type::SEMICOLON, String::from("此处应有分号")) {
+        if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
             Err(self.error(e.mes))
         } else {
             Ok(Stmt::Expression {
@@ -238,9 +239,21 @@ impl Parser {
             })
         }
     }
+    fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
+        let expr=self.equality();
+        if self.match_token(&[Token_Type::EQUAL]) {
+            let equals = self.previous();
+            let val=self.assign_stmt()?;
+            if let Expr::Variable {name} = expr? {
+                return   Ok(Expr::Assign { name, val: Box::from(val) })
+            }
+        }
+         Err(self.error(String::from("无效声明")))
+
+    }
     fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         let val = self.expression();
-        if let Err(e) = self.consume(&Token_Type::SEMICOLON, String::from("此处应有分号")) {
+        if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
             Err(self.error(e.mes))
         } else {
             Ok(Stmt::Print {
@@ -248,4 +261,5 @@ impl Parser {
             })
         }
     }
+    //声明语法
 }

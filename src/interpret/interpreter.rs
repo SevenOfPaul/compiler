@@ -96,6 +96,9 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
         env_get!(name)
     }
+    fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
+        todo!()
+    }
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
@@ -127,13 +130,14 @@ impl Interpreter {
         r: &Value,
     ) -> Result<(), Run_Err> {
         //加法操作支持str+num
-        if oper.token_type == Token_Type::AND
+        if oper.token_type == Token_Type::PLUS
             && ((l.is_num() && r.is_num()) || l.is_str() && r.is_num())
         {
             Ok(())
         } else if l.is_num() && r.is_num() {
             Ok(())
         } else {
+            error::log(oper.line, &oper.lexeme, &format!("此类型不支持{}操作", oper.lexeme));
             Err(Run_Err::new(
                 oper.clone(),
                 format!("此类型不支持{}操作", oper.lexeme),

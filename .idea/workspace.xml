@@ -7,23 +7,15 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="提交加减乘除">
+    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="修改错误机制">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/expr_visitor.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr_visitor.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/token/token_type.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/token/token_type.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpret/error.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/error.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ast/expression/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ast/expression/expr_visitor.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr_visitor.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ast/statment/stmt.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/statment/stmt.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ast/token/object.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/token/object.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/interpret/interpreter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/interpreter.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpret/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpret/value.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/value.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parse/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parse/parser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/runner/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/runner/mod.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/runner/run.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/runner/run.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/runner/scanner.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/scanner.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tools/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/mod.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x/main.x" beforeDir="false" afterPath="$PROJECT_DIR$/x/main.x" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -129,6 +121,7 @@
   </component>
   <component name="RunManager">
     <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
+      <option name="buildProfileId" value="dev" />
       <option name="command" value="run" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
@@ -210,39 +203,27 @@
       <workItem from="1730985535117" duration="140000" />
       <workItem from="1731055946415" duration="17000" />
       <workItem from="1731056114523" duration="61000" />
-      <workItem from="1731121425425" duration="4027000" />
-    </task>
-    <task id="LOCAL-00001" summary="初始化项目">
-      <option name="closed" value="true" />
-      <created>1726580247231</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1726580247231</updated>
-    </task>
-    <task id="LOCAL-00002" summary="构建运行模块和错误模块">
-      <option name="closed" value="true" />
-      <created>1729314275933</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1729314275933</updated>
-    </task>
-    <task id="LOCAL-00003" summary="缩减代码">
-      <option name="closed" value="true" />
-      <created>1729316204608</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1729316204608</updated>
-    </task>
-    <task id="LOCAL-00004" summary="提交扫描器">
-      <option name="closed" value="true" />
-      <created>1729330726928</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1729330726929</updated>
+      <workItem from="1731121425425" duration="4090000" />
+      <workItem from="1731142057386" duration="6542000" />
+      <workItem from="1731211806246" duration="1496000" />
+      <workItem from="1731234734728" duration="3965000" />
+      <workItem from="1731410708862" duration="21000" />
+      <workItem from="1731504617893" duration="5012000" />
+      <workItem from="1731583854799" duration="478000" />
+      <workItem from="1731751983736" duration="995000" />
+      <workItem from="1731771738013" duration="2006000" />
+      <workItem from="1731821651783" duration="3107000" />
+      <workItem from="1731828694730" duration="61000" />
+      <workItem from="1731849670769" duration="2328000" />
+      <workItem from="1731934360982" duration="1599000" />
+      <workItem from="1731936006191" duration="53000" />
+      <workItem from="1732024820939" duration="35000" />
+      <workItem from="1732188163960" duration="950000" />
+      <workItem from="1732189152802" duration="68000" />
+      <workItem from="1732189229872" duration="1613000" />
+      <workItem from="1732272426398" duration="3479000" />
+      <workItem from="1732379451169" duration="89000" />
+      <workItem from="1732444832651" duration="3414000" />
     </task>
     <task id="LOCAL-00005" summary="提交扫描器">
       <option name="closed" value="true" />
@@ -564,7 +545,79 @@
       <option name="project" value="LOCAL" />
       <updated>1730985414142</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="可以运算了，增加多行注释，修改代码结构">
+      <option name="closed" value="true" />
+      <created>1731125547508</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1731125547508</updated>
+    </task>
+    <task id="LOCAL-00046" summary="修改报错机制，改为中断报错，并且提示红色">
+      <option name="closed" value="true" />
+      <created>1731148722428</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1731148722428</updated>
+    </task>
+    <task id="LOCAL-00047" summary="修改报错机制，改为中断报错，并且提示红色">
+      <option name="closed" value="true" />
+      <created>1731148821234</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1731148821234</updated>
+    </task>
+    <task id="LOCAL-00048" summary="尝试使用宏替代垃圾代码">
+      <option name="closed" value="true" />
+      <created>1731247022879</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1731247022879</updated>
+    </task>
+    <task id="LOCAL-00049" summary="提交宏">
+      <option name="closed" value="true" />
+      <created>1731509689725</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1731509689725</updated>
+    </task>
+    <task id="LOCAL-00050" summary="提交宏">
+      <option name="closed" value="true" />
+      <created>1731584329133</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1731584329133</updated>
+    </task>
+    <task id="LOCAL-00051" summary="表达式转语句">
+      <option name="closed" value="true" />
+      <created>1731773751933</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1731773751933</updated>
+    </task>
+    <task id="LOCAL-00052" summary="执行语句">
+      <option name="closed" value="true" />
+      <created>1731935974493</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1731935974493</updated>
+    </task>
+    <task id="LOCAL-00053" summary="修改错误机制">
+      <option name="closed" value="true" />
+      <created>1732189966805</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1732189966805</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -572,6 +625,17 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.asm" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="GitHub.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -586,13 +650,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="添加对应的token 字符串" />
-    <MESSAGE value="提交关键字" />
-    <MESSAGE value="rust的响应者模式" />
-    <MESSAGE value="rust的响应者模式" />
-    <MESSAGE value="提交打印" />
-    <MESSAGE value="提交equality" />
-    <MESSAGE value="提交equality函数" />
     <MESSAGE value="提交多个parser的函数" />
     <MESSAGE value="修改代码结构" />
     <MESSAGE value="增加注释" />
@@ -611,18 +668,16 @@
     <MESSAGE value="为value实现加减法操作" />
     <MESSAGE value="为value实现加减乘除操作" />
     <MESSAGE value="提交加减乘除" />
-    <option name="LAST_COMMIT_MESSAGE" value="提交加减乘除" />
+    <MESSAGE value="可以运算了，增加多行注释，修改代码结构" />
+    <MESSAGE value="修改报错机制，改为中断报错，并且提示红色" />
+    <MESSAGE value="尝试使用宏替代垃圾代码" />
+    <MESSAGE value="提交宏" />
+    <MESSAGE value="表达式转语句" />
+    <MESSAGE value="执行语句" />
+    <MESSAGE value="修改错误机制" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改错误机制" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/interpret/interpreter.rs</url>
-          <line>48</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="CargoCommandRunConfiguration">
         <watch expression="self-&gt;tokens" />

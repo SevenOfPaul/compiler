@@ -36,4 +36,7 @@ impl Visitor<String> for ExprVisitor {
     fn visit_variable(&mut self, name: &Token) -> String {
         todo!()
     }
+    fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> String {
+        todo!()
+    }
 }

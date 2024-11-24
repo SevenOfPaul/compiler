@@ -17,10 +17,9 @@ pub fn run_file(path: String) {
         let mut parser =Parser::new(sc.scan_tokens());
         let stmts=parser.parse();
       let mut inter =Interpreter::new();
-        println!("{:?}",stmts);
+        // println!("{:?}",stmts);
         //调用解析出来的语句
         inter.run(stmts.clone());
-
     } else {
         error::log(0, "", "找不到文件");
         exit(32);

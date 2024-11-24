@@ -39,7 +39,7 @@ impl Get<String> for Object {
 }
 impl Get<f32> for Object {
     fn get_value(&self) ->Option<f32> {
-        return match self {
+         match self {
             Object::num(n)=>Some(*n),
             _=>None
         }
@@ -48,7 +48,7 @@ impl Get<f32> for Object {
 }
 impl Get<bool> for Object {
     fn get_value(&self) ->Option<bool> {
-        return match self {
+         match self {
             Object::bool(b)=>Some(*b),
             _=>None
         }
