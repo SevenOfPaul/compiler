@@ -6,6 +6,7 @@ use crate::ast::token::token_type::Token_Type;
 use crate::error;
 use crate::parse::err::Parse_Err;
 
+#[derive(Debug)]
 pub(crate) struct Parser {
     tokens: Vec<Token>,
     pos: usize,
@@ -17,6 +18,7 @@ impl Parser {
     pub(crate) fn parse(&mut self) -> Vec<Stmt> {
         let mut stmts = vec![];
         while !self.is_end() {
+            println!("{:?}=={:?}",self.peek(),stmts);
            let stmt=self.declaration();
             if let Ok(stmt) = stmt {
                 stmts.push(stmt);
@@ -249,7 +251,6 @@ impl Parser {
             }
         }
          Err(self.error(String::from("无效声明")))
-
     }
     fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         let val = self.expression();

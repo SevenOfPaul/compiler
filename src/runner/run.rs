@@ -10,18 +10,20 @@ pub fn run_program(){
 }
 pub fn run_file(path: String) {
     //判断文件是否存在
-    let mut bytes = String::new();
-    if let Ok(mut res) = File::open(path) {
-        res.read_to_string(&mut bytes).unwrap();
+    let mut bytes = String::from("let a=2;\
+    print a;");
+    // if let Ok(mut res) = File::open(path) {
+    //     res.read_to_string(&mut bytes).unwrap();
         let mut sc =scanner::Scanner::new(bytes);
         let mut parser =Parser::new(sc.scan_tokens());
+        println!("{:?}",parser);
         let stmts=parser.parse();
       let mut inter =Interpreter::new();
         // println!("{:?}",stmts);
         //调用解析出来的语句
         inter.run(stmts.clone());
-    } else {
-        error::log(0, "", "找不到文件");
-        exit(32);
-    }
+    // } else {
+    //     error::log(0, "", "找不到文件");
+    //     exit(32);
+    // }
 }
