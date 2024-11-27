@@ -5,7 +5,7 @@ use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::error;
+use crate::{env_set, error};
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
@@ -97,7 +97,8 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         env_get!(name)
     }
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
-        todo!()
+       let val=self.evaluate(value)?;
+        env_set!(name,val)
     }
 }
 impl Interpreter {
