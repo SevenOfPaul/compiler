@@ -9,7 +9,7 @@ use crate::{env_set, error};
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
-use crate::interpret::env::Environment;
+use crate::interpret::env::enviroment;
 use crate::{env_add,env_get};
 pub(crate) struct Interpreter {}
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
