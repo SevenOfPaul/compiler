@@ -6,7 +6,7 @@ use std::sync::Mutex;
 use lazy_static::lazy_static;
 use crate::interpret::value::Value;
 pub(crate) struct Environment{
-   pub(crate) enclose:Option<Box<Environment>>,
+   pub(crate)   enclose:Option<Box<Environment>>,
     pub(crate)   local:HashMap<String,Value>
 }
 impl Environment{

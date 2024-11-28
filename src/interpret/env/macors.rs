@@ -30,7 +30,6 @@ macro_rules! env_get(
     if let Some(v)=enviroment.lock().unwrap().borrow().local.get(&key){
         return Ok(v.clone());
     }else{
-        
      Err(Run_Err::new($key.clone(),String::from(key+"未定义")))
     }
   }}

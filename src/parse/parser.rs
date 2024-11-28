@@ -240,6 +240,14 @@ impl Parser {
             })
         }
     }
+    fn block_stmt(&mut self)->Vec<Stmt>{
+        let mut stmts =vec![];
+        while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
+         self.declaration().and_then(|stmt| Ok( stmts.push(stmt)));
+        }
+        self.consume(&Token_Type::RIGHT_BRACE, "丢失了}");
+        return stmts;
+    }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
         let expr=self.equality();
         if self.match_token(&[Token_Type::EQUAL]) {
