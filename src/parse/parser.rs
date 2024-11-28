@@ -18,7 +18,6 @@ impl Parser {
     pub(crate) fn parse(&mut self) -> Vec<Stmt> {
         let mut stmts = vec![];
         while !self.is_end() {
-            println!("{:?}=={:?}",self.peek(),stmts);
            let stmt=self.declaration();
             if let Ok(stmt) = stmt {
                 stmts.push(stmt);
@@ -37,8 +36,8 @@ impl Parser {
         } else {
             Expr::Literal { val: Object::nil }
         }
-
     }
+
     fn declaration(&mut self) -> Result<Stmt, Parse_Err> {
         if self.match_token(&[Token_Type::LET]) {
             self.let_declaration()
@@ -246,11 +245,13 @@ impl Parser {
         if self.match_token(&[Token_Type::EQUAL]) {
             let equals = self.previous();
             let val=self.assign_stmt()?;
-            if let Expr::Variable {name} = expr? {
+            if let Expr::Variable {name} = expr?.clone() {
                 return   Ok(Expr::Assign { name, val: Box::from(val) })
+            }else{
+                return Err(self.error(String::from("无效声明")))
             }
         }
-         Err(self.error(String::from("无效声明")))
+        return expr
     }
     fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         let val = self.expression();
