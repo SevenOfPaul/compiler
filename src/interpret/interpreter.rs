@@ -95,11 +95,11 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
     }
     fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
-        env_get!(name)
+        
     }
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
        let val=self.evaluate(value)?;
-        env_set!(name,val)
+       env_set!(name,val)
     }
 }
 impl Interpreter {
