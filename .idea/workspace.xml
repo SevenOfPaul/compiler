@@ -7,7 +7,7 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="提交完成的宏">
+    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="还差一些">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ast/expression/expr_visitor.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr_visitor.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ast/statment/stmt.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/statment/stmt.rs" afterDir="false" />
@@ -228,15 +228,7 @@
       <workItem from="1732966914536" duration="1051000" />
       <workItem from="1732968027625" duration="2879000" />
       <workItem from="1732971132364" duration="160000" />
-      <workItem from="1733023878106" duration="4003000" />
-    </task>
-    <task id="LOCAL-00009" summary="增加识别空白符">
-      <option name="closed" value="true" />
-      <created>1729389629668</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1729389629668</updated>
+      <workItem from="1733023878106" duration="4034000" />
     </task>
     <task id="LOCAL-00010" summary="增加字符串的识别">
       <option name="closed" value="true" />
@@ -622,7 +614,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732969917445</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="还差一些">
+      <option name="closed" value="true" />
+      <created>1733028245983</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1733028245983</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -655,7 +655,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="增加报错处理" />
     <MESSAGE value="将报错函数嵌入到解析中" />
     <MESSAGE value="修改启动器错误，修改运行bug" />
     <MESSAGE value="修改名字 增加interpreter" />
@@ -680,7 +679,8 @@
     <MESSAGE value="增加赋值函数" />
     <MESSAGE value="执行有问题，执行了两次。需要debug" />
     <MESSAGE value="提交完成的宏" />
-    <option name="LAST_COMMIT_MESSAGE" value="提交完成的宏" />
+    <MESSAGE value="还差一些" />
+    <option name="LAST_COMMIT_MESSAGE" value="还差一些" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

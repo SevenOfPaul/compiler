@@ -5,7 +5,6 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 use lazy_static::lazy_static;
 use crate::ast::token::token::Token;
-use crate::env_get;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 #[derive(Clone)]
