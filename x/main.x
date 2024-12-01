@@ -1,5 +1,6 @@
 {
 let a=2;
-a=4;
+let b=3;
+a=a+b;
 print a;
 }

@@ -15,7 +15,6 @@ pub fn run_file(path: String) {
         res.read_to_string(&mut bytes).unwrap();
         let mut sc =scanner::Scanner::new(bytes);
         let mut parser =Parser::new(sc.scan_tokens());
-        println!("{:?}",parser);
         let stmts=parser.parse();
       let mut inter =Interpreter::new();
         //调用解析出来的语句

@@ -120,7 +120,7 @@ impl Interpreter {
        }
 
     }
-    fn execute(&mut self,stmt:Stmt){
+    fn execute(&mut self, stmt:Stmt){
          stmt.accept(self)
     }
     pub(crate) fn interpret(&mut self, expr: &Expr) -> Value {
@@ -154,11 +154,13 @@ impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
     }
-    fn excute_block(&mut self, stmts: &Vec<Stmt>, env: Rc<RefCell<Environment>>) ->Result<(),Run_Err>{
-
+    fn execute_block(&mut self, stmts: &Vec<Stmt>, env: Environment) ->Result<(),Run_Err>{
+       let pre_env=self.env.clone();
+        self.env=Rc::new(RefCell::new(env));
         for stmt in stmts {
             self.execute(stmt.clone());
         }
+        self.env = pre_env;
         Ok(())
 
     }
@@ -188,7 +190,7 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), Run_Err> {
         //这里要支持嵌套
         //这里得改
-        self.excute_block(stmts,self.env.clone())?;
+        self.execute_block(stmts, Environment::new(Some(self.env.clone())));
         Ok(())
     }
 }

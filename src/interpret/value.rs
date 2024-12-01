@@ -36,7 +36,6 @@ impl Add for Value{
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        println!("{:?}=={:?}",self,other);
         if let Value::num(n1)=self{
             if let Value::num(n2)=other{
                 return Value::num(n1+n2);

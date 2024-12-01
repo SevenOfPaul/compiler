@@ -126,6 +126,7 @@ impl Parser {
         while !(self.is_end()||self.check(&Token_Type::RIGHT_BRACE)) {
             res.push(self.declaration()?);
         }
+        self.consume(&Token_Type::RIGHT_BRACE,"此处缺少}");
         Ok(res)
     }
     //是不是乘除
@@ -250,13 +251,6 @@ impl Parser {
             })
         }
     }
-    fn block_stmt(&mut self)->Vec<Stmt>{
-        let mut stmts =vec![];
-        while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
-         self.declaration().and_then(|stmt| Ok( stmts.push(stmt)));
-        }
-         stmts
-    }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
         let expr=self.equality();
         if self.match_token(&[Token_Type::EQUAL]) {
@@ -269,6 +263,13 @@ impl Parser {
             }
         }
          expr
+    }
+    fn block_stmt(&mut self)->Vec<Stmt>{
+        let mut stmts =vec![];
+        while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
+            self.declaration().and_then(|stmt| Ok( stmts.push(stmt)));
+        }
+        stmts
     }
     fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         let val = self.expression();
