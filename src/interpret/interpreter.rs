@@ -35,7 +35,6 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         match operator.token_type {
             Token_Type::PLUS => {
                 self.check_num_operands(operator, &l, &r)?;
-                println!("{:?}=={:?}",l,r);
                 Ok(l + r)
             }
             Token_Type::MINUS => {
