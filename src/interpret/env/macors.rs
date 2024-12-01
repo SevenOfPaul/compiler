@@ -2,13 +2,12 @@
 /*
 添加变量进全局变量池子
 */
-use crate::interpret::env::enviroment;
 
 #[macro_export]
 macro_rules! env_add(
 ($key:ident,$val:ident)=>{
 {
-  enviroment.lock().unwrap().get_mut().add($key,$val)
+ self.env.borrow().add($key,$val)
   }}
 );
 /*
@@ -18,7 +17,8 @@ macro_rules! env_add(
 macro_rules! env_get(
 ($key:ident)=>{
 {
- enviroment.lock().unwrap().get_mut().get($key)
+
+    Ok( self.env.borrow().get($key)?)
 
   }}
 );
@@ -30,7 +30,7 @@ macro_rules! env_get(
 macro_rules! env_set(
 ($key:ident,$val:ident)=>{
 {
-  enviroment.lock().unwrap().get_mut().set($key,$val)
+  self.env.borrow().set($key,$val)
 }
     }
 );

@@ -4,6 +4,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use lazy_static::lazy_static;
+use crate::ast::expression::expr::Expr;
 use crate::ast::token::token::Token;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
@@ -54,7 +55,3 @@ impl Environment{
     }
 }
 //存储变量的环境
-lazy_static! {
-    //最高作用域 也是全局作用域
-    pub(crate)  static ref enviroment:Mutex<RefCell<Environment>>=Mutex::new(RefCell::new(Environment::new(None)));
-}

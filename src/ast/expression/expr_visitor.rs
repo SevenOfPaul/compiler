@@ -1,4 +1,4 @@
-use crate::interpret::env::enviroment;
+use crate::interpret::env::Environment;
 use crate::ast::expression::expr::{Expr, Visitor};
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;

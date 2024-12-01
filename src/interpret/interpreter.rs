@@ -1,3 +1,5 @@
+use std::cell::{RefCell, RefMut};
+use std::rc::Rc;
 use crate::ast::expression::expr::{Expr};
 use crate::ast::expression::expr;
 use crate::ast::statment::stmt::{Stmt};
@@ -9,9 +11,11 @@ use crate::{env_set, error};
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
-use crate::interpret::env::{enviroment, Environment};
+use crate::interpret::env::{ Environment};
 use crate::{env_add,env_get};
-pub(crate) struct Interpreter {}
+pub(crate) struct Interpreter {
+    env: Rc<RefCell<Environment>>,
+}
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_binary(
         &mut self,
@@ -95,16 +99,17 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
     }
     fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
-         env_get!(name)
+      Ok(self.env.borrow().get(name)?)
     }
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
        let val=self.evaluate(value)?;
-       env_set!(name,val)
+       self.env.borrow_mut().set(name, val)
     }
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
-        Self {}
+        //最高作用域
+        Self {env: Rc::from(RefCell::from(Environment::new(None))) }
     }
     /*
     这里改成执行语句vec
@@ -149,7 +154,7 @@ impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
     }
-    fn excute_block(&mut self, stmts: &Vec<Stmt>,env:Environment)->Result<(),Run_Err>{
+    fn excute_block(&mut self, stmts: &Vec<Stmt>, env: Rc<RefCell<Environment>>) ->Result<(),Run_Err>{
 
         for stmt in stmts {
             self.execute(stmt.clone());
@@ -174,14 +179,16 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
            //添加到变量池中
         let res=self.evaluate(expr);
         if let Ok(val) = res {
-            env_add!(name,val)
+           self.env.borrow_mut().add(name,val)
         }else{
               Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
         }
     }
 
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), Run_Err> {
-       self.excute_block(stmts,Environment::new(Some(enviroment.lock().unwrap().get_mut().clone())))?;
+        //这里要支持嵌套
+        //这里得改
+        self.excute_block(stmts,self.env.clone())?;
         Ok(())
     }
 }
