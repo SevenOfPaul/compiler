@@ -9,7 +9,7 @@ use crate::{env_set, error};
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
-use crate::interpret::env::enviroment;
+use crate::interpret::env::{enviroment, Environment};
 use crate::{env_add,env_get};
 pub(crate) struct Interpreter {}
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
@@ -95,7 +95,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
     }
     fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
-        
+         env_get!(name)
     }
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
        let val=self.evaluate(value)?;
@@ -149,6 +149,14 @@ impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
     }
+    fn excute_block(&mut self, stmts: &Vec<Stmt>,env:Environment)->Result<(),Run_Err>{
+
+        for stmt in stmts {
+            self.execute(stmt.clone());
+        }
+        Ok(())
+
+    }
     //这里其实可以复写
 }
 impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
@@ -170,6 +178,11 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
         }else{
               Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
         }
+    }
+
+    fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), Run_Err> {
+       self.excute_block(stmts,Environment::new(Some(enviroment.lock().unwrap().get_mut().clone())))?;
+        Ok(())
     }
 }
 //执行

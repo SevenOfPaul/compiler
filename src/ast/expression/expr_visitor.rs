@@ -1,6 +1,8 @@
+use crate::interpret::env::enviroment;
 use crate::ast::expression::expr::{Expr, Visitor};
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
+use crate::env_get;
 
 pub (crate) struct ExprVisitor {}
 impl ExprVisitor{
@@ -34,9 +36,10 @@ impl Visitor<String> for ExprVisitor {
         self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
     }
     fn visit_variable(&mut self, name: &Token) -> String {
-        todo!()
+      todo!();
+
     }
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> String {
-        todo!()
+        String::from("变量已声明")
     }
 }

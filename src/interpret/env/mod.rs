@@ -14,14 +14,14 @@ pub(crate) struct Environment{
     pub(crate)   local:HashMap<String,Value>
 }
 impl Environment{
-    fn new(enclose:Option<Environment>) -> Self{
+    pub(crate) fn new(enclose: Option<Environment>) -> Self{
         if enclose.is_none(){
             Self{enclose:None,local:HashMap::new()}
         }else{
             Self{enclose:Some(Box::from(enclose.unwrap())),local:HashMap::new()}
         }
     }
-    fn get(&self,name:&Token)->Result<Value,Run_Err>{
+    pub(crate)  fn get(&self,name:&Token)->Result<Value,Run_Err>{
         let key=name.clone().lexeme;
         let res= self.local.get(&key);
         if res.is_some(){
@@ -32,21 +32,6 @@ impl Environment{
             Err(Run_Err::new(name.clone(),String::from(key+"未定义")))
         }
     }
-//     macro_rules! env_set(
-// ($env:expr,$key:ident,$val:ident)=>{
-// {
-//
-//     let key=$key.lexeme.clone();
-//     if $env.local.contains_key(&key){
-//
-//          $env.local.insert(key,$val.clone());
-//         Ok($val)
-//     }else{
-//          Err(Run_Err::new($key.clone(),String::from(key+"变量未声明")))
-//
-//     }
-//   }}
-// );
     pub(crate) fn set(&mut self, name:&Token, val:Value) ->Result<Value,Run_Err>{
     let key=name.clone().lexeme;
     let res= self.local.contains_key(&key);

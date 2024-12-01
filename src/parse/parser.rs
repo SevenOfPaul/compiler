@@ -67,6 +67,8 @@ impl Parser {
     fn statement(&mut self) -> Result<Stmt, Parse_Err> {
         if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
+        }else if self.match_token(&[Token_Type::LEFT_BRACE]) {
+            Ok(Stmt::Block {stmts:self.block()?})
         } else {
             self.expr_stmt()
         }
@@ -117,6 +119,14 @@ impl Parser {
             })
         }
         expr
+    }
+    //添加{}中的语句
+    fn block(&mut self) ->Result<Vec<Stmt>,Parse_Err>{
+     let mut res=vec![];
+        while !(self.is_end()||self.check(&Token_Type::RIGHT_BRACE)) {
+            res.push(self.declaration()?);
+        }
+        Ok(res)
     }
     //是不是乘除
     fn factor(&mut self) -> Result<Expr, Parse_Err> {
@@ -175,10 +185,6 @@ impl Parser {
             };
             self.consume(&Token_Type::RIGHT_PAREN, "需要一个)")?;
             Ok(expr)
-        } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
-               // self.consume()
-            self.consume(&Token_Type::RIGHT_BRACE, "丢失了}")?;
-            
         }else{
             Err(self.error(String::from("无效的表达式")))
         }
@@ -249,7 +255,7 @@ impl Parser {
         while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
          self.declaration().and_then(|stmt| Ok( stmts.push(stmt)));
         }
-        return stmts;
+         stmts
     }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
         let expr=self.equality();
@@ -262,7 +268,7 @@ impl Parser {
                 return Err(self.error(String::from("无效声明")))
             }
         }
-        return expr
+         expr
     }
     fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         let val = self.expression();
@@ -270,7 +276,7 @@ impl Parser {
             Err(self.error(e.mes))
         } else {
             Ok(Stmt::Print {
-                expr: Box::from(val),
+                expr: Box::from(val)
             })
         }
     }

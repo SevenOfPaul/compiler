@@ -7,16 +7,13 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="修改错误机制">
+    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="提交完成的宏">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/expression/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ast/expression/expr_visitor.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr_visitor.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ast/statment/stmt.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/statment/stmt.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/token/object.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/token/object.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/interpret/env/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/env/mod.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/interpret/interpreter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/interpreter.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parse/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parse/parser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/runner/run.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/runner/run.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x/main.x" beforeDir="false" afterPath="$PROJECT_DIR$/x/main.x" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,38 +221,14 @@
       <workItem from="1732272426398" duration="3479000" />
       <workItem from="1732379451169" duration="89000" />
       <workItem from="1732444832651" duration="3414000" />
-    </task>
-    <task id="LOCAL-00005" summary="提交扫描器">
-      <option name="closed" value="true" />
-      <created>1729331591938</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1729331591938</updated>
-    </task>
-    <task id="LOCAL-00006" summary="提交双字符的token">
-      <option name="closed" value="true" />
-      <created>1729352957478</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1729352957478</updated>
-    </task>
-    <task id="LOCAL-00007" summary="提交双字符的token">
-      <option name="closed" value="true" />
-      <created>1729353032376</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1729353032377</updated>
-    </task>
-    <task id="LOCAL-00008" summary="增加识别空白符">
-      <option name="closed" value="true" />
-      <created>1729388459529</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1729388459529</updated>
+      <workItem from="1732448374431" duration="29000" />
+      <workItem from="1732631654908" duration="59000" />
+      <workItem from="1732711968687" duration="3328000" />
+      <workItem from="1732809299992" duration="29000" />
+      <workItem from="1732966914536" duration="1051000" />
+      <workItem from="1732968027625" duration="2879000" />
+      <workItem from="1732971132364" duration="160000" />
+      <workItem from="1733023878106" duration="4003000" />
     </task>
     <task id="LOCAL-00009" summary="增加识别空白符">
       <option name="closed" value="true" />
@@ -617,7 +590,39 @@
       <option name="project" value="LOCAL" />
       <updated>1732189966805</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="提交代码">
+      <option name="closed" value="true" />
+      <created>1732448393948</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1732448393948</updated>
+    </task>
+    <task id="LOCAL-00055" summary="增加赋值函数">
+      <option name="closed" value="true" />
+      <created>1732713637622</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1732713637622</updated>
+    </task>
+    <task id="LOCAL-00056" summary="执行有问题，执行了两次。需要debug">
+      <option name="closed" value="true" />
+      <created>1732715323357</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1732715323357</updated>
+    </task>
+    <task id="LOCAL-00057" summary="提交完成的宏">
+      <option name="closed" value="true" />
+      <created>1732969917445</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1732969917445</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -650,10 +655,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="提交多个parser的函数" />
-    <MESSAGE value="修改代码结构" />
-    <MESSAGE value="增加注释" />
-    <MESSAGE value="增加nil类型" />
     <MESSAGE value="增加报错处理" />
     <MESSAGE value="将报错函数嵌入到解析中" />
     <MESSAGE value="修改启动器错误，修改运行bug" />
@@ -675,7 +676,11 @@
     <MESSAGE value="表达式转语句" />
     <MESSAGE value="执行语句" />
     <MESSAGE value="修改错误机制" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改错误机制" />
+    <MESSAGE value="提交代码" />
+    <MESSAGE value="增加赋值函数" />
+    <MESSAGE value="执行有问题，执行了两次。需要debug" />
+    <MESSAGE value="提交完成的宏" />
+    <option name="LAST_COMMIT_MESSAGE" value="提交完成的宏" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
