@@ -171,10 +171,8 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
         Ok(())
     }
     fn visit_print(&mut self, expr: &Expr)->Result<(),Run_Err>{
-            let res= self.evaluate(expr);
-          printf(res?);
-        Ok(())
-
+            let res= self.evaluate(expr)?;
+         Ok(())
     }
     fn visit_let(&mut self,name:&Token,expr:&Expr)->Result<(),Run_Err>{
            //添加到变量池中
@@ -189,7 +187,7 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), Run_Err> {
         //这里要支持嵌套
         //这里得改
-        self.execute_block(stmts, Environment::new(Some(self.env.clone())));
+        self.execute_block(stmts, Environment::new(Some(self.env.clone())))?;
         Ok(())
     }
 }
