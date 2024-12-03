@@ -190,5 +190,14 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
         self.execute_block(stmts, Environment::new(Some(self.env.clone())))?;
         Ok(())
     }
+
+    fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> Result<(), Run_Err> {
+        if self.evaluate(condition)?==Value::bool(true){
+            self.execute(then_branch.clone());
+        }else if else_branch.is_some(){
+            self.execute(else_branch.unwrap().clone());
+        }
+        Ok(())
+    }
 }
 //执行

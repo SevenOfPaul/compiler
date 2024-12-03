@@ -13,6 +13,7 @@ pub trait Visitor<T> {
     fn visit_print(&mut self, expr: &Expr) -> T;
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_block(&mut self, stmts:&Vec<Stmt>) -> T;
+    fn visit_if(&mut self,condition:&Expr,then_branch:&Stmt,else_branch:Option<&Stmt>)->T;
 }
 
 impl Stmt {
@@ -32,7 +33,12 @@ impl Stmt {
                 visitor.visit_block(stmts);
             }
             Stmt::IF { condition, then_branch, else_branch } => {
-                todo!();
+                if else_branch.is_some() {
+                    visitor.visit_if(condition.as_ref(),then_branch.as_ref(),
+                                     Some(else_branch.clone().unwrap().as_ref()));
+                }else{
+                    visitor.visit_if(condition.as_ref(),then_branch.as_ref(),None);
+                }
             }
         }
     }
