@@ -1,5 +1,8 @@
-if(1+1){
+let b=1;
+if(true){
+let a=true;
+b=2;
 print a;
-}else{
-print b;
+print c;
 }
+print b;
