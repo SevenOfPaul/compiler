@@ -21,11 +21,13 @@ impl Environment{
     pub(crate)  fn get(&self,name:&Token)->Result<Value,Run_Err>{
         let key=name.clone().lexeme;
         let res= self.local.get(&key);
+        println!("{:?}",res);
         if res.is_some(){
             Ok(res.unwrap().clone())
         }else if self.enclose.is_some() {
             self.enclose.as_ref().unwrap().borrow().get(name)
         }else{
+            println!("{:?}报错",res);
             Err(Run_Err::new(name.clone(),String::from(key+"未定义")))
         }
     }

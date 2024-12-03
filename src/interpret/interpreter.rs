@@ -97,8 +97,8 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
-      Ok(self.env.borrow().get(name)?)
+    fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> { 
+        self.env.borrow().get(name)
     }
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
        let val=self.evaluate(value)?;
@@ -161,7 +161,6 @@ impl Interpreter {
         }
         self.env = pre_env;
         Ok(())
-
     }
     //这里其实可以复写
 }
@@ -172,6 +171,7 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
     }
     fn visit_print(&mut self, expr: &Expr)->Result<(),Run_Err>{
             let res= self.evaluate(expr)?;
+           printf(res);
          Ok(())
     }
     fn visit_let(&mut self,name:&Token,expr:&Expr)->Result<(),Run_Err>{

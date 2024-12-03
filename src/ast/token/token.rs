@@ -18,6 +18,9 @@ lazy_static! {
             (String::from("nil"), Token_Type::NIL),
             (String::from("true"), Token_Type::TRUE),
             (String::from("false"), Token_Type::FALSE),
+            (String::from("if"), Token_Type::IF),
+             (String::from("else"), Token_Type::ELSE),
+             (String::from("while"), Token_Type::WHILE),
         ])
     };
 }
