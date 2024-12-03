@@ -6,6 +6,7 @@ pub(crate) enum Stmt {
     Expression { expr: Box<Expr> },
     Print { expr: Box<Expr> },
     LET { name: Token, expr: Box<Expr> },
+    IF{condition:Box<Expr>,then_branch:Box<Stmt>,else_branch:Option<Box<Stmt>>}
 }
 pub trait Visitor<T> {
     fn visit_expr(&mut self, expr: &Expr) -> T;
@@ -29,6 +30,9 @@ impl Stmt {
             }
             Stmt::Block { stmts } => {
                 visitor.visit_block(stmts);
+            }
+            Stmt::IF { condition, then_branch, else_branch } => {
+                todo!();
             }
         }
     }

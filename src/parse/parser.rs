@@ -65,7 +65,9 @@ impl Parser {
     }
     //把表达式转为语句
     fn statement(&mut self) -> Result<Stmt, Parse_Err> {
-        if self.match_token(&[Token_Type::PRINT]) {
+        if self.match_token(&[Token_Type::IF]){
+              self.if_stmt()
+        }else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
         }else if self.match_token(&[Token_Type::LEFT_BRACE]) {
             Ok(Stmt::Block {stmts:self.block()?})
@@ -251,15 +253,22 @@ impl Parser {
             })
         }
     }
+    fn if_stmt(&mut self)->Result<Stmt,Parse_Err>{
+         self.consume(&Token_Type::LEFT_PAREN,"此处缺少{")?;//先有个左括号
+         let condition=self.expression();
+         self.consume(&Token_Type::RIGHT_PAREN, "此处缺少}")?;//再有个右括号
+          let then_branch=self.statement()?;//默认条件
+          Ok(Stmt::IF {condition:Box::from(condition),then_branch:Box::from(then_branch),else_branch:None})
+    }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
         let expr=self.equality();
         if self.match_token(&[Token_Type::EQUAL]) {
             let equals = self.previous();
             let val=self.assign_stmt()?;
-            if let Expr::Variable {name} = expr?.clone() {
-                return   Ok(Expr::Assign { name, val: Box::from(val) })
+            return  if let Expr::Variable {name} = expr?.clone() {
+                   Ok(Expr::Assign { name, val: Box::from(val) })
             }else{
-                return Err(self.error(String::from("无效声明")))
+                 Err(self.error(String::from("无效声明")))
             }
         }
          expr
@@ -267,7 +276,7 @@ impl Parser {
     fn block_stmt(&mut self)->Vec<Stmt>{
         let mut stmts =vec![];
         while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
-            self.declaration().and_then(|stmt| Ok( stmts.push(stmt)));
+            self.declaration().and_then(|stmt| Ok(stmts.push(stmt)));
         }
         stmts
     }

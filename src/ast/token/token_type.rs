@@ -34,6 +34,9 @@ pub enum Token_Type {
     NIL, //null
     TRUE,
     FALSE,
+    IF,//if
+    WHILE,//while
+    FOR,//for 循环
     /*
     注释不进入parse 这里只是方便理解
     COMMENT_START,// /*
