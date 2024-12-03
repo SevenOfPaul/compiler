@@ -239,7 +239,6 @@ impl Parser {
     }
     fn error(&mut self, mes: String) -> Parse_Err {
         let token = self.peek();
-        error::log(token.line, &token.lexeme, &mes);
         Parse_Err::new(token.clone(),mes)
     }
     //下面是表达式转语句的代码

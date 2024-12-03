@@ -103,6 +103,7 @@ impl Not for Value {
 
 impl PartialEq<Self> for Value {
     fn eq(&self, other: &Self) -> bool {
+        println!("{:?}",self);
        return  match self {
             Value::num(n1) => {
                 if let Value::num(n2) = other {
