@@ -255,10 +255,14 @@ impl Parser {
     }
     fn if_stmt(&mut self)->Result<Stmt,Parse_Err>{
          self.consume(&Token_Type::LEFT_PAREN,"此处缺少{")?;//先有个左括号
-         let condition=self.expression();
+         let condition=Box::from(self.expression());
          self.consume(&Token_Type::RIGHT_PAREN, "此处缺少}")?;//再有个右括号
-          let then_branch=self.statement()?;//默认条件
-          Ok(Stmt::IF {condition:Box::from(condition),then_branch:Box::from(then_branch),else_branch:None})
+          let then_branch=Box::from(self.statement()?);//默认条件
+         let mut else_branch=None;
+          if self.match_token(&[Token_Type::ELSE]){
+             else_branch=Some(Box::from(self.statement()?));
+        }
+          Ok(Stmt::IF {condition,then_branch,else_branch})
     }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
         let expr=self.equality();
@@ -273,13 +277,13 @@ impl Parser {
         }
          expr
     }
-    fn block_stmt(&mut self)->Vec<Stmt>{
-        let mut stmts =vec![];
-        while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
-            self.declaration().and_then(|stmt| Ok(stmts.push(stmt)));
-        }
-        stmts
-    }
+    // fn block_stmt(&mut self)->Vec<Stmt>{
+    //     let mut stmts =vec![];
+    //     while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
+    //         self.declaration().and_then(|stmt| Ok(stmts.push(stmt)));
+    //     }
+    //     stmts
+    // }
     fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         let val = self.expression();
         if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
