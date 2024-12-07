@@ -104,6 +104,13 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
        let val=self.evaluate(value)?;
        self.env.borrow_mut().set(name, val)
     }
+    fn visit_question(&mut self, condition: &Expr, then_branch: &Box<Expr, else_branch: &Box<Expr>) -> Result<Value, Run_Err> {
+    return Ok(if self.evaluate(condition)?==Value::bool(true){
+            self.evaluate(then_branch)
+        }else if else_branch.is_some(){
+            self.evaluate(else_branch)
+        }
+     })
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
