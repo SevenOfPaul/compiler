@@ -27,6 +27,10 @@ pub(crate) enum Expr {
         name:Token,
         val:Box<Expr>,
     }
+    Question{
+        condition:&Expr,
+        // then_expr:
+    }
 }
 
 pub trait Visitor<T> {
