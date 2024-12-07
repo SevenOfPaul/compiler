@@ -1,8 +1,6 @@
-use crate::interpret::env::Environment;
 use crate::ast::expression::expr::{Expr, Visitor};
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
-use crate::env_get;
 
 pub (crate) struct ExprVisitor {}
 impl ExprVisitor{

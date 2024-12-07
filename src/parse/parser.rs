@@ -30,9 +30,17 @@ impl Parser {
     执行单操作符
     */
     fn expression(&mut self) -> Expr {
-        if let Ok(expr) = self.assign_stmt() {
+        if self.check_next(&Token_Type::QUESTION){
+            //给个三元
+            let ternary_expr=  self.ternary_stmt();
+            if ternary_expr.is_ok(){
+                ternary_expr.unwrap()
+            }else if let Ok(expr) = self.assign_stmt() {
             expr
-        } else {
+        }else {
+                Expr::Literal { val: Object::nil }
+            }
+        }else{
             Expr::Literal { val: Object::nil }
         }
     }
@@ -205,6 +213,13 @@ impl Parser {
             (*self.peek()).token_type == *token_type
         }
     }
+    fn check_next(&self, token_type: &Token_Type) -> bool {
+        if self.is_end() {
+            false
+        } else {
+            self.next().token_type == *token_type
+        }
+    }
     fn match_token(&mut self, types: &[Token_Type]) -> bool {
         //当前的token 必须是需要的 才能继续
         for t in types {
@@ -231,6 +246,14 @@ impl Parser {
     //当前token
     fn peek(&self) -> &Token {
         &self.tokens[self.pos]
+    }
+    fn next(&self)->Token{
+      if self.pos<self.tokens.len()-1{
+        self.tokens[self.pos+1].clone()
+      }else{
+          //到头了的话 前一个就是EOF
+         self.previous()
+      }
     }
     //前一个token
     fn previous(&self) -> Token {
@@ -274,6 +297,18 @@ impl Parser {
             }
         }
          expr
+    }
+    fn ternary_stmt(&mut self)->Result<Expr,Parse_Err>{
+        println!("{:?}",self.peek());
+        let condition=self.equality()?;
+        self.advance();
+        self.advance();
+        let t_expr=self.equality()?;
+        self.consume(&Token_Type::COLON,"应该是:")?;
+        self.advance();
+        let f_expr=self.equality()?;
+        Ok(Expr::Ternary {condition:Box::from(condition),t_expr:Box::from(t_expr),f_expr:Box::from(f_expr)})
+        // expr
     }
     // fn block_stmt(&mut self)->Vec<Stmt>{
     //     let mut stmts =vec![];

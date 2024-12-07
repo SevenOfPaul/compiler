@@ -172,7 +172,7 @@ impl Interpreter {
 }
 impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
     fn visit_expr(&mut self, expr: &Expr)->Result<(),Run_Err>{
-       self.evaluate(expr);
+       self.evaluate(expr)?;
         Ok(())
     }
     fn visit_print(&mut self, expr: &Expr)->Result<(),Run_Err>{
