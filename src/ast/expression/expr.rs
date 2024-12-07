@@ -26,11 +26,11 @@ pub(crate) enum Expr {
     Assign{
         name:Token,
         val:Box<Expr>,
-    }
-    Question{
-        condition:&Expr,
-        then_expr:Box<Expr>,
-        else_expr:Box<Expr>
+    },
+    Ternary{
+        condition:Box<Expr>,
+        t_expr:Box<Expr>,
+        f_expr:Box<Expr>
     }
 }
 
@@ -41,7 +41,7 @@ pub trait Visitor<T> {
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
     fn visit_variable(&mut self, name: &Token) -> T;
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> T;
-    fn visit_question(&mut self,condition:&Expr,then_expr:&Box<Expr>,else_expr:&Box<Expr>)->T
+    fn visit_ternary(&mut self,condition:&Box<Expr>,t_expr:&Box<Expr>,f_expr:&Box<Expr>)->T;
 }
 // 
 // impl Expr {
@@ -71,8 +71,4 @@ impl_expr_accept! {(Literal,literal,{val,}),(
     Unary,unary,{operator,r_expression,}
 ),(Variable,variable,{name,}),(
     Assign,assign,{name,val,}
-),(
-    Question,question,{
-        condition,then_expr,else_expr  
-    }
-)}
+),(Ternary,ternary,{condition,t_expr,f_expr,}),}

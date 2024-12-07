@@ -1,4 +1,4 @@
-use std::cell::{RefCell, RefMut};
+use std::cell::{RefCell};
 use std::rc::Rc;
 use crate::ast::expression::expr::{Expr};
 use crate::ast::expression::expr;
@@ -7,12 +7,11 @@ use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::{env_set, error};
+use crate::{error};
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
 use crate::interpret::env::{ Environment};
-use crate::{env_add,env_get};
 pub(crate) struct Interpreter {
     env: Rc<RefCell<Environment>>,
 }
@@ -104,13 +103,13 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
        let val=self.evaluate(value)?;
        self.env.borrow_mut().set(name, val)
     }
-    fn visit_question(&mut self, condition: &Expr, then_branch: &Box<Expr, else_branch: &Box<Expr>) -> Result<Value, Run_Err> {
-    return Ok(if self.evaluate(condition)?==Value::bool(true){
-            self.evaluate(then_branch)
-        }else if else_branch.is_some(){
-            self.evaluate(else_branch)
-        }
-     })
+    fn visit_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>) -> Result<Value, Run_Err> {
+         Ok(if self.evaluate(condition)? == Value::bool(true) {
+            self.evaluate(t_expr)?
+        } else {
+            self.evaluate(f_expr)?
+        })
+    }
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {

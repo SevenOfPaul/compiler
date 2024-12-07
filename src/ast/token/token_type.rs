@@ -14,6 +14,8 @@ pub enum Token_Type {
     SEMICOLON,//;
     BANG, // !
     EQUAL, //=
+    COLON,//:
+    QUESTION,//?
     //两个字符构成的token
     BANG_EQUAL,//！=
     EQUAL_EQUAL,//==
@@ -35,6 +37,7 @@ pub enum Token_Type {
     TRUE,
     FALSE,
     IF,//if
+
     ELSE,//else
     WHILE,//while
     FOR,//for 循环

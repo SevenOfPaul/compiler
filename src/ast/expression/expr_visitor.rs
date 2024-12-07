@@ -42,4 +42,8 @@ impl Visitor<String> for ExprVisitor {
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> String {
         String::from("变量已声明")
     }
+
+    fn visit_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>) -> String {
+        todo!()
+    }
 }

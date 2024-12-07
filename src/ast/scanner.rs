@@ -57,6 +57,10 @@ impl Scanner {
             '+' => self.add_token(Token_Type::PLUS, Some(Object::nil)),
             ';' => self.add_token(Token_Type::SEMICOLON, Some(Object::nil)),
             '*' => self.add_token(Token_Type::STAR, Some(Object::nil)),
+            '?'=>{
+                self.add_token(Token_Type::QUESTION,Some(Object::nil))
+            },
+            ':'=>self.add_token(Token_Type::COLON,Some(Object::nil)),
             //以上为单字符 还有双字符
             '!' => {
                 let tok = if self.is_match('=') {
