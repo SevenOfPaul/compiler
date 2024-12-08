@@ -27,19 +27,19 @@ jobs:
     - name: Rename executable
       run: |
         cd target/release
-        move x.exe ../x.exe
+        ren x.exe x.exe
         
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: x.exe
-        path: target/x.exe
+        name: x
+        path: target/release/x.exe
         
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
-        files: target/x.exe
+        files: target/release/x.exe
         name: Latest Build
         tag_name: latest
       env:
