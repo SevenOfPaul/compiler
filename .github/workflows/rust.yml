@@ -4,7 +4,7 @@ on:
     types: [created]
 jobs:
   release:
-    name: release ${{ x }}
+    name: release ${{ x.exe }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,5 +17,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          RUSTTARGET: ${{ x }}
+          RUSTTARGET: ${{ x.exe }}
           EXTRA_FILES: "README.md LICENSE"
