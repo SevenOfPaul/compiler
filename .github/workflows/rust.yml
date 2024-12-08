@@ -29,5 +29,5 @@ jobs:
     - name: Upload Executable
       uses: actions/upload-artifact@v3
       with:
-        name: music-ui
-        path: target/release/music-ui
+        name: x
+        path: target/release/x
