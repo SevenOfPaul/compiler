@@ -1,4 +1,3 @@
-use log::error;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::{self, Keywords};
 use crate::error;
