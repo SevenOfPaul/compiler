@@ -1,33 +1,21 @@
-name: Rust CI
-
+name: Release
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
-env:
-  CARGO_TERM_COLOR: always
-
+  release:
+    types: [created]
 jobs:
-  build:
+  release:
+    name: release ${{ x }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
     steps:
-    - uses: actions/checkout@v4
-    - name: Install Dependencies
-      run: sudo apt update && sudo apt install libasound2-dev -y
-      
-    - name: Setup Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
-        
-    - name: Build
-      run: cargo build --release --verbose
-
-    - name: Upload Executable
-      uses: actions/upload-artifact@v3
-      with:
-        name: x
-        path: target/release/x
+      - uses: actions/checkout@master
+      - name: Compile and release
+        uses: rust-build/rust-build.action@v1.4.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          RUSTTARGET: ${{ x }}
+          EXTRA_FILES: "README.md LICENSE"
