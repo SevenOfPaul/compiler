@@ -30,17 +30,10 @@ impl Parser {
     执行单操作符
     */
     fn expression(&mut self) -> Expr {
-        if self.check_next(&Token_Type::QUESTION){
-            //给个三元
-            let ternary_expr=  self.ternary_stmt();
-            if ternary_expr.is_ok(){
-                ternary_expr.unwrap()
-            }else if let Ok(expr) = self.assign_stmt() {
+        //先看看是不是三元
+        if let Ok(expr) = self.ternary_expr() {
             expr
-        }else {
-                Expr::Literal { val: Object::nil }
-            }
-        }else{
+        } else {
             Expr::Literal { val: Object::nil }
         }
     }
@@ -52,6 +45,7 @@ impl Parser {
             self.statement()
         }
     }
+
     //声明变量的规则
     fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
         let name = self.consume(
@@ -72,12 +66,12 @@ impl Parser {
     }
     //把表达式转为语句
     fn statement(&mut self) -> Result<Stmt, Parse_Err> {
-        if self.match_token(&[Token_Type::IF]){
-              self.if_stmt()
-        }else if self.match_token(&[Token_Type::PRINT]) {
+        if self.match_token(&[Token_Type::IF]) {
+            self.if_stmt()
+        } else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
-        }else if self.match_token(&[Token_Type::LEFT_BRACE]) {
-            Ok(Stmt::Block {stmts:self.block()?})
+        } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
+            Ok(Stmt::Block {stmts: self.block()?})
         } else {
             self.expr_stmt()
         }
@@ -195,7 +189,7 @@ impl Parser {
             };
             self.consume(&Token_Type::RIGHT_PAREN, "需要一个)")?;
             Ok(expr)
-        }else{
+        }else {
             Err(self.error(String::from("无效的表达式")))
         }
     }
@@ -211,13 +205,6 @@ impl Parser {
             false
         } else {
             (*self.peek()).token_type == *token_type
-        }
-    }
-    fn check_next(&self, token_type: &Token_Type) -> bool {
-        if self.is_end() {
-            false
-        } else {
-            self.next().token_type == *token_type
         }
     }
     fn match_token(&mut self, types: &[Token_Type]) -> bool {
@@ -247,14 +234,6 @@ impl Parser {
     fn peek(&self) -> &Token {
         &self.tokens[self.pos]
     }
-    fn next(&self)->Token{
-      if self.pos<self.tokens.len()-1{
-        self.tokens[self.pos+1].clone()
-      }else{
-          //到头了的话 前一个就是EOF
-         self.previous()
-      }
-    }
     //前一个token
     fn previous(&self) -> Token {
         self.tokens[self.pos - 1].clone()
@@ -265,14 +244,11 @@ impl Parser {
     }
     //下面是表达式转语句的代码
     fn expr_stmt(&mut self) -> Result<Stmt, Parse_Err> {
-        let val = self.expression();
-        if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
-            Err(self.error(e.mes))
-        } else {
-            Ok(Stmt::Expression {
-                expr: Box::from(val),
-            })
-        }
+        let expr = self.assign_stmt()?;
+        self.consume(&Token_Type::SEMICOLON, "表达式后需要分号")?;
+        Ok(Stmt::Expression {
+            expr: Box::new(expr)
+        })
     }
     fn if_stmt(&mut self)->Result<Stmt,Parse_Err>{
          self.consume(&Token_Type::LEFT_PAREN,"此处缺少{")?;//先有个左括号
@@ -298,17 +274,24 @@ impl Parser {
         }
          expr
     }
-    fn ternary_stmt(&mut self)->Result<Expr,Parse_Err>{
-        println!("{:?}",self.peek());
-        let condition=self.equality()?;
-        self.advance();
-        self.advance();
-        let t_expr=self.equality()?;
-        self.consume(&Token_Type::COLON,"应该是:")?;
-        self.advance();
-        let f_expr=self.equality()?;
-        Ok(Expr::Ternary {condition:Box::from(condition),t_expr:Box::from(t_expr),f_expr:Box::from(f_expr)})
-        // expr
+    //解析三元表达式
+    fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
+        // 先解析条件表达式
+        let may_expr = self.equality()?;
+        //不是三元直接返回
+        if !self.match_token(&[Token_Type::QUESTION]) {
+            return Ok(may_expr);
+        }
+        // 解析 ? 后的表达式
+        let t_expr = self.expression();
+        // 必须有冒号
+        self.consume(&Token_Type::COLON, "此处三元表达式缺少:'")?;
+        let f_expr = self.expression();
+        Ok(Expr::Ternary {
+            condition: Box::new(may_expr),
+            t_expr: Box::new(t_expr), 
+            f_expr: Box::new(f_expr)
+        })
     }
     // fn block_stmt(&mut self)->Vec<Stmt>{
     //     let mut stmts =vec![];
@@ -329,3 +312,4 @@ impl Parser {
     }
     //声明语法
 }
+//表达式解析的时候看看是不是三元
