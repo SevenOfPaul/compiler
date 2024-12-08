@@ -44,4 +44,8 @@ impl Visitor<String> for ExprVisitor {
     fn visit_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>) -> String {
         todo!()
     }
+
+    fn visit_logical(&mut self, operator: &Token, l_expression: &Box<Expr>, r_expression: &Box<Expr>) -> String {
+        todo!()
+    }
 }

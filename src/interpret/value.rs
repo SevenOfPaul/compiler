@@ -31,6 +31,13 @@ impl Value {
             _ => false,
         }
     }
+    pub (crate) fn is_truthy(&self) -> bool {
+        match self {
+            Value::bool(b) => *b,
+            Value::num(n)=>*n==1.0,
+             _=>false
+        }
+    }
 }
 impl Add for Value {
     type Output = Self;

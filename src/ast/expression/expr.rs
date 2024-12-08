@@ -20,17 +20,26 @@ pub(crate) enum Expr {
         operator: Token,
         r_expression: Box<Expr>,
     },
+    //获取变量
     Variable {
         name:Token
     },
+    //声明变量
     Assign{
         name:Token,
         val:Box<Expr>,
     },
+    //三元
     Ternary{
         condition:Box<Expr>,
         t_expr:Box<Expr>,
         f_expr:Box<Expr>
+    },
+    //逻辑运算符
+    Logical{
+        operator: Token,
+        l_expression: Box<Expr>,
+        r_expression: Box<Expr>,
     }
 }
 
@@ -42,6 +51,7 @@ pub trait Visitor<T> {
     fn visit_variable(&mut self, name: &Token) -> T;
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> T;
     fn visit_ternary(&mut self,condition:&Box<Expr>,t_expr:&Box<Expr>,f_expr:&Box<Expr>)->T;
+    fn visit_logical(&mut self, operator: &Token, l_expression: &Box<Expr>, r_expression: &Box<Expr>) -> T;
 }
 // 
 // impl Expr {
@@ -71,4 +81,6 @@ impl_expr_accept! {(Literal,literal,{val,}),(
     Unary,unary,{operator,r_expression,}
 ),(Variable,variable,{name,}),(
     Assign,assign,{name,val,}
-),(Ternary,ternary,{condition,t_expr,f_expr,}),}
+),(Ternary,ternary,{condition,t_expr,f_expr,}),(
+    Logical,logical,{operator,l_expression,r_expression,}
+),}

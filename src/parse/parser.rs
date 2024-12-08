@@ -76,7 +76,7 @@ impl Parser {
             self.expr_stmt()
         }
     }
-    //看看等号的运算符
+    //看看以等号为中心的表达式 类似 1!=2;1==2; 1==2&&2==1;
     fn equality(&mut self) -> Result<Expr, Parse_Err> {
         let mut expr = self.comparison();
         while self.match_token(&[Token_Type::BANG_EQUAL, Token_Type::EQUAL_EQUAL]) {
@@ -157,6 +157,25 @@ impl Parser {
             });
         }
         self.primary()
+    }
+    fn or(&mut self)->Result<Expr,Parse_Err>{
+        let l=self.and()?;
+        while self.match_token(&[Token_Type::OR]) {
+           let oper=self.previous();
+            let r = self.and()?;
+            return Ok(Expr::Logical {operator:oper,l_expression:Box::from(l.clone()),r_expression:Box::from(r)})
+        }
+        Ok(l)
+    }
+    fn and(&mut self)->Result<Expr,Parse_Err>{
+        let l=self.equality()?;
+        while self.match_token(&[Token_Type::AND]) {
+            let oper=self.previous();
+            let r=self.equality()?;
+            return Ok(Expr::Logical {operator:oper,l_expression:Box::from(l.clone()),r_expression:Box::from(r)})
+        }
+        Ok(l)
+
     }
     //非运算符的情况下
     //进行递归
@@ -276,7 +295,7 @@ impl Parser {
     }
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
-        // 先解析条件表达式
+        // 先解析条件表达式 以等号为核心
         let may_expr = self.equality()?;
         //不是三元直接返回
         if !self.match_token(&[Token_Type::QUESTION]) {

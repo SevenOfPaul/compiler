@@ -1,3 +1,4 @@
+use log::error;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::{self, Keywords};
 use crate::error;
@@ -61,6 +62,20 @@ impl Scanner {
                 self.add_token(Token_Type::QUESTION,Some(Object::nil))
             },
             ':'=>self.add_token(Token_Type::COLON,Some(Object::nil)),
+            '&'=>{
+                if self.is_match('&'){
+                    self.add_token(Token_Type::AND,Some(Object::nil))
+                }else{
+                    error::log(self.line, &self.peek().to_string(), "暂不支持位与运算");
+                }
+            }
+            '|'=>{
+                if self.is_match('|'){
+                    self.add_token(Token_Type::OR,Some(Object::nil))
+                }else{
+                    error::log(self.line, &self.peek().to_string(), "暂不支持位或运算");
+                }
+            }
             //以上为单字符 还有双字符
             '!' => {
                 let tok = if self.is_match('=') {

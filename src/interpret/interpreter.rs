@@ -110,6 +110,21 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
             self.evaluate(f_expr)?
         })
     }
+
+    fn visit_logical(&mut self, operator: &Token, l_expression: &Box<Expr>, r_expression: &Box<Expr>) -> Result<Value, Run_Err> {
+        let l=self.evaluate(l_expression)?;
+        if operator.token_type==Token_Type::OR {
+            if l.is_truthy(){
+               return Ok(l)
+            }
+       }else{
+            if !l.is_truthy(){
+                return Ok(l)
+            }
+        }
+        Ok(self.evaluate(r_expression)?)
+    }
+
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
