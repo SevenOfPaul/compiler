@@ -9,13 +9,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="去掉不需要的注释">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/expression/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/expression/expr.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/scanner.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/scanner.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ast/token/token_type.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ast/token/token_type.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpret/env/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/env/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interpret/interpreter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/interpreter.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parse/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parse/parser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x/main.x" beforeDir="false" afterPath="$PROJECT_DIR$/x/main.x" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +132,7 @@
     </configuration>
   </component>
   <component name="RustProjectSettings">
-    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="toolchainHomeDirectory" value="$PROJECT_DIR$/../.cargo/bin" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -656,7 +649,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
