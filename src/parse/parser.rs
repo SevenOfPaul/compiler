@@ -281,7 +281,7 @@ impl Parser {
           Ok(Stmt::IF {condition,then_branch,else_branch})
     }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
-        let expr=self.or();
+        let expr=self.ternary_expr();
         if self.match_token(&[Token_Type::EQUAL]) {
             let equals = self.previous();
             let val=self.assign_stmt()?;
@@ -296,7 +296,7 @@ impl Parser {
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
         // 先解析条件表达式 以等号为核心
-        let may_expr = self.equality()?;
+        let may_expr = self.or()?;
         //不是三元直接返回
         if !self.match_token(&[Token_Type::QUESTION]) {
             return Ok(may_expr);
