@@ -21,6 +21,7 @@ lazy_static! {
             (String::from("if"), Token_Type::IF),
              (String::from("else"), Token_Type::ELSE),
              (String::from("while"), Token_Type::WHILE),
+             (String::from("for"),Token_Type::FOR)
         ])
     };
 }
