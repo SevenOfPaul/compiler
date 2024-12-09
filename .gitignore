@@ -3,3 +3,4 @@
 .github/*
 .idea/workspace.xml
 .github/workflows/rust.yml
+.vscode

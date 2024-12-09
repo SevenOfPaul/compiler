@@ -31,7 +31,7 @@ impl Parser {
     */
     fn expression(&mut self) -> Expr {
         //先看看是不是三元
-        if let Ok(expr) = self.ternary_expr() {
+        if let Ok(expr) = self.assign_stmt() {
             expr
         } else {
             Expr::Literal { val: Object::nil }
@@ -281,7 +281,7 @@ impl Parser {
           Ok(Stmt::IF {condition,then_branch,else_branch})
     }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
-        let expr=self.equality();
+        let expr=self.or();
         if self.match_token(&[Token_Type::EQUAL]) {
             let equals = self.previous();
             let val=self.assign_stmt()?;

@@ -143,13 +143,6 @@ impl Interpreter {
     fn execute(&mut self, stmt:Stmt){
          stmt.accept(self)
     }
-    pub(crate) fn interpret(&mut self, expr: &Expr) -> Value {
-        let res = self.evaluate(expr);
-        res.unwrap_or_else(|e| {
-            error::log(e.token.line, &e.token.lexeme, &e.mes);
-            Value::nil
-        })
-    }
     pub(crate) fn check_num_operands(
         &self,
         oper: &Token,

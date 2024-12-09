@@ -1,1 +1,2 @@
-true||false;
+let a=true||false;
+print a;

@@ -6,8 +6,7 @@ mod runner;
 mod parse;
 pub(crate) mod tools;
 mod interpret;
-
-use crate::runner::run::run_file;
+use crate::runner::run::{run_program,run_file};
 fn main() {
     let mut args = env::args();
 
@@ -21,8 +20,7 @@ fn main() {
         // runner file
         run_file(args.nth(1).unwrap());
     } else {
-        run_file("".parse().unwrap());
-        //runner prompt
+        run_program(String::new());
         error::log(0, "", "暂不支持命令行");
     }
 }
