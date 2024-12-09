@@ -25,11 +25,11 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         //判断是否出错
         let l = self.evaluate(l_expression).unwrap_or_else(|e| {
             error::log(e.token.line, &e.token.lexeme, &e.mes);
-            Value::nil
+            Value::Nil
         });
         let r = self.evaluate(r_expression).unwrap_or_else(|e| {
             error::log(e.token.line, &e.token.lexeme, &e.mes);
-            Value::nil
+            Value::Nil
         });
         match operator.token_type {
             Token_Type::PLUS => {
@@ -50,27 +50,27 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
             }
             Token_Type::GREATER => {
                 self.check_num_operands(operator, &l, &r)?;
-                Ok(Value::bool(l > r))
+                Ok(Value::Bool(l > r))
             }
             Token_Type::LESS => {
                 self.check_num_operands(operator, &l, &r)?;
-                Ok(Value::bool(l < r))
+                Ok(Value::Bool(l < r))
             }
             Token_Type::GREATER_EQUAL => {
                 self.check_num_operands(operator, &l, &r)?;
-                Ok(Value::bool(l >= r))
+                Ok(Value::Bool(l >= r))
             }
             Token_Type::EQUAL_EQUAL => {
                 self.check_num_operands(operator, &l, &r)?;
-                Ok(Value::bool(l == r))
+                Ok(Value::Bool(l == r))
             }
             Token_Type::BANG_EQUAL => {
                 self.check_num_operands(operator, &l, &r)?;
-                Ok(Value::bool(l != r))
+                Ok(Value::Bool(l != r))
             }
             Token_Type::LESS_EQUAL => {
                 self.check_num_operands(operator, &l, &r)?;
-                Ok(Value::bool(l <= r))
+                Ok(Value::Bool(l <= r))
             }
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
@@ -82,10 +82,10 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
 
     fn visit_literal(&mut self, value: &Object) -> Result<Value, Run_Err> {
         Ok(match value {
-            Object::str(s) => Value::str(s.clone()),
-            Object::num(n) => Value::num(*n),
-            Object::bool(b) => Value::bool(*b),
-            _ => Value::nil,
+            Object::Str(s) => Value::Str(s.clone()),
+            Object::Num(n) => Value::Num(*n),
+            Object::Bool(b) => Value::Bool(*b),
+            _ => Value::Nil,
         })
     }
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, Run_Err> {
@@ -104,7 +104,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
        self.env.borrow_mut().set(name, val)
     }
     fn visit_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>) -> Result<Value, Run_Err> {
-         Ok(if self.evaluate(condition)? == Value::bool(true) {
+         Ok(if self.evaluate(condition)? == Value::Bool(true) {
             self.evaluate(t_expr)?
         } else {
             self.evaluate(f_expr)?
@@ -206,7 +206,7 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
     }
 
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> Result<(), Run_Err> {
-        if self.evaluate(condition)?==Value::bool(true){
+        if self.evaluate(condition)?==Value::Bool(true){
             self.execute(then_branch.clone());
         }else if else_branch.is_some(){
             self.execute(else_branch.unwrap().clone());

@@ -34,7 +34,7 @@ impl Parser {
         if let Ok(expr) = self.assign_stmt() {
             expr
         } else {
-            Expr::Literal { val: Object::nil }
+            Expr::Literal { val: Object::Nil }
         }
     }
 
@@ -181,14 +181,14 @@ impl Parser {
     //进行递归
     fn primary(&mut self) -> Result<Expr, Parse_Err> {
         if self.match_token(&[Token_Type::NIL]) {
-            Ok(Expr::Literal { val: Object::nil })
+            Ok(Expr::Literal { val: Object::Nil })
         } else if self.match_token(&[Token_Type::TRUE]) {
             Ok(Expr::Literal {
-                val: Object::bool(true),
+                val: Object::Bool(true),
             })
         } else if self.match_token(&[Token_Type::FALSE]) {
             Ok(Expr::Literal {
-                val: Object::bool(false),
+                val: Object::Bool(false),
             })
         } else if self.match_token(&[Token_Type::NUMBER]) {
             Ok(Expr::Literal {

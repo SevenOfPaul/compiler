@@ -1,22 +1,22 @@
 #[derive(Debug,Clone)]
 pub(crate) enum Object {
-    str(String),
-    num(f32),
-    bool(bool),
-    nil
+    Str(String),
+    Num(f32),
+    Bool(bool),
+    Nil
 }
 impl Object{
    pub(crate) fn to_string(&self)->String{
        match self {
-           Object::num(n)=>{
+           Object::Num(n)=>{
                n.to_string()
-           },Object::bool(b)=>{
+           },Object::Bool(b)=>{
                b.to_string()
            }
-           Object::nil=>{
+           Object::Nil =>{
               String::from("Nil")
            }
-           Object::str(s)=>{
+           Object::Str(s)=>{
                s.clone()
            }
        }
@@ -32,7 +32,7 @@ pub(crate)  trait Get<T>{
 impl Get<String> for Object {
    fn get_value(&self) ->Option<String> {
       match self {
-          Object::str(s)=>Some(s.clone()),
+          Object::Str(s)=>Some(s.clone()),
         _=>None
       }
     }
@@ -40,7 +40,7 @@ impl Get<String> for Object {
 impl Get<f32> for Object {
     fn get_value(&self) ->Option<f32> {
          match self {
-            Object::num(n)=>Some(*n),
+            Object::Num(n)=>Some(*n),
             _=>None
         }
     }
@@ -49,7 +49,7 @@ impl Get<f32> for Object {
 impl Get<bool> for Object {
     fn get_value(&self) ->Option<bool> {
          match self {
-            Object::bool(b)=>Some(*b),
+            Object::Bool(b)=>Some(*b),
             _=>None
         }
     }

@@ -3,17 +3,17 @@ use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 
 #[derive(Debug, Clone)]
 pub(crate) enum Value {
-    str(String),
-    num(f32),
-    bool(bool),
-    nil,
+    Str(String),
+    Num(f32),
+    Bool(bool),
+    Nil,
 }
 impl Neg for Value {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Value::num(match self {
-            Value::num(n) => -n,
+        Value::Num(match self {
+            Value::Num(n) => -n,
             _ => panic!("不支持负号操作"),
         })
     }
@@ -21,20 +21,20 @@ impl Neg for Value {
 impl Value {
     pub(crate) fn is_num(&self) -> bool {
         match self {
-            Value::num(n) => true,
+            Value::Num(n) => true,
             _ => false,
         }
     }
     pub(crate) fn is_str(&self) -> bool {
         match self {
-            Value::str(s) => true,
+            Value::Str(s) => true,
             _ => false,
         }
     }
     pub (crate) fn is_truthy(&self) -> bool {
         match self {
-            Value::bool(b) => *b,
-            Value::num(n)=>*n==1.0,
+            Value::Bool(b) => *b,
+            Value::Num(n)=>*n==1.0,
              _=>false
         }
     }
@@ -43,17 +43,17 @@ impl Add for Value {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        if let Value::num(n1) = self {
-            if let Value::num(n2) = other {
-                return Value::num(n1 + n2);
+        if let Value::Num(n1) = self {
+            if let Value::Num(n2) = other {
+                return Value::Num(n1 + n2);
             } else {
                 panic!("不支持此类型加法操作");
             }
-        } else if let Value::str(s1) = self {
-            if let Value::str(s2) = other {
-                return Value::str(s1 + &s2);
-            } else if let Value::num(n2) = other {
-                return Value::str(s1 + &n2.to_string());
+        } else if let Value::Str(s1) = self {
+            if let Value::Str(s2) = other {
+                return Value::Str(s1 + &s2);
+            } else if let Value::Num(n2) = other {
+                return Value::Str(s1 + &n2.to_string());
             } else {
                 panic!("不支持此类型加法操作");
             }
@@ -65,9 +65,9 @@ impl Sub for Value {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
-        if let Value::num(n1) = self {
-            if let Value::num(n2) = other {
-                return Value::num(n1 - n2);
+        if let Value::Num(n1) = self {
+            if let Value::Num(n2) = other {
+                return Value::Num(n1 - n2);
             }
         }
         panic!("不支持此类型减法操作");
@@ -77,9 +77,9 @@ impl Mul for Value {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self::Output {
-        if let Value::num(n1) = self {
-            if let Value::num(n2) = other {
-                return Value::num(n1 * n2);
+        if let Value::Num(n1) = self {
+            if let Value::Num(n2) = other {
+                return Value::Num(n1 * n2);
             }
         }
         panic!("不支持此类型乘法操作");
@@ -89,9 +89,9 @@ impl Div for Value {
     type Output = Self;
 
     fn div(self, other: Self) -> Self::Output {
-        if let Value::num(n1) = self {
-            if let Value::num(n2) = other {
-                return Value::num(n1 / n2);
+        if let Value::Num(n1) = self {
+            if let Value::Num(n2) = other {
+                return Value::Num(n1 / n2);
             }
         }
         panic!("不支持此类型法操作");
@@ -101,8 +101,8 @@ impl Not for Value {
     type Output = Self;
 
     fn not(self) -> Self::Output {
-        Value::bool(match self {
-            Value::bool(n) => !n,
+        Value::Bool(match self {
+            Value::Bool(n) => !n,
             _ => panic!("不支持取反操作"),
         })
     }
@@ -111,21 +111,21 @@ impl Not for Value {
 impl PartialEq<Self> for Value {
     fn eq(&self, other: &Self) -> bool {
        return  match self {
-            Value::num(n1) => {
-                if let Value::num(n2) = other {
+            Value::Num(n1) => {
+                if let Value::Num(n2) = other {
                     n1 == n2
                 } else {
                     false
                 }
             }
-            Value::bool(b1)=>{
-                if let Value::bool(b2)=other{
+            Value::Bool(b1)=>{
+                if let Value::Bool(b2)=other{
                       *b1==*b2
                 }else{
                     *b1
                 }
             }
-            Value::nil => false,
+            Value::Nil => false,
             _ => {
                 panic!("类型错误，不支持此类型比较");
             }
@@ -135,8 +135,8 @@ impl PartialEq<Self> for Value {
 
 impl PartialOrd for Value {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        if let Value::num(n1) = self {
-            if let Value::num(n2) = other {
+        if let Value::Num(n1) = self {
+            if let Value::Num(n2) = other {
                 return n1.partial_cmp(n2);
             }
         }
