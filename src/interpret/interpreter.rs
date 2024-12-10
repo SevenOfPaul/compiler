@@ -104,7 +104,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
        self.env.borrow_mut().set(name, val)
     }
     fn visit_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>) -> Result<Value, Run_Err> {
-         Ok(if self.evaluate(condition)? == Value::Bool(true) {
+         Ok(if self.evaluate(condition)?.is_truthy() {
             self.evaluate(t_expr)?
         } else {
             self.evaluate(f_expr)?
@@ -206,7 +206,7 @@ impl stmt::Visitor<Result<(),Run_Err>> for Interpreter {
     }
 
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> Result<(), Run_Err> {
-        if self.evaluate(condition)?==Value::Bool(true){
+        if self.evaluate(condition)?.is_truthy(){
             self.execute(then_branch.clone());
         }else if else_branch.is_some(){
             self.execute(else_branch.unwrap().clone());
