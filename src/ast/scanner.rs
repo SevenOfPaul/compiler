@@ -1,16 +1,16 @@
 use crate::ast::token::object::Object;
 use crate::ast::token::token::{self, Keywords};
-use crate::error;
 use crate::ast::token::token_type::Token_Type;
+use crate::error;
 
 pub(crate) struct Scanner {
-    source: Vec<char>,
-    tokens: Vec<token::Token>,
-    //start是被处理的第一个字符
-    start: usize,
     //cur是当前字符 例如let start永远指向l cur可能为 l e t
     cur: usize,
     line: usize,
+    source: Vec<char>,
+    //start是被处理的第一个字符
+    start: usize,
+    tokens: Vec<token::Token>,
 }
 impl Scanner {
     pub(crate) fn new(source: String) -> Scanner {
@@ -23,25 +23,102 @@ impl Scanner {
             line: 1,
         }
     }
-    /*
-    递归整个源文件
-    */
-    pub(crate) fn scan_tokens(&mut self) -> Vec<token::Token> {
-        //没到头
-        while !self.is_at_end() {
-            //递归下去
-            self.start = self.cur;
-            //识别每一个token
-            self.scan_token();
-        }
+    fn add_token(&mut self, token_type: Token_Type, literal: Option<Object>) {
+        let text = &self.source[self.start..self.cur].iter().collect::<String>();
         self.tokens.push(token::Token::new(
-            Token_Type::EOF,
-            String::from(""),
-            Some(Object::Nil),
+            token_type,
+            text.clone(),
+            literal,
             self.line,
         ));
-        //添加token
-        self.tokens.clone()
+    }
+    fn advance(&mut self) -> char {
+        //返回当前指向的字符
+        self.cur += 1;
+        self.source[self.cur - 1]
+    }
+    fn is_match(&mut self, expected: char) -> bool {
+        if self.is_at_end() || self.source[self.cur] != expected {
+            false
+        } else {
+            self.cur += 1;
+            true
+        }
+    }
+    //这里得大改
+    fn get_number(&mut self) {
+        while Self::is_digit(self.peek()) {
+            self.advance();
+        }
+        if self.peek() == '.' && Self::is_digit(self.peek_next()) {
+            self.advance();
+        }
+        while Self::is_digit(self.peek()) {
+            self.advance();
+        }
+        let val: String = self.source[self.start..self.cur].iter().collect();
+        self.add_token(Token_Type::NUMBER, Some(Object::Num(val.parse().unwrap())));
+    }
+    fn get_string(&mut self) {
+        while self.peek() != '"' && !self.is_at_end() {
+            //跳过换行
+            if self.peek() == '\n' {
+                self.line += 1
+            };
+            self.advance();
+        }
+        //没找到 后面的"
+        if self.is_at_end() {
+            error::log(self.line, &self.peek().to_string(), "Unterminated string.");
+            return;
+        }
+        self.advance();
+        let val: String = self.source[self.start + 1..self.cur - 1].iter().collect();
+        self.add_token(Token_Type::STRING, Some(Object::Str(val)));
+    }
+    fn get_identifier(&mut self) {
+        while Self::is_alaph_or_digit(self.peek()) {
+            self.advance();
+        }
+        let text = self.source[self.start..self.cur].iter().collect::<String>();
+        if let Some(token_type) = Keywords.get(&text) {
+            self.add_token(token_type.clone(), Some(Object::Str(text)));
+        } else {
+            self.add_token(Token_Type::IDENTIFIER, Some(Object::Str(text)));
+        }
+    }
+
+    fn is_digit(c: char) -> bool {
+        c >= '0' && c <= '9'
+    }
+    fn is_alaph(c: char) -> bool {
+        (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                //为什么有个_
+                c == '_'
+    }
+    fn is_alaph_or_digit(c: char) -> bool {
+        Self::is_alaph(c) || Self::is_digit(c)
+    }
+    fn is_at_end(&self) -> bool {
+        self.cur >= self.source.len()
+    }
+    //看看下个是啥，不会增加cur
+    fn peek(&mut self) -> char {
+        if self.is_at_end() {
+            '\0'
+        } else {
+            self.source[self.cur]
+        }
+    }
+    //在多看一个
+    fn peek_next(&mut self) -> char {
+        //到头了
+        if self.cur + 1 >= self.source.len() {
+            '\0'
+        } else {
+            self.source[self.cur + 1]
+        }
     }
     fn scan_token(&mut self) {
         //没到头
@@ -57,21 +134,19 @@ impl Scanner {
             '+' => self.add_token(Token_Type::PLUS, Some(Object::Nil)),
             ';' => self.add_token(Token_Type::SEMICOLON, Some(Object::Nil)),
             '*' => self.add_token(Token_Type::STAR, Some(Object::Nil)),
-            '?'=>{
-                self.add_token(Token_Type::QUESTION,Some(Object::Nil))
-            },
-            ':'=>self.add_token(Token_Type::COLON,Some(Object::Nil)),
-            '&'=>{
-                if self.is_match('&'){
-                    self.add_token(Token_Type::AND,Some(Object::Nil))
-                }else{
+            '?' => self.add_token(Token_Type::QUESTION, Some(Object::Nil)),
+            ':' => self.add_token(Token_Type::COLON, Some(Object::Nil)),
+            '&' => {
+                if self.is_match('&') {
+                    self.add_token(Token_Type::AND, Some(Object::Nil))
+                } else {
                     error::log(self.line, &self.peek().to_string(), "暂不支持位与运算");
                 }
             }
-            '|'=>{
-                if self.is_match('|'){
-                    self.add_token(Token_Type::OR,Some(Object::Nil))
-                }else{
+            '|' => {
+                if self.is_match('|') {
+                    self.add_token(Token_Type::OR, Some(Object::Nil))
+                } else {
                     error::log(self.line, &self.peek().to_string(), "暂不支持位或运算");
                 }
             }
@@ -119,20 +194,20 @@ impl Scanner {
                         //}
                         self.advance();
                     }
-                } else if self.is_match('*'){
+                } else if self.is_match('*') {
                     //多行注释
                     while !self.is_at_end() {
-                        if self.is_match( '*') && self.peek()== '/' {
+                        if self.is_match('*') && self.peek() == '/' {
                             break;
                         }
                         self.advance();
                     }
                     //因为下一个是 / 所以还需要再走一步
                     self.advance();
-                    if self.is_at_end(){
+                    if self.is_at_end() {
                         error::log(self.line, &self.peek().to_string(), "需要*/");
                     }
-                }else{
+                } else {
                     self.add_token(Token_Type::SLASH, Some(Object::Nil));
                 };
             }
@@ -164,101 +239,24 @@ impl Scanner {
             }
         }
     }
-    fn add_token(&mut self, token_type: Token_Type, literal: Option<Object>) {
-        let text = &self.source[self.start..self.cur].iter().collect::<String>();
+    /*
+    递归整个源文件
+    */
+    pub(crate) fn scan_tokens(&mut self) -> Vec<token::Token> {
+        //没到头
+        while !self.is_at_end() {
+            //递归下去
+            self.start = self.cur;
+            //识别每一个token
+            self.scan_token();
+        }
         self.tokens.push(token::Token::new(
-            token_type,
-            text.clone(),
-            literal,
+            Token_Type::EOF,
+            String::from(""),
+            Some(Object::Nil),
             self.line,
         ));
+        //添加token
+        self.tokens.clone()
     }
-    fn advance(&mut self) -> char {
-        //返回当前指向的字符
-        self.cur += 1;
-        self.source[self.cur - 1]
-    }
-    //看看下个是啥，不会增加cur
-    fn peek(&mut self) -> char {
-        if self.is_at_end() {
-            '\0'
-        } else {
-            self.source[self.cur]
-        }
-    }
-
-    //在多看一个
-    fn peek_next(&mut self) -> char {
-        //到头了
-        if self.cur + 1 >= self.source.len() {
-            '\0'
-        } else {
-            self.source[self.cur + 1]
-        }
-    }
-    //这里得大改
-    fn get_number(&mut self) {
-        while Self::is_digit(self.peek()) {
-            self.advance();
-        }
-        if self.peek() == '.' && Self::is_digit(self.peek_next()) {
-            self.advance();
-        }
-        while Self::is_digit(self.peek()) {
-            self.advance();
-        }
-        let val: String = self.source[self.start..self.cur].iter().collect();
-        self.add_token(Token_Type::NUMBER, Some(Object::Num(val.parse().unwrap())));
-    }
-    fn get_string(&mut self) {
-        while self.peek() != '"' && !self.is_at_end() {
-            //跳过换行
-            if self.peek() == '\n' {
-                self.line += 1
-            };
-            self.advance();
-        }
-        //没找到 后面的"
-        if self.is_at_end() {
-            error::log(self.line, &self.peek().to_string(), "Unterminated string.");
-            return;
-        }
-        self.advance();
-        let val: String = self.source[self.start + 1..self.cur - 1].iter().collect();
-        self.add_token(Token_Type::STRING, Some(Object::Str(val)));
-    }
-    fn get_identifier(&mut self) {
-        while Self::is_alaph_or_digit(self.peek()) {
-            self.advance();
-        }
-        let text = self.source[self.start..self.cur].iter().collect::<String>();
-        if let Some(token_type) = Keywords.get(&text) {
-            self.add_token(token_type.clone(), Some(Object::Str(text)));
-        } else {
-            self.add_token(Token_Type::IDENTIFIER, Some(Object::Str(text)));
-        }
-    }
-    fn is_match(&mut self, expected: char) -> bool {
-        if self.is_at_end() || self.source[self.cur] != expected {
-            false
-        } else {
-            self.cur += 1;
-            true
-        }
-    }
-    fn is_digit(c: char) -> bool {
-        c >= '0' && c <= '9'
-    }
-        fn is_alaph(c:char)->bool{
-            (c >= 'a' && c <= 'z') ||
-                (c >= 'A' && c <= 'Z') ||
-                //为什么有个_
-                c == '_'
-        }
-        fn is_alaph_or_digit(c: char) -> bool {
-            Self::is_alaph(c) || Self::is_digit(c)
-        }
-        fn is_at_end(&self) -> bool {
-            self.cur >= self.source.len()
-        }
-    }
+}
