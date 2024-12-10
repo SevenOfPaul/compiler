@@ -1,6 +1,6 @@
 use crate::ast::expression::expr::Expr;
 use crate::ast::statment::stmt::Stmt;
-use crate::ast::token::object::{ Object};
+use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::parse::err::Parse_Err;
