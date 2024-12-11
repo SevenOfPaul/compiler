@@ -9,9 +9,7 @@ mod interpret;
 use crate::runner::run::{run_program,run_file};
 fn main() {
     let mut args = env::args();
-
     //获取命令行参数
-
     if args.len() > 2 {
         error::log(0, "", "X 是个脚本,参数传错啦");
         exit(64);
