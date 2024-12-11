@@ -66,7 +66,9 @@ impl Parser {
     }
     //把表达式转为语句
     fn statement(&mut self) -> Result<Stmt, Parse_Err> {
-        if self.match_token(&[Token_Type::IF]) {
+        if self.match_token(&[Token_Type::FOR]){
+           self.for_stmt()
+        }else if self.match_token(&[Token_Type::IF]) {
             self.if_stmt()
         } else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
@@ -303,6 +305,10 @@ impl Parser {
          self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
          let body=self.statement()?;
         Ok(Stmt::While {condition:Box::from(expr),body:Box::from(body)})
+    }
+    fn for_stmt(&mut self)->Result<Stmt,Parse_Err>{
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
     }
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
