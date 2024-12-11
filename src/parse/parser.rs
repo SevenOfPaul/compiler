@@ -70,6 +70,8 @@ impl Parser {
             self.if_stmt()
         } else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
+        }else if self.match_token(&[Token_Type::WHILE]) {
+            self.while_stmt()
         } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
             Ok(Stmt::Block {stmts: self.block()?})
         } else {
@@ -285,7 +287,7 @@ impl Parser {
         //表达式解析的时候看看是不是三元
         let expr=self.ternary_expr();
         if self.match_token(&[Token_Type::EQUAL]) {
-            let equals = self.previous();
+            let _ = self.previous();
             let val=self.assign_stmt()?;
             return  if let Expr::Variable {name} = expr?.clone() {
                    Ok(Expr::Assign { name, val: Box::from(val) })
@@ -294,6 +296,13 @@ impl Parser {
             }
         }
          expr
+    }
+    fn while_stmt(&mut self)->Result<Stmt,Parse_Err>{
+         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        let expr=self.expression();
+         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+         let body=self.statement()?;
+        Ok(Stmt::While {condition:Box::from(expr),body:Box::from(body)})
     }
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {

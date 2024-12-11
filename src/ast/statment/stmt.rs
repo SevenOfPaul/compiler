@@ -22,7 +22,7 @@ pub(crate) enum Stmt {
     },
     While{
         condition:Box<Expr>,
-        stmt:Box<Stmt>
+        body:Box<Stmt>
     }
 }
 pub trait Visitor<T> {
@@ -31,7 +31,7 @@ pub trait Visitor<T> {
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> T;
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
-    fn visit_while(&mut self, condition: &Expr, stmt: &Stmt) -> T;
+    fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
 }
 
 impl Stmt {
@@ -65,9 +65,9 @@ impl Stmt {
                 }
             }
             Stmt::While{
-                condition, stmt
+                condition, body
             }=> {
-                visitor.visit_while(condition,stmt);
+                visitor.visit_while(condition,body);
             }
         }
     }
