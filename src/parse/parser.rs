@@ -30,7 +30,7 @@ impl Parser {
     执行单操作符
     */
     fn expression(&mut self) -> Expr {
-        //先看看是不是三元
+
         if let Ok(expr) = self.assign_stmt() {
             expr
         } else {
@@ -281,6 +281,8 @@ impl Parser {
           Ok(Stmt::IF {condition,then_branch,else_branch})
     }
     fn assign_stmt(&mut self)->Result<Expr,Parse_Err>{
+        //先看看是不是三元
+        //表达式解析的时候看看是不是三元
         let expr=self.ternary_expr();
         if self.match_token(&[Token_Type::EQUAL]) {
             let equals = self.previous();
@@ -331,4 +333,4 @@ impl Parser {
     }
     //声明语法
 }
-//表达式解析的时候看看是不是三元
+
