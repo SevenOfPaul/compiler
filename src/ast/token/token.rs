@@ -1,6 +1,6 @@
+use crate::ast::token::object::Object;
 use crate::ast::token::token_type::Token_Type;
 use lazy_static::lazy_static;
-use crate::ast::token::object::Object;
 use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub(crate) struct Token {
@@ -12,16 +12,16 @@ pub(crate) struct Token {
 lazy_static! {
     pub(crate) static ref Keywords: HashMap<String, Token_Type> = {
         HashMap::from([
-            (String::from("let"), Token_Type::LET),
-            (String::from("print"), Token_Type::PRINT),
+            (String::from("else"), Token_Type::ELSE),
             (String::from("fn"), Token_Type::FN),
-            (String::from("nil"), Token_Type::NIL),
-            (String::from("true"), Token_Type::TRUE),
+            (String::from("for"), Token_Type::FOR),
             (String::from("false"), Token_Type::FALSE),
+            (String::from("let"), Token_Type::LET),
             (String::from("if"), Token_Type::IF),
-             (String::from("else"), Token_Type::ELSE),
-             (String::from("while"), Token_Type::WHILE),
-             (String::from("for"),Token_Type::FOR)
+            (String::from("nil"), Token_Type::NIL),
+            (String::from("print"), Token_Type::PRINT),
+            (String::from("true"), Token_Type::TRUE),
+            (String::from("while"), Token_Type::WHILE),
         ])
     };
 }

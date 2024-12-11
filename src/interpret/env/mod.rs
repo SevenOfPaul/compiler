@@ -15,6 +15,15 @@ impl Environment{
     pub(crate) fn new(enclose: Option<Rc<RefCell<Environment>>>) -> Self{
         Self{enclose,local:HashMap::new()}
     }
+        pub(crate) fn add(&mut self, name:&Token, val:Value) ->Result<(),Run_Err>{
+        let key=name.clone().lexeme;
+         if self.local.contains_key(&key){
+             Err(Run_Err::new(name.clone(),String::from("变量已存在，不可重复声明")))
+         }else{
+             self.local.insert(key,val);
+             Ok(())
+         }
+    }
     pub(crate)  fn get(&self,name:&Token)->Result<Value,Run_Err>{
         let key=name.clone().lexeme;
         let res= self.local.get(&key);
@@ -38,14 +47,6 @@ impl Environment{
         Err(Run_Err::new(name.clone(),String::from(key+"变量未声明")))
     }
     }
-    pub(crate) fn add(&mut self, name:&Token, val:Value) ->Result<(),Run_Err>{
-        let key=name.clone().lexeme;
-         if self.local.contains_key(&key){
-             Err(Run_Err::new(name.clone(),String::from("变量已存在，不可重复声明")))
-         }else{
-             self.local.insert(key,val);
-             Ok(())
-         }
-    }
+
 }
 //存储变量的环境

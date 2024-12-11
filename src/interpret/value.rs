@@ -8,37 +8,6 @@ pub(crate) enum Value {
     Bool(bool),
     Nil,
 }
-impl Neg for Value {
-    type Output = Self;
-
-    fn neg(self) -> Self::Output {
-        Value::Num(match self {
-            Value::Num(n) => -n,
-            _ => panic!("不支持负号操作"),
-        })
-    }
-}
-impl Value {
-    pub(crate) fn is_num(&self) -> bool {
-        match self {
-            Value::Num(n) => true,
-            _ => false,
-        }
-    }
-    pub(crate) fn is_str(&self) -> bool {
-        match self {
-            Value::Str(s) => true,
-            _ => false,
-        }
-    }
-    pub (crate) fn is_truthy(&self) -> bool {
-        match self {
-            Value::Bool(b) => *b,
-            Value::Num(n)=>*n==1.0,
-             _=>false
-        }
-    }
-}
 impl Add for Value {
     type Output = Self;
 
@@ -61,16 +30,16 @@ impl Add for Value {
         panic!("不支持此类型加法操作");
     }
 }
-impl Sub for Value {
+impl Div for Value {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self::Output {
+    fn div(self, other: Self) -> Self::Output {
         if let Value::Num(n1) = self {
             if let Value::Num(n2) = other {
-                return Value::Num(n1 - n2);
+                return Value::Num(n1 / n2);
             }
         }
-        panic!("不支持此类型减法操作");
+        panic!("不支持此类型法操作");
     }
 }
 impl Mul for Value {
@@ -85,18 +54,7 @@ impl Mul for Value {
         panic!("不支持此类型乘法操作");
     }
 }
-impl Div for Value {
-    type Output = Self;
 
-    fn div(self, other: Self) -> Self::Output {
-        if let Value::Num(n1) = self {
-            if let Value::Num(n2) = other {
-                return Value::Num(n1 / n2);
-            }
-        }
-        panic!("不支持此类型法操作");
-    }
-}
 impl Not for Value {
     type Output = Self;
 
@@ -108,6 +66,16 @@ impl Not for Value {
     }
 }
 
+impl Neg for Value {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Value::Num(match self {
+            Value::Num(n) => -n,
+            _ => panic!("不支持负号操作"),
+        })
+    }
+}
 impl PartialEq<Self> for Value {
     fn eq(&self, other: &Self) -> bool {
        return  match self {
@@ -143,3 +111,40 @@ impl PartialOrd for Value {
         panic!("类型错误，不支持此类型比较");
     }
 }
+impl Sub for Value {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        if let Value::Num(n1) = self {
+            if let Value::Num(n2) = other {
+                return Value::Num(n1 - n2);
+            }
+        }
+        panic!("不支持此类型减法操作");
+    }
+}
+impl Value {
+    pub(crate) fn is_num(&self) -> bool {
+        match self {
+            Value::Num(n) => true,
+            _ => false,
+        }
+    }
+    pub(crate) fn is_str(&self) -> bool {
+        match self {
+            Value::Str(s) => true,
+            _ => false,
+        }
+    }
+    pub (crate) fn is_truthy(&self) -> bool {
+        match self {
+            Value::Bool(b) => *b,
+            Value::Num(n)=>*n==1.0,
+             _=>false
+        }
+    }
+}
+
+
+
+
