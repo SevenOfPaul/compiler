@@ -129,10 +129,14 @@ impl Parser {
     }
     //把表达式转为语句
     fn statement(&mut self) -> Result<Stmt, Parse_Err> {
-        if self.match_token(&[Token_Type::IF]) {
+        if self.match_token(&[Token_Type::FOR]){
+           self.for_stmt()
+        }else if self.match_token(&[Token_Type::IF]) {
             self.if_stmt()
         } else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
+        }else if self.match_token(&[Token_Type::WHILE]) {
+            self.while_stmt()
         } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
             Ok(Stmt::Block {
                 stmts: self.block()?,

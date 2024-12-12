@@ -1,17 +1,17 @@
-use crate::ast::expression::expr;
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::ast::expression::expr::Expr;
-use crate::ast::statment::stmt;
+use crate::ast::expression::expr;
 use crate::ast::statment::stmt::Stmt;
+use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::error;
-use crate::interpret::env::Environment;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
-use std::cell::RefCell;
-use std::rc::Rc;
+use crate::interpret::env::Environment;
 pub(crate) struct Interpreter {
     env: Rc<RefCell<Environment>>,
 }
@@ -141,6 +141,9 @@ impl Interpreter {
             env: Rc::from(RefCell::from(Environment::new(None))),
         }
     }
+    fn execute(&mut self, stmt:Stmt){
+         stmt.accept(self)
+    }
     pub(crate) fn check_num_operands(
         &self,
         oper: &Token,
@@ -228,6 +231,13 @@ impl stmt::Visitor<Result<(), Run_Err>> for Interpreter {
     fn visit_print(&mut self, expr: &Expr) -> Result<(), Run_Err> {
         let res = self.evaluate(expr)?;
         printf(res);
+        Ok(())
+    }
+
+    fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), Run_Err> {
+        while self.evaluate(condition)?.is_truthy() {
+            self.execute(body.clone());
+        }
         Ok(())
     }
 }
