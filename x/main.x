@@ -1,20 +1,4 @@
 let a=1;
-if(a<4){
-    a=a+1;
+for(let i=1;i<10;i=i+1){
+    print i;
 }
-if(a<4){
-    a=a+1;
-}
-if(a<4){
-    a=a+1;
-}
-if(a<4){
-    a=a+1;
-}
-if(a<4){
-    a=a+1;
-}
-if(a<4){
-    a=a+1;
-}
-print a;

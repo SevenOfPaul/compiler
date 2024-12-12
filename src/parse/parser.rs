@@ -129,13 +129,13 @@ impl Parser {
     }
     //把表达式转为语句
     fn statement(&mut self) -> Result<Stmt, Parse_Err> {
-        if self.match_token(&[Token_Type::FOR]){
-           self.for_stmt()
-        }else if self.match_token(&[Token_Type::IF]) {
+        if self.match_token(&[Token_Type::FOR]) {
+            self.for_stmt()
+        } else if self.match_token(&[Token_Type::IF]) {
             self.if_stmt()
         } else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
-        }else if self.match_token(&[Token_Type::WHILE]) {
+        } else if self.match_token(&[Token_Type::WHILE]) {
             self.while_stmt()
         } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
             Ok(Stmt::Block {
@@ -315,16 +315,57 @@ impl Parser {
             else_branch,
         })
     }
-    fn while_stmt(&mut self)->Result<Stmt,Parse_Err>{
-         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
-        let expr=self.expression();
-         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
-         let body=self.statement()?;
-        Ok(Stmt::While {condition:Box::from(expr),body:Box::from(body)})
-    }
-    fn for_stmt(&mut self)->Result<Stmt,Parse_Err>{
+    fn while_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        let expr = self.expression();
         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+        let body = self.statement()?;
+        Ok(Stmt::While {
+            condition: Box::from(expr),
+            body: Box::from(body),
+        })
+    }
+    fn for_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        //准备脱糖
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        let mut initializer: Option<Stmt> = None;
+        if self.match_token(&[Token_Type::SEMICOLON]) {
+            initializer = None;
+        } else if self.match_token(&[Token_Type::LET]) {
+            initializer = Some(self.let_declaration()?);
+        } else {
+            initializer = Some(self.expr_stmt()?);
+        };
+        self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
+        let mut condition: Expr =Expr::Literal { val: Object::Bool(true) } ;
+        if !self.match_token(&[Token_Type::SEMICOLON]) {
+            condition = self.expression();
+        };
+        self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
+        let mut increment = None;
+        if !self.match_token(&[Token_Type::RIGHT_PAREN]) {
+            increment = Some(self.expression());
+        };
+        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+        self.consume(&Token_Type::LEFT_BRACE, "此处应有一个{");
+        let mut body = self.statement()?;
+        self.consume(&Token_Type::RIGHT_BRACE, "此处应有一个}");
+        //从后往前分类
+        if increment.is_some() {
+            body = Stmt::Block {
+                stmts: vec![
+                    body,
+                    Stmt::Expression {
+                        expr: Box::from(increment.unwrap()),
+                    },
+                ],
+            };
+        }
+            body=Stmt::While { condition: Box::from(condition), body: Box::from(body) };
+            if initializer.is_some(){
+                body=Stmt::Block { stmts: vec![initializer.unwrap(),body] }
+            }
+        return Ok(body);
     }
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
