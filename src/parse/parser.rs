@@ -349,9 +349,7 @@ impl Parser {
             increment = Some(self.expression());
         };
         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
-        self.consume(&Token_Type::LEFT_BRACE, "此处应有一个{");
         let mut body = self.statement()?;
-        self.consume(&Token_Type::RIGHT_BRACE, "此处应有一个}");
         //从后往前分类
         if increment.is_some() {
             body = Stmt::Block {
@@ -372,7 +370,7 @@ impl Parser {
                 stmts: vec![initializer.unwrap(), body],
             }
         }
-        return Ok(body);
+         Ok(body)
     }
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
