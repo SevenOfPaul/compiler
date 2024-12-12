@@ -335,9 +335,11 @@ impl Parser {
             initializer = Some(self.let_declaration()?);
         } else {
             initializer = Some(self.expr_stmt()?);
+            self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
         };
-        self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
-        let mut condition: Expr =Expr::Literal { val: Object::Bool(true) } ;
+        let mut condition: Expr = Expr::Literal {
+            val: Object::Bool(true),
+        };
         if !self.match_token(&[Token_Type::SEMICOLON]) {
             condition = self.expression();
         };
@@ -361,10 +363,15 @@ impl Parser {
                 ],
             };
         }
-            body=Stmt::While { condition: Box::from(condition), body: Box::from(body) };
-            if initializer.is_some(){
-                body=Stmt::Block { stmts: vec![initializer.unwrap(),body] }
+        body = Stmt::While {
+            condition: Box::from(condition),
+            body: Box::from(body),
+        };
+        if initializer.is_some() {
+            body = Stmt::Block {
+                stmts: vec![initializer.unwrap(), body],
             }
+        }
         return Ok(body);
     }
     //解析三元表达式
