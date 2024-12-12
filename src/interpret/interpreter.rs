@@ -141,9 +141,6 @@ impl Interpreter {
             env: Rc::from(RefCell::from(Environment::new(None))),
         }
     }
-    fn execute(&mut self, stmt:Stmt){
-         stmt.accept(self)
-    }
     pub(crate) fn check_num_operands(
         &self,
         oper: &Token,

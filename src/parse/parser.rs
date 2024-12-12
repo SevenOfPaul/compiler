@@ -315,7 +315,17 @@ impl Parser {
             else_branch,
         })
     }
-
+    fn while_stmt(&mut self)->Result<Stmt,Parse_Err>{
+         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        let expr=self.expression();
+         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+         let body=self.statement()?;
+        Ok(Stmt::While {condition:Box::from(expr),body:Box::from(body)})
+    }
+    fn for_stmt(&mut self)->Result<Stmt,Parse_Err>{
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+    }
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
         // 先解析条件表达式 以等号为核心
