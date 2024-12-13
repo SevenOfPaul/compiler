@@ -30,22 +30,6 @@ impl Parser {
         }
         expr
     }
-    /*止*/
-    fn advance(&mut self) -> Token {
-        if !self.is_end() {
-            self.pos += 1;
-        }
-        self.previous()
-    }
-    //添加{}中的语句
-    fn block(&mut self) -> Result<Vec<Stmt>, Parse_Err> {
-        let mut res = vec![];
-        while !(self.is_end() || self.check(&Token_Type::RIGHT_BRACE)) {
-            res.push(self.declaration()?);
-        }
-        self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}");
-        Ok(res)
-    }
     fn and(&mut self) -> Result<Expr, Parse_Err> {
         let l = self.equality()?;
         while self.match_token(&[Token_Type::AND]) {
@@ -59,6 +43,30 @@ impl Parser {
         }
         Ok(l)
     }
+    /*止*/
+    fn advance(&mut self) -> Token {
+        if !self.is_end() {
+            self.pos += 1;
+        }
+        self.previous()
+    }
+
+    //添加{}中的语句
+    fn block(&mut self) -> Result<Vec<Stmt>, Parse_Err> {
+        let mut res = vec![];
+        while !(self.is_end() || self.check(&Token_Type::RIGHT_BRACE)) {
+            res.push(self.declaration()?);
+        }
+        self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}");
+        Ok(res)
+    }
+    // fn block_stmt(&mut self)->Vec<Stmt>{
+    //     let mut stmts =vec![];
+    //     while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
+    //         self.declaration().and_then(|stmt| Ok(stmts.push(stmt)));
+    //     }
+    //     stmts
+    // }
     //或大或小
     fn comparison(&mut self) -> Result<Expr, Parse_Err> {
         let mut expr = self.term();
@@ -77,6 +85,22 @@ impl Parser {
             })
         }
         expr
+    }
+    //判断错误
+    fn consume(&mut self, token_type: &Token_Type, mes: &str) -> Result<Token, Parse_Err> {
+        if self.check(&token_type) {
+            Ok(self.advance())
+        } else {
+            //应该报错
+            Err(self.error(String::from(mes)))
+        }
+    }
+    fn check(&self, token_type: &Token_Type) -> bool {
+        if self.is_end() {
+            false
+        } else {
+            (*self.peek()).token_type == *token_type
+        }
     }
     fn declaration(&mut self) -> Result<Stmt, Parse_Err> {
         if self.match_token(&[Token_Type::LET]) {
@@ -111,69 +135,18 @@ impl Parser {
         }
         expr
     }
-
-    //声明变量的规则
-    fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
-        let name = self.consume(&Token_Type::IDENTIFIER, "这个单词不允许作为声明")?;
-        let mut expr;
-        if self.match_token(&[Token_Type::EQUAL]) {
-            expr = self.expression();
-            self.consume(&Token_Type::SEMICOLON, "此处应有分号结尾")?;
-            Ok(Stmt::LET {
-                name,
-                expr: Box::new(expr),
-            })
-        } else {
-            Err(self.error(String::from("此处声明出错")))
-        }
+    fn error(&mut self, mes: String) -> Parse_Err {
+        let token = self.peek();
+        Parse_Err::new(token.clone(), mes)
     }
-    //把表达式转为语句
-    fn statement(&mut self) -> Result<Stmt, Parse_Err> {
-        if self.match_token(&[Token_Type::FOR]) {
-            self.for_stmt()
-        } else if self.match_token(&[Token_Type::IF]) {
-            self.if_stmt()
-        } else if self.match_token(&[Token_Type::PRINT]) {
-            self.print_stmt()
-        } else if self.match_token(&[Token_Type::WHILE]) {
-            self.while_stmt()
-        } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
-            Ok(Stmt::Block {
-                stmts: self.block()?,
-            })
-        } else {
-            self.expr_stmt()
-        }
+    //下面是表达式转语句的代码
+    fn expr_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        let expr = self.assign_stmt()?;
+        self.consume(&Token_Type::SEMICOLON, "表达式后需要分号")?;
+        Ok(Stmt::Expression {
+            expr: Box::new(expr),
+        })
     }
-
-    pub(crate) fn parse(&mut self) -> Vec<Stmt> {
-        let mut stmts = vec![];
-        while !self.is_end() {
-            let stmt = self.declaration();
-            if let Ok(stmt) = stmt {
-                stmts.push(stmt);
-            } else {
-                self.advance();
-            }
-        }
-        stmts
-    }
-
-    //是不是加减
-    fn term(&mut self) -> Result<Expr, Parse_Err> {
-        let mut expr = self.factor();
-        while self.match_token(&[Token_Type::MINUS, Token_Type::PLUS]) {
-            let operator = self.previous();
-            let r_expression = Box::from(self.factor()?);
-            expr = Ok(Expr::Binary {
-                l_expression: Box::from(expr?),
-                operator,
-                r_expression,
-            })
-        }
-        expr
-    }
-
     //是不是乘除
     fn factor(&mut self) -> Result<Expr, Parse_Err> {
         let mut expr = self.unary();
@@ -188,18 +161,83 @@ impl Parser {
         }
         expr
     }
-    //
-    fn unary(&mut self) -> Result<Expr, Parse_Err> {
-        if self.match_token(&[Token_Type::BANG, Token_Type::MINUS]) {
-            let operator = self.previous();
-            let r_expression = Box::from(self.unary()?);
-            return Ok(Expr::Unary {
-                operator,
-                r_expression,
-            });
+    fn for_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        //准备脱糖
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        let mut initializer: Option<Stmt> = None;
+        if self.match_token(&[Token_Type::SEMICOLON]) {
+            initializer = None;
+        } else if self.match_token(&[Token_Type::LET]) {
+            initializer = Some(self.let_declaration()?);
+        } else {
+            initializer = Some(self.expr_stmt()?);
+            self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
+        };
+        let mut condition: Expr = Expr::Literal {
+            val: Object::Bool(true),
+        };
+        if !self.match_token(&[Token_Type::SEMICOLON]) {
+            condition = self.expression();
+        };
+        self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
+        let mut increment = None;
+        if !self.match_token(&[Token_Type::RIGHT_PAREN]) {
+            increment = Some(self.expression());
+        };
+        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+        let mut body = self.statement()?;
+        //从后往前分类
+        if increment.is_some() {
+            body = Stmt::Block {
+                stmts: vec![
+                    body,
+                    Stmt::Expression {
+                        expr: Box::from(increment.unwrap()),
+                    },
+                ],
+            };
         }
-        self.primary()
+        body = Stmt::While {
+            condition: Box::from(condition),
+            body: Box::from(body),
+        };
+        if initializer.is_some() {
+            body = Stmt::Block {
+                stmts: vec![initializer.unwrap(), body],
+            }
+        }
+        Ok(body)
     }
+    fn is_end(&self) -> bool {
+        self.peek().token_type == Token_Type::EOF
+    }
+    
+    fn if_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        self.consume(&Token_Type::LEFT_PAREN, "此处缺少{")?; //先有个左括号
+        let condition = Box::from(self.expression());
+        self.consume(&Token_Type::RIGHT_PAREN, "此处缺少}")?; //再有个右括号
+        let then_branch = Box::from(self.statement()?); //默认条件
+        let mut else_branch = None;
+        if self.match_token(&[Token_Type::ELSE]) {
+            else_branch = Some(Box::from(self.statement()?));
+        }
+        Ok(Stmt::IF {
+            condition,
+            then_branch,
+            else_branch,
+        })
+    }
+    fn match_token(&mut self, types: &[Token_Type]) -> bool {
+        //当前的token 必须是需要的 才能继续
+        for t in types {
+            if self.check(t) {
+                self.advance();
+                return true;
+            }
+        }
+        false
+    }
+
     fn or(&mut self) -> Result<Expr, Parse_Err> {
         let l = self.and()?;
         while self.match_token(&[Token_Type::OR]) {
@@ -249,36 +287,17 @@ impl Parser {
             Err(self.error(String::from("无效的表达式")))
         }
     }
-
-    fn check(&self, token_type: &Token_Type) -> bool {
-        if self.is_end() {
-            false
-        } else {
-            (*self.peek()).token_type == *token_type
-        }
-    }
-    fn match_token(&mut self, types: &[Token_Type]) -> bool {
-        //当前的token 必须是需要的 才能继续
-        for t in types {
-            if self.check(t) {
+    pub(crate) fn parse(&mut self) -> Vec<Stmt> {
+        let mut stmts = vec![];
+        while !self.is_end() {
+            let stmt = self.declaration();
+            if let Ok(stmt) = stmt {
+                stmts.push(stmt);
+            } else {
                 self.advance();
-                return true;
             }
         }
-        false
-    }
-    //判断错误
-    fn consume(&mut self, token_type: &Token_Type, mes: &str) -> Result<Token, Parse_Err> {
-        if self.check(&token_type) {
-            Ok(self.advance())
-        } else {
-            //应该报错
-            Err(self.error(String::from(mes)))
-        }
-    }
-
-    fn is_end(&self) -> bool {
-        self.peek().token_type == Token_Type::EOF
+        stmts
     }
     //当前token
     fn peek(&self) -> &Token {
@@ -288,89 +307,64 @@ impl Parser {
     fn previous(&self) -> Token {
         self.tokens[self.pos - 1].clone()
     }
-    fn error(&mut self, mes: String) -> Parse_Err {
-        let token = self.peek();
-        Parse_Err::new(token.clone(), mes)
-    }
-    //下面是表达式转语句的代码
-    fn expr_stmt(&mut self) -> Result<Stmt, Parse_Err> {
-        let expr = self.assign_stmt()?;
-        self.consume(&Token_Type::SEMICOLON, "表达式后需要分号")?;
-        Ok(Stmt::Expression {
-            expr: Box::new(expr),
-        })
-    }
-    fn if_stmt(&mut self) -> Result<Stmt, Parse_Err> {
-        self.consume(&Token_Type::LEFT_PAREN, "此处缺少{")?; //先有个左括号
-        let condition = Box::from(self.expression());
-        self.consume(&Token_Type::RIGHT_PAREN, "此处缺少}")?; //再有个右括号
-        let then_branch = Box::from(self.statement()?); //默认条件
-        let mut else_branch = None;
-        if self.match_token(&[Token_Type::ELSE]) {
-            else_branch = Some(Box::from(self.statement()?));
-        }
-        Ok(Stmt::IF {
-            condition,
-            then_branch,
-            else_branch,
-        })
-    }
-    fn while_stmt(&mut self) -> Result<Stmt, Parse_Err> {
-        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
-        let expr = self.expression();
-        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
-        let body = self.statement()?;
-        Ok(Stmt::While {
-            condition: Box::from(expr),
-            body: Box::from(body),
-        })
-    }
-    fn for_stmt(&mut self) -> Result<Stmt, Parse_Err> {
-        //准备脱糖
-        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
-        let mut initializer: Option<Stmt> = None;
-        if self.match_token(&[Token_Type::SEMICOLON]) {
-            initializer = None;
-        } else if self.match_token(&[Token_Type::LET]) {
-            initializer = Some(self.let_declaration()?);
+    fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        let val = self.expression();
+        if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
+            Err(self.error(e.mes))
         } else {
-            initializer = Some(self.expr_stmt()?);
-            self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
-        };
-        let mut condition: Expr = Expr::Literal {
-            val: Object::Bool(true),
-        };
-        if !self.match_token(&[Token_Type::SEMICOLON]) {
-            condition = self.expression();
-        };
-        self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
-        let mut increment = None;
-        if !self.match_token(&[Token_Type::RIGHT_PAREN]) {
-            increment = Some(self.expression());
-        };
-        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
-        let mut body = self.statement()?;
-        //从后往前分类
-        if increment.is_some() {
-            body = Stmt::Block {
-                stmts: vec![
-                    body,
-                    Stmt::Expression {
-                        expr: Box::from(increment.unwrap()),
-                    },
-                ],
-            };
+            Ok(Stmt::Print {
+                expr: Box::from(val),
+            })
         }
-        body = Stmt::While {
-            condition: Box::from(condition),
-            body: Box::from(body),
-        };
-        if initializer.is_some() {
-            body = Stmt::Block {
-                stmts: vec![initializer.unwrap(), body],
-            }
+    }
+        //声明语法
+    //声明变量的规则
+    fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
+        let name = self.consume(&Token_Type::IDENTIFIER, "这个单词不允许作为声明")?;
+        let mut expr;
+        if self.match_token(&[Token_Type::EQUAL]) {
+            expr = self.expression();
+            self.consume(&Token_Type::SEMICOLON, "此处应有分号结尾")?;
+            Ok(Stmt::LET {
+                name,
+                expr: Box::new(expr),
+            })
+        } else {
+            Err(self.error(String::from("此处声明出错")))
         }
-         Ok(body)
+    }
+
+    //把表达式转为语句
+    fn statement(&mut self) -> Result<Stmt, Parse_Err> {
+        if self.match_token(&[Token_Type::FOR]) {
+            self.for_stmt()
+        } else if self.match_token(&[Token_Type::IF]) {
+            self.if_stmt()
+        } else if self.match_token(&[Token_Type::PRINT]) {
+            self.print_stmt()
+        } else if self.match_token(&[Token_Type::WHILE]) {
+            self.while_stmt()
+        } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
+            Ok(Stmt::Block {
+                stmts: self.block()?,
+            })
+        } else {
+            self.expr_stmt()
+        }
+    }
+    //是不是加减
+    fn term(&mut self) -> Result<Expr, Parse_Err> {
+        let mut expr = self.factor();
+        while self.match_token(&[Token_Type::MINUS, Token_Type::PLUS]) {
+            let operator = self.previous();
+            let r_expression = Box::from(self.factor()?);
+            expr = Ok(Expr::Binary {
+                l_expression: Box::from(expr?),
+                operator,
+                r_expression,
+            })
+        }
+        expr
     }
     //解析三元表达式
     fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
@@ -391,23 +385,31 @@ impl Parser {
             f_expr: Box::new(f_expr),
         })
     }
-    // fn block_stmt(&mut self)->Vec<Stmt>{
-    //     let mut stmts =vec![];
-    //     while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
-    //         self.declaration().and_then(|stmt| Ok(stmts.push(stmt)));
-    //     }
-    //     stmts
-    // }
-    fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
-        let val = self.expression();
-        if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
-            Err(self.error(e.mes))
-        } else {
-            Ok(Stmt::Print {
-                expr: Box::from(val),
-            })
+
+    //
+    fn unary(&mut self) -> Result<Expr, Parse_Err> {
+        if self.match_token(&[Token_Type::BANG, Token_Type::MINUS]) {
+            let operator = self.previous();
+            let r_expression = Box::from(self.unary()?);
+            return Ok(Expr::Unary {
+                operator,
+                r_expression,
+            });
         }
+        self.primary()
     }
-    //声明语法
+
+    fn while_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        let expr = self.expression();
+        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+        let body = self.statement()?;
+        Ok(Stmt::While {
+            condition: Box::from(expr),
+            body: Box::from(body),
+        })
+    }
+
+
 }
 //表达式解析的时候看看是不是三元
