@@ -37,15 +37,17 @@ impl Scanner {
         self.cur += 1;
         self.source[self.cur - 1]
     }
-    fn is_match(&mut self, expected: char) -> bool {
-        if self.is_at_end() || self.source[self.cur] != expected {
-            false
+    fn get_identifier(&mut self) {
+        while Self::is_alaph_or_digit(self.peek()) {
+            self.advance();
+        }
+        let text = self.source[self.start..self.cur].iter().collect::<String>();
+        if let Some(token_type) = Keywords.get(&text) {
+            self.add_token(token_type.clone(), Some(Object::Str(text)));
         } else {
-            self.cur += 1;
-            true
+            self.add_token(Token_Type::IDENTIFIER, Some(Object::Str(text)));
         }
     }
-    //这里得大改
     fn get_number(&mut self) {
         while Self::is_digit(self.peek()) {
             self.advance();
@@ -76,21 +78,6 @@ impl Scanner {
         let val: String = self.source[self.start + 1..self.cur - 1].iter().collect();
         self.add_token(Token_Type::STRING, Some(Object::Str(val)));
     }
-    fn get_identifier(&mut self) {
-        while Self::is_alaph_or_digit(self.peek()) {
-            self.advance();
-        }
-        let text = self.source[self.start..self.cur].iter().collect::<String>();
-        if let Some(token_type) = Keywords.get(&text) {
-            self.add_token(token_type.clone(), Some(Object::Str(text)));
-        } else {
-            self.add_token(Token_Type::IDENTIFIER, Some(Object::Str(text)));
-        }
-    }
-
-    fn is_digit(c: char) -> bool {
-        c >= '0' && c <= '9'
-    }
     fn is_alaph(c: char) -> bool {
         (c >= 'a' && c <= 'z') ||
                 (c >= 'A' && c <= 'Z') ||
@@ -103,7 +90,17 @@ impl Scanner {
     fn is_at_end(&self) -> bool {
         self.cur >= self.source.len()
     }
-    //看看下个是啥，不会增加cur
+    fn is_digit(c: char) -> bool {
+        c >= '0' && c <= '9'
+    }
+    fn is_match(&mut self, expected: char) -> bool {
+        if self.is_at_end() || self.source[self.cur] != expected {
+            false
+        } else {
+            self.cur += 1;
+            true
+        }
+    }
     fn peek(&mut self) -> char {
         if self.is_at_end() {
             '\0'
@@ -111,7 +108,6 @@ impl Scanner {
             self.source[self.cur]
         }
     }
-    //在多看一个
     fn peek_next(&mut self) -> char {
         //到头了
         if self.cur + 1 >= self.source.len() {
@@ -119,6 +115,23 @@ impl Scanner {
         } else {
             self.source[self.cur + 1]
         }
+    }
+    pub(crate) fn scan_tokens(&mut self) -> Vec<token::Token> {
+        //没到头
+        while !self.is_at_end() {
+            //递归下去
+            self.start = self.cur;
+            //识别每一个token
+            self.scan_token();
+        }
+        self.tokens.push(token::Token::new(
+            Token_Type::EOF,
+            String::from(""),
+            Some(Object::Nil),
+            self.line,
+        ));
+        //添加token
+        self.tokens.clone()
     }
     fn scan_token(&mut self) {
         //没到头
@@ -238,25 +251,5 @@ impl Scanner {
                 }
             }
         }
-    }
-    /*
-    递归整个源文件
-    */
-    pub(crate) fn scan_tokens(&mut self) -> Vec<token::Token> {
-        //没到头
-        while !self.is_at_end() {
-            //递归下去
-            self.start = self.cur;
-            //识别每一个token
-            self.scan_token();
-        }
-        self.tokens.push(token::Token::new(
-            Token_Type::EOF,
-            String::from(""),
-            Some(Object::Nil),
-            self.line,
-        ));
-        //添加token
-        self.tokens.clone()
     }
 }

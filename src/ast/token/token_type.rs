@@ -1,52 +1,43 @@
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Token_Type {
     //自己就是个token
-    LEFT_PAREN,//(
-    RIGHT_PAREN,//)
-    LEFT_BRACE,//{
-    RIGHT_BRACE,//}
+    AND, //&&
+    BANG, // !
+    BANG_EQUAL,//！=
+    COLON,//:
     COMMA,//,
     DOT,//.
-    MINUS, //-
-    PLUS,//+
-    SLASH,// /
-    STAR, // *
-    SEMICOLON,//;
-    BANG, // !
+    ELSE,//else
+    EOF, //结尾符
     EQUAL, //=
-    COLON,//:
-    QUESTION,//?
-    //两个字符构成的token
-    BANG_EQUAL,//！=
     EQUAL_EQUAL,//==
+    FALSE,
+    FOR,//for 循环
+    FN,//函数
     GREATER, //>
     GREATER_EQUAL, //>=
+    IDENTIFIER, //字面量
+    IF,//if
+    LEFT_BRACE,//{
+    LEFT_PAREN,//(
     LESS,//<
     LESS_EQUAL, //<=
-    //字面量
-    IDENTIFIER, //字面量
-    STRING, //字符串
-    NUMBER, //数字
-    AND, //&&
-    OR, //||
-    //关键字
     LET, //声明
-    PRINT, //打印
-    FN,//函数
+    MINUS, //-
     NIL, //null
+    NUMBER, //数字
+    OR, //||
+    PLUS,//+
+    PRINT, //打印
+    QUESTION,//?
+    RIGHT_BRACE,//}
+    RIGHT_PAREN,//)
+    STRING, //字符串
+    SLASH,// /
+    STAR,// *
+    SEMICOLON, //;
     TRUE,
-    FALSE,
-    IF,//if
-    ELSE,//else
     WHILE,//while
-    FOR,//for 循环
-    /*
-    注释不进入parse 这里只是方便理解
-    COMMENT_START,// /*
-    COMMENT_END, // */
-    COMMENTED, // //
-    */
-    EOF //结尾符
 }
 impl Token_Type {
     pub(crate) fn to_string(&self) ->String{

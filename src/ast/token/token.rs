@@ -13,11 +13,11 @@ lazy_static! {
     pub(crate) static ref Keywords: HashMap<String, Token_Type> = {
         HashMap::from([
             (String::from("else"), Token_Type::ELSE),
+            (String::from("false"), Token_Type::FALSE),
             (String::from("fn"), Token_Type::FN),
             (String::from("for"), Token_Type::FOR),
-            (String::from("false"), Token_Type::FALSE),
-            (String::from("let"), Token_Type::LET),
             (String::from("if"), Token_Type::IF),
+            (String::from("let"), Token_Type::LET),
             (String::from("nil"), Token_Type::NIL),
             (String::from("print"), Token_Type::PRINT),
             (String::from("true"), Token_Type::TRUE),
