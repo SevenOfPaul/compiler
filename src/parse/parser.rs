@@ -60,6 +60,17 @@ impl Parser {
         self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}");
         Ok(res)
     }
+    fn call(&mut self)->Result<Expr,Parse_Err>{
+        let expr=self.primary()?;
+       loop{
+           if self.check(&Token_Type::LEFT_PAREN){
+
+           }else{
+               break;
+           }
+       }
+        Ok(expr)
+    }
     // fn block_stmt(&mut self)->Vec<Stmt>{
     //     let mut stmts =vec![];
     //     while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
@@ -396,7 +407,7 @@ impl Parser {
                 r_expression,
             });
         }
-        self.primary()
+        self.call()
     }
 
     fn while_stmt(&mut self) -> Result<Stmt, Parse_Err> {
