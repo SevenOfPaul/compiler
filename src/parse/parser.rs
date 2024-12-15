@@ -61,10 +61,10 @@ impl Parser {
         Ok(res)
     }
     fn call(&mut self)->Result<Expr,Parse_Err>{
-        let expr=self.primary()?;
+        let mut expr =self.primary()?;
        loop{
            if self.check(&Token_Type::LEFT_PAREN){
-
+             expr=self.finish_call(Box::from(expr))?;
            }else{
                break;
            }
@@ -218,6 +218,24 @@ impl Parser {
             }
         }
         Ok(body)
+    }
+    fn finish_call(&mut self,callee:Box<Expr>) ->Result<Expr,Parse_Err>{
+        let mut arguments=vec![];
+        if !self.check(&Token_Type::RIGHT_PAREN){
+         loop{
+             arguments.push(Box::from(self.expression()));
+             //把参数添加进去 按逗号分割参数
+             if !self.check(&Token_Type::COMMA){
+                      break;
+             }
+             if arguments.len() >= 255 {
+              return Err(self.error(String::from("参数数量最大为255")));
+             }
+         }
+        };
+        let paren=self.consume(&Token_Type::RIGHT_PAREN,")这里必须得有个)")?;
+         Ok(Expr::Call {callee,paren,arguments})
+
     }
     fn is_end(&self) -> bool {
         self.peek().token_type == Token_Type::EOF

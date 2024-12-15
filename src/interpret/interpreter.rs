@@ -11,6 +11,7 @@ use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
+use crate::call::Call;
 use crate::interpret::env::Environment;
 pub(crate) struct Interpreter {
     env: Rc<RefCell<Environment>>,
@@ -80,6 +81,21 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
     }
     fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, Run_Err> {
+      let mut expr:Value;
+        //感觉这里有问题
+        match callee.as_ref() {
+          Expr::Call {callee, paren, arguments} => {
+              expr=self.evaluate(callee)?
+          },
+          _=>{
+          return Err(Run_Err::new(paren.clone(), String::from("必须是个函数")));
+          }
+      }
+        //这里需要加入一个类型检查 是否可以执行call
+        let mut arguments_func =vec![];
+        for argu in arguments {
+            arguments_func.push(self.evaluate(argu)?);
+        }
         todo!()
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {

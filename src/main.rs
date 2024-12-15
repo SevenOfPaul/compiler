@@ -6,6 +6,8 @@ mod runner;
 mod parse;
 pub(crate) mod tools;
 mod interpret;
+mod call;
+
 use crate::runner::run::{run_program,run_file};
 fn main() {
     let mut args = env::args();
