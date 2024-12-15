@@ -48,4 +48,8 @@ impl Visitor<String> for ExprVisitor {
     fn visit_logical(&mut self, operator: &Token, l_expression: &Box<Expr>, r_expression: &Box<Expr>) -> String {
         todo!()
     }
+
+    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> String {
+        todo!()
+    }
 }

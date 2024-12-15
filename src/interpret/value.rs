@@ -78,7 +78,7 @@ impl Neg for Value {
 }
 impl PartialEq<Self> for Value {
     fn eq(&self, other: &Self) -> bool {
-       return  match self {
+         match self {
             Value::Num(n1) => {
                 if let Value::Num(n2) = other {
                     n1 == n2

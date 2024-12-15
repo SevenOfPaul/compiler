@@ -79,7 +79,9 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-
+    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, Run_Err> {
+        todo!()
+    }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         self.evaluate(expr)
     }

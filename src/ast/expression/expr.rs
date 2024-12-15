@@ -14,6 +14,12 @@ pub(crate) enum Expr {
         l_expression: Box<Expr>,
         r_expression: Box<Expr>,
     },
+    //调用函数
+    Call{
+        callee:Box<Expr>,
+        paren:Token,
+        arguments:Vec<Box<Expr>>
+    },
     Grouping {
         expression: Box<Expr>,
     },
@@ -45,6 +51,7 @@ pub(crate) enum Expr {
 pub trait Visitor<T> {
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> T;
     fn visit_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> T;
+    fn visit_call(&mut self, callee:&Box<Expr>, paren:&Token, arguments:&Vec<Box<Expr>>) -> T;
     fn visit_grouping(&mut self, expression: &Expr) -> T;
     fn visit_literal(&mut self, value: &Object) -> T;
     fn visit_logical(
@@ -57,6 +64,7 @@ pub trait Visitor<T> {
         -> T;
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
     fn visit_variable(&mut self, name: &Token) -> T;
+
 }
 //
 // impl Expr {
@@ -80,9 +88,11 @@ pub trait Visitor<T> {
 //       }
 //     }
 // }
-impl_expr_accept! {(Literal,literal,{val,}),(
-    Grouping,grouping,{expression,}
-),(Binary,binary,{operator,l_expression,r_expression,}),(
+impl_expr_accept! {
+    (Literal,literal,{val,}),
+    (Grouping,grouping,{expression,}),(Binary,binary,{operator,l_expression,r_expression,}),
+    (Call,call,{callee,paren,arguments,}),
+    (
     Unary,unary,{operator,r_expression,}
 ),(Variable,variable,{name,}),(
     Assign,assign,{name,val,}
