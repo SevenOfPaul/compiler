@@ -154,9 +154,10 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
+        let  global=Environment::new(None);
         //最高作用域
         Self {
-            env: Rc::from(RefCell::from(Environment::new(None))),
+            env: Rc::from(RefCell::from(global)),
         }
     }
     pub(crate) fn check_num_operands(
