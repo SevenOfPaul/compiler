@@ -7,7 +7,7 @@ use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::call::func::Time_Func;
+use crate::call::func::Func;
 use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
@@ -155,7 +155,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
 impl Interpreter {
     pub(crate) fn new() -> Self {
         let  mut global=Environment::new(None);
-        global.local.insert(String::from("now"),Value::Func(Time_Func::new("now")));
+           global.init_fn(vec!["now"]);
         //最高作用域
         Self {
             env: Rc::from(RefCell::from(global)),
