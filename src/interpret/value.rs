@@ -1,11 +1,13 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
+use std::time::SystemTime;
 
 #[derive(Debug, Clone)]
 pub(crate) enum Value {
     Str(String),
     Num(f32),
     Bool(bool),
+    Time(SystemTime),
     Nil,
 }
 impl Add for Value {
