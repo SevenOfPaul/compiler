@@ -7,7 +7,7 @@ use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::call::func::Func;
+use crate::call::Call;
 use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
@@ -81,22 +81,13 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
     }
     fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, Run_Err> {
-      let mut expr:Value;
+      let mut expr=self.evaluate(callee)?;
         //感觉这里有问题
-        match callee.as_ref() {
-          Expr::Call {callee, paren, arguments} => {
-              expr=self.evaluate(callee)?
-          },
-          _=>{
-          return Err(Run_Err::new(paren.clone(), String::from("必须是个函数")));
-          }
-      }
-        //这里需要加入一个类型检查 是否可以执行call
         let mut arguments_func =vec![];
         for argu in arguments {
             arguments_func.push(self.evaluate(argu)?);
         }
-        todo!()
+       Ok(expr.call(arguments_func))
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         self.evaluate(expr)

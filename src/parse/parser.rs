@@ -221,6 +221,8 @@ impl Parser {
     }
     fn finish_call(&mut self,callee:Box<Expr>) ->Result<Expr,Parse_Err>{
         let mut arguments=vec![];
+        //    print!("{:?}",self.tokens[self.pos]);
+           self.advance();
         if !self.check(&Token_Type::RIGHT_PAREN){
          loop{
              arguments.push(Box::from(self.expression()));
@@ -233,7 +235,7 @@ impl Parser {
              }
          }
         };
-        let paren=self.consume(&Token_Type::RIGHT_PAREN,")这里必须得有个)")?;
+        let paren=self.consume(&Token_Type::RIGHT_PAREN,"这里必须得有个)")?;
          Ok(Expr::Call {callee,paren,arguments})
 
     }

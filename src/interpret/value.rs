@@ -1,15 +1,15 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
-use std::time::SystemTime;
+use chrono::{DateTime, Local};
 
-use crate::call::func::Func;
+use crate::call::{Call, Funcs,Func};
 
 #[derive(Debug, Clone)]
 pub(crate) enum Value {
     Str(String),
     Num(f32),
     Bool(bool),
-    Time(SystemTime),
+    Time(DateTime<Local>),
     Func(Func),
     Nil,
 }
@@ -33,6 +33,25 @@ impl Add for Value {
             }
         }
         panic!("不支持此类型加法操作");
+    }
+}
+impl Call for Value{
+    fn arity(&self) -> usize {
+      return if let Value::Func(f)=self{
+        Funcs.get(&f.name).unwrap().0
+       }else{
+        panic!("只支持函数调用")
+       }
+    }
+
+    fn call(&self,arguments:Vec<Value>)->Value {
+        println!("{:?}","执行函数");
+        if let Value::Func(f)=self{
+            println!("{:?}",Funcs.get(&f.name).unwrap().1(arguments.clone()));
+          Funcs.get(&f.name).unwrap().1(arguments)
+       }else{
+        panic!("只支持函数调用")
+       }
     }
 }
 impl Div for Value {
