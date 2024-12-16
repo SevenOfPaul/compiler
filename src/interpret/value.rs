@@ -2,12 +2,15 @@ use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 use std::time::SystemTime;
 
+use crate::call::func::Time_Func;
+
 #[derive(Debug, Clone)]
 pub(crate) enum Value {
     Str(String),
     Num(f32),
     Bool(bool),
     Time(SystemTime),
+    Func(Time_Func),
     Nil,
 }
 impl Add for Value {
