@@ -114,7 +114,9 @@ impl Parser {
         }
     }
     fn declaration(&mut self) -> Result<Stmt, Parse_Err> {
-        if self.match_token(&[Token_Type::LET]) {
+        if self.match_token(&[Token_Type::FN]){
+        todo!()
+        }else if self.match_token(&[Token_Type::LET]) {
             self.let_declaration()
         } else {
             self.statement()

@@ -28,4 +28,7 @@ impl Func{
    pub(crate) fn new(name:&str)->Self{
            Self{name:String::from(name)}
     }
+    pub (crate) fn to_string(&self)->String{
+         String::from("<native fn>")
+    }
 }

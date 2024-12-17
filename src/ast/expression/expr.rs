@@ -1,3 +1,4 @@
+use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::impl_expr_accept;
@@ -15,10 +16,16 @@ pub(crate) enum Expr {
         r_expression: Box<Expr>,
     },
     //调用函数
-    Call{
-        callee:Box<Expr>,
-        paren:Token,
-        arguments:Vec<Box<Expr>>
+    Call {
+        callee: Box<Expr>,
+        paren: Token,
+        arguments: Vec<Box<Expr>>,
+    },
+    //函数声明
+    Func {
+        name: Token,
+        params: Vec<Token>,
+        body: Vec<Stmt>,
     },
     Grouping {
         expression: Box<Expr>,
@@ -51,7 +58,8 @@ pub(crate) enum Expr {
 pub trait Visitor<T> {
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> T;
     fn visit_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> T;
-    fn visit_call(&mut self, callee:&Box<Expr>, paren:&Token, arguments:&Vec<Box<Expr>>) -> T;
+    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> T;
+    fn visit_func(&mut self, name: &Token, params: &Vec<Token>, body: &Vec<Stmt>) -> T;
     fn visit_grouping(&mut self, expression: &Expr) -> T;
     fn visit_literal(&mut self, value: &Object) -> T;
     fn visit_logical(
@@ -64,7 +72,6 @@ pub trait Visitor<T> {
         -> T;
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
     fn visit_variable(&mut self, name: &Token) -> T;
-
 }
 //
 // impl Expr {
@@ -91,7 +98,7 @@ pub trait Visitor<T> {
 impl_expr_accept! {
     (Literal,literal,{val,}),
     (Grouping,grouping,{expression,}),(Binary,binary,{operator,l_expression,r_expression,}),
-    (Call,call,{callee,paren,arguments,}),
+    (Call,call,{callee,paren,arguments,}),(Func,func,{name,params,body,}),
     (
     Unary,unary,{operator,r_expression,}
 ),(Variable,variable,{name,}),(

@@ -6,7 +6,7 @@ pub(crate) fn printf(v:Value){
         Value::Str(s)=>println!("{}", s),
         Value::Bool(b)=>println!("{}", b),
         Value::Time(t)=>println!("{:?}", t),
-         Value::Func(f)=>println!("{:?}", "navtive function"),
+         Value::Func(f)=>println!("{:?}", f.to_string()),
         _=>println!("{:?}",Value::Nil)
     }
 }

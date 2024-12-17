@@ -92,6 +92,9 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
        Ok(expr.call(arguments_func))
     }
+    fn visit_func(&mut self, name: &Token, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<Value, Run_Err> {
+        todo!()
+    }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         self.evaluate(expr)
     }
