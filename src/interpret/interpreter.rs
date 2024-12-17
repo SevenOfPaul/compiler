@@ -81,9 +81,9 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
     }
     fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, Run_Err> {
-      let mut expr=self.evaluate(callee)?;
+      let  expr=self.evaluate(callee)?;
       if arguments.len()!=expr.arity(){
-         return Err(Run_Err::new(paren.clone(), String::from("只有函数有参数")));
+         return Err(Run_Err::new(paren.clone(), String::from("参数数量不符合调用要求")));
       }
         //感觉这里有问题
         let mut arguments_func =vec![];

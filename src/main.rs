@@ -4,7 +4,7 @@ mod ast;
 mod error;
 mod runner;
 mod parse;
-pub(crate) mod tools;
+mod tools;
 mod interpret;
 mod call;
 
