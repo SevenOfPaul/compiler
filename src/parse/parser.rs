@@ -191,6 +191,8 @@ impl Parser {
         }
     }
     self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个)");
+     self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个{");
+    //这里需要判断{吗？
      let body=self.block()?;
          Ok(Stmt::Func { name, params, body })
     }
