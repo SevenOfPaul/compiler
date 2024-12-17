@@ -7,7 +7,7 @@ use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::call::Call;
+use crate::call::{Call, Funcs};
 use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
@@ -82,6 +82,9 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     }
     fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, Run_Err> {
       let mut expr=self.evaluate(callee)?;
+      if arguments.len()!=expr.arity(){
+         return Err(Run_Err::new(paren.clone(), String::from("只有函数有参数")));
+      }
         //感觉这里有问题
         let mut arguments_func =vec![];
         for argu in arguments {
@@ -146,7 +149,8 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
 impl Interpreter {
     pub(crate) fn new() -> Self {
         let  mut global=Environment::new(None);
-           global.init_fn(vec!["now"]);
+        //读取所有原生函数 添加到最高作用域中
+           global.init_fn(Funcs.keys().collect::<Vec<&String>>());
         //最高作用域
         Self {
             env: Rc::from(RefCell::from(global)),
@@ -237,8 +241,7 @@ impl stmt::Visitor<Result<(), Run_Err>> for Interpreter {
         Ok(())
     }
     fn visit_print(&mut self, expr: &Expr) -> Result<(), Run_Err> {
-        let res = self.evaluate(expr)?;
-        printf(res);
+        printf(self.evaluate(expr)?);
         Ok(())
     }
 

@@ -45,9 +45,7 @@ impl Call for Value{
     }
 
     fn call(&self,arguments:Vec<Value>)->Value {
-        println!("{:?}","执行函数");
         if let Value::Func(f)=self{
-            println!("{:?}",Funcs.get(&f.name).unwrap().1(arguments.clone()));
           Funcs.get(&f.name).unwrap().1(arguments)
        }else{
         panic!("只支持函数调用")

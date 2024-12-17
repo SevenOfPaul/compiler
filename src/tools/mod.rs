@@ -1,5 +1,3 @@
-use crate::ast::expression::expr::{Expr, Visitor};
-use crate::ast::expression::expr_visitor::ExprVisitor;
 use crate::interpret::value::Value;
 
 pub(crate) fn printf(v:Value){
@@ -7,6 +5,8 @@ pub(crate) fn printf(v:Value){
         Value::Num(num) => println!("{}", num),
         Value::Str(s)=>println!("{}", s),
         Value::Bool(b)=>println!("{}", b),
+        Value::Time(t)=>println!("{:?}", t),
+         Value::Func(f)=>println!("{:?}", "navtive function"),
         _=>println!("{:?}",Value::Nil)
     }
 }

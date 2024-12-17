@@ -42,11 +42,11 @@ impl Environment {
             Err(Run_Err::new(name.clone(), String::from(key + "未定义")))
         }
     }
-    pub(crate) fn init_fn(&mut self,names:Vec<&str>) {
+    pub(crate) fn init_fn(&mut self,names:Vec<&String>) {
      names.into_iter().for_each(|name|{
          self.local.insert(
              String::from(name),
-            Value::Func(Func::new(name)),
+            Value::Func(Func::new(name.as_str())),
         );
      });
     }

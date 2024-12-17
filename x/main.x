@@ -1,1 +1,2 @@
+print now;
 print now();
