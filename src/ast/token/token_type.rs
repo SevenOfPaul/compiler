@@ -36,7 +36,7 @@ pub enum Token_Type {
     SLASH,// /
     STAR,// *
     SEMICOLON, //;
-    TRUE,
+    TRUE,//True
     WHILE,//while
 }
 impl Token_Type {

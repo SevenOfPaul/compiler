@@ -32,3 +32,16 @@ impl Func{
          String::from("<native fn>")
     }
 }
+pub (crate) enum Fn_Type{
+    Func,
+    Method
+}
+impl Fn_Type{
+ pub (crate) fn to_str(&mut self)->&str{
+       return if let _Func=self{
+         "Func"
+       }else{
+        "Method"
+       }
+   } 
+}

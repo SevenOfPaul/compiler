@@ -8,6 +8,12 @@ pub(crate) enum Stmt {
     Expression {
         expr: Box<Expr>,
     },
+        //函数声明
+    Func {
+        name: Token,
+        params: Vec<Token>,
+        body: Vec<Stmt>,
+    },
     IF {
         condition: Box<Expr>,
         then_branch: Box<Stmt>,
@@ -57,6 +63,9 @@ impl Stmt {
                 } else {
                     visitor.visit_if(condition, then_branch, None);
                 }
+            }
+            Self::Func { name, params, body }=>{
+                
             }
             Stmt::LET { name, expr } => {
                 visitor.visit_let(name, expr);

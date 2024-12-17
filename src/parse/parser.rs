@@ -3,6 +3,7 @@ use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
+use crate::call::Fn_Type;
 use crate::parse::err::Parse_Err;
 
 #[derive(Debug)]
@@ -115,7 +116,7 @@ impl Parser {
     }
     fn declaration(&mut self) -> Result<Stmt, Parse_Err> {
         if self.match_token(&[Token_Type::FN]){
-        todo!()
+           self.func(Fn_Type::Func)
         }else if self.match_token(&[Token_Type::LET]) {
             self.let_declaration()
         } else {
@@ -173,6 +174,25 @@ impl Parser {
             });
         }
         expr
+    }
+    fn func(&mut self,mut fn_type:Fn_Type)->Result<Stmt,Parse_Err>{
+        let name=self.consume(&Token_Type::IDENTIFIER,
+             &("期望".to_owned()+fn_type.to_str()+"名字"))?;
+        let mut params=vec![];
+        if !self.check(&Token_Type::RIGHT_PAREN){
+        loop{
+            if params.len()>255{
+                self.error(String::from("参数数量不可以超过255个"));
+            }
+            params.push(self.consume(&Token_Type::IDENTIFIER, "期望一个参数名")?);
+            if self.check(&Token_Type::COMMA){
+                    break;
+            }
+        }
+    }
+    self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个)");
+     let body=self.block()?;
+         Ok(Stmt::Func { name, params, body })
     }
     fn for_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         //准备脱糖
