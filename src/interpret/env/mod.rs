@@ -1,7 +1,7 @@
 pub(crate) mod macors;
 
 use crate::ast::token::token::Token;
-use crate::call::{Func};
+use crate::call::native_fn::Func;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use std::cell::RefCell;

@@ -1,8 +1,16 @@
+use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
+use std::rc::Rc;
 use chrono::{DateTime, Local};
 
-use crate::call::{Call, Funcs,Func};
+use crate::call::Call;
+use crate::call::native_fn::{Func,Funcs};
+
+use self::interpreter::Interpreter;
+
+use super::env::Environment;
+use super::interpreter;
 
 #[derive(Debug, Clone)]
 pub(crate) enum Value {
@@ -37,16 +45,20 @@ impl Add for Value {
 }
 impl Call for Value{
     fn arity(&self) -> usize {
-      return if let Value::Func(f)=self{
-        Funcs.get(&f.name).unwrap().0
+      return if let Value::Func(n_f)=self{
+        Funcs.get(&n_f.name).unwrap().0
+       }else if let Value::Func(f)=self{
+        0
        }else{
         panic!("只支持函数调用")
        }
     }
 
-    fn call(&self,arguments:Vec<Value>)->Value {
-        if let Value::Func(f)=self{
-          Funcs.get(&f.name).unwrap().1(arguments)
+    fn call(&self,_env:Rc<RefCell<Environment>>,arguments:Vec<Value>)->Value {
+       return if let Value::Func(n_f)=self{
+          Funcs.get(&n_f.name).unwrap().1(arguments)
+       }else if let Value::Func(d_f)=self{
+        Value::Nil
        }else{
         panic!("只支持函数调用")
        }

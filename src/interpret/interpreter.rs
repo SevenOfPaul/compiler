@@ -7,14 +7,15 @@ use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::call::{Call, Funcs};
+use crate::call::Call;
+use crate::call::native_fn::Funcs;
 use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
 use crate::interpret::env::Environment;
 pub(crate) struct Interpreter {
-    env: Rc<RefCell<Environment>>,
+   pub(crate) env: Rc<RefCell<Environment>>,
 }
 impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
@@ -90,7 +91,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         for argu in arguments {
             arguments_func.push(self.evaluate(argu)?);
         }
-       Ok(expr.call(arguments_func))
+       Ok(expr.call(self.env.clone(),arguments_func))
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         self.evaluate(expr)

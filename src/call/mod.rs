@@ -1,37 +1,14 @@
-use std::collections::HashMap;
-use lazy_static::lazy_static;
-use crate::interpret::value::Value;
-use chrono::prelude::*;
-lazy_static!{
-    pub(crate) static ref Funcs: HashMap<String, (usize,Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)> = {
-        //内置函数列表
-        HashMap::from([
-            (String::from("now"), 
-               (0, Box::new(|arguments| {
-                 let now = Local::now();
-                     Value::Time(now)
-                }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
-            )
-        ])
-    };
-}
+use std::{cell::RefCell, rc::Rc};
+
+use crate::interpret::{env::Environment, interpreter::Interpreter, value::Value};
+
+pub (crate) mod native_fn;
+pub (crate) mod decl_fn;
 pub(crate) trait Call{
     //检查参数数量
     fn arity(&self) -> usize;
-    fn call(&self,arguments:Vec<Value>)->Value;
+    fn call(&self,env:Rc<RefCell<Environment>>,arguments:Vec<Value>)->Value;
 }// Box<dyn Fn(Vec<Value>) -> Value + Send + Sync + 'static>
-#[derive(Debug, Clone)]
-pub (crate) struct Func{
-pub (crate) name:String
-}
-impl Func{
-   pub(crate) fn new(name:&str)->Self{
-           Self{name:String::from(name)}
-    }
-    pub (crate) fn to_string(&self)->String{
-         String::from("<native fn>")
-    }
-}
 pub (crate) enum Fn_Type{
     Func,
     Method

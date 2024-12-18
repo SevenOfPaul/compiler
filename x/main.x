@@ -1,2 +1,1 @@
-print now;
-print now();
+X();
