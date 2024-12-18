@@ -21,7 +21,16 @@ impl Call for Func{
     }
 
     fn call(&self,env:Rc<RefCell<Environment>>,arguments:Vec<Value>)->Value {
-      let env=Environment::new(Some(env));
+      let mut env=Environment::new(Some(env));
+      if let Stmt::Func { name, params, body }=self.decl.as_ref(){
+      for argu in params.iter().enumerate(){
+         env.add(argu.1, arguments[argu.0].clone());
+      }
+      //执行他
+      
+    }else{
+        panic!("类型错误")
+    }
       todo!()
     }
 }
