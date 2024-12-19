@@ -1,4 +1,4 @@
-use crate::interpret::{interpreter::Interpreter, value::Value};
+use crate::{ast::statment::stmt::Stmt, interpret::{interpreter::Interpreter, value::Value}};
 mod native_fn;
 mod decl_fn;
 use native_fn::Native_Fn;
@@ -12,12 +12,12 @@ lazy_static!{
         //内置函数列表
         HashMap::from([
             (String::from("now"), 
-               (0, Box::new(|arguments| {
+               (0, Box::new(|_arguments| {
                  let now = Local::now();
                      Value::Time(now)
                 }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
             ),    (String::from("X"), 
-               (0, Box::new(|arguments| {
+               (0, Box::new(|_arguments| {
                     println!("{:?}","==================================");
                     println!("{:?}","==  X-MAN   ======================");
                     println!("{:?}","==================================");
@@ -56,11 +56,6 @@ impl Call for Func{
 pub(crate) trait Fn_init<T>{
         fn new(name:T)->Func;
 }
-impl Fn_init<&str> for Func{
-    fn new(name:&str)->Func {
-       Native_Fn::new(name)
-    }
-}
 impl Func {
    pub(crate) fn to_string(&self)->String{
       return  if let Func::Native(_)=self{
@@ -76,7 +71,7 @@ pub (crate) enum Fn_Type{
 }
 impl Fn_Type{
  pub (crate) fn to_str(&mut self)->&str{
-       return if let _Func=self{
+       return if let Fn_Type::Func=self{
          "Func"
        }else{
         "Method"

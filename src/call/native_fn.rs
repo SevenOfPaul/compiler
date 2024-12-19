@@ -4,6 +4,12 @@ use super::{Call, Fn_init, Func, Funcs, Interpreter, Value};
 pub (crate) struct Native_Fn{
 pub (crate) name:String
 }
+//语言本身的函数
+impl Fn_init<&str> for Func{
+    fn new(name:&str)->Func {
+       Native_Fn::new(name)
+    }
+}
 impl Call for Native_Fn{
     fn arity(&self) -> usize {
          Funcs.get(&self.name).unwrap().0

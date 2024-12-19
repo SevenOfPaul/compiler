@@ -6,6 +6,12 @@ use super::{Call, Fn_init, Func, Interpreter, Value};
 pub struct Decl_Fn{
 pub  decl:Box<Stmt>
 }
+//自定义函数
+impl Fn_init<Stmt> for Func{
+    fn new(decl:Stmt)->Func {
+       Decl_Fn::new(decl)
+    }
+}
 impl Call for Decl_Fn{
     fn arity(&self) -> usize {
         todo!()

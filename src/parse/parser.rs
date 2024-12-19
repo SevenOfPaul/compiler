@@ -377,7 +377,7 @@ impl Parser {
     //声明变量的规则
     fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
         let name = self.consume(&Token_Type::IDENTIFIER, "这个单词不允许作为声明")?;
-        let mut expr;
+        let  expr;
         if self.match_token(&[Token_Type::EQUAL]) {
             expr = self.expression();
             self.consume(&Token_Type::SEMICOLON, "此处应有分号结尾")?;

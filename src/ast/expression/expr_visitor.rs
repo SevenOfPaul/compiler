@@ -33,19 +33,19 @@ impl Visitor<String> for ExprVisitor {
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> String {
         self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
     }
-    fn visit_variable(&mut self, name: &Token) -> String {
+    fn visit_variable(&mut self, _name: &Token) -> String {
       todo!();
 
     }
-    fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> String {
+    fn visit_assign(&mut self, _name: &Token,_value: &Box<Expr>) -> String {
         String::from("变量已声明")
     }
 
-    fn visit_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>) -> String {
+    fn visit_ternary(&mut self, _condition: &Box<Expr>, _t_expr: &Box<Expr>, _f_expr: &Box<Expr>) -> String {
         todo!()
     }
 
-    fn visit_logical(&mut self, operator: &Token, l_expression: &Box<Expr>, r_expression: &Box<Expr>) -> String {
+    fn visit_logical(&mut self, _operator: &Token, _l_expression: &Box<Expr>, _r_expression: &Box<Expr>) -> String {
         todo!()
     }
 
