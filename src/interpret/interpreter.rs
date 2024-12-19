@@ -168,6 +168,8 @@ impl Interpreter {
             && ((l.is_num() && r.is_num()) || l.is_str() && r.is_num())
         {
             Ok(())
+        }else if l.is_str() && r.is_str(){
+            Ok(())
         } else if l.is_num() && r.is_num() {
             Ok(())
         } else {

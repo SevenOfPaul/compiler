@@ -1,6 +1,6 @@
 X();
 print now();
-fn hello(){
-    print "hello world!";
+fn hello(world){
+    print "hello"+world;
 }
-hello();
+hello(" world!");

@@ -64,7 +64,7 @@ impl Div for Value {
                 return Value::Num(n1 / n2);
             }
         }
-        panic!("不支持此类型法操作");
+        panic!("不支持此类型除法操作");
     }
 }
 impl Mul for Value {

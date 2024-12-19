@@ -178,15 +178,16 @@ impl Parser {
     fn func(&mut self,mut fn_type:Fn_Type)->Result<Stmt,Parse_Err>{
         let name=self.consume(&Token_Type::IDENTIFIER,
              &("期望".to_owned()+fn_type.to_str()+"名字"))?;
+        self.consume(&Token_Type::LEFT_PAREN,"期望(");
         let mut params=vec![];
-        self.advance();
         if !self.check(&Token_Type::RIGHT_PAREN){
         loop{
+            println!("{:?}",self.tokens[self.pos]);
             if params.len()>255{
                 self.error(String::from("参数数量不可以超过255个"));
             }
             params.push(self.consume(&Token_Type::IDENTIFIER, "期望一个参数名")?);
-            if self.check(&Token_Type::COMMA){
+            if self.check(&Token_Type::RIGHT_PAREN){
                     break;
             }
         }
