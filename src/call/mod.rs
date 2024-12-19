@@ -31,7 +31,7 @@ lazy_static!{
 #[derive(Debug, Clone)]
 pub (crate) enum Func{
     Native(Native_Fn),
-    DeclFn(Decl_Fn)
+    Decl(Decl_Fn)
 }
 pub(crate) trait Call{
     //检查参数数量
@@ -43,13 +43,13 @@ impl Call for Func{
     fn arity(&self) -> usize {
       match self{
           Func::Native(n_f)=>n_f.arity(),
-          Func::DeclFn(d_f)=>d_f.arity()
+          Func::Decl(d_f)=>d_f.arity()
     }
 }
     fn call(&self, inter: &mut Interpreter,arguments:Vec<Value>)->Value {
        match self{
           Func::Native(n_f)=>n_f.call(inter,arguments),
-          Func::DeclFn(d_f)=>d_f.call(inter,arguments)
+          Func::Decl(d_f)=>d_f.call(inter,arguments)
     }
     }
 }

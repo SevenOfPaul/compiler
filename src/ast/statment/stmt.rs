@@ -64,7 +64,7 @@ impl Stmt {
                     visitor.visit_if(condition, then_branch, None);
                 }
             }
-            Self::Func { name, params, body }=>{
+            Stmt::Func { name, params, body }=>{
                 
             }
             Stmt::LET { name, expr } => {

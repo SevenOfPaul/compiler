@@ -33,6 +33,6 @@ impl Call for Decl_Fn{
 }
 impl Fn_init<Stmt> for Decl_Fn{
     fn new(decl:Stmt)->Func{
-         Func::DeclFn(Self{decl:Box::from(decl)})
+         Func::Decl(Self{decl:Box::from(decl)})
     }
 }
