@@ -1,7 +1,7 @@
 pub(crate) mod macors;
 
 use crate::ast::token::token::Token;
-use crate::call::native_fn::Func;
+use crate::call::{Fn_init, Func};
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use std::cell::RefCell;
@@ -46,6 +46,7 @@ impl Environment {
      names.into_iter().for_each(|name|{
          self.local.insert(
              String::from(name),
+             //这里需要添加一个标识识别native or decl
             Value::Func(Func::new(name.as_str())),
         );
      });

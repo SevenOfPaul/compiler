@@ -1,19 +1,12 @@
 use crate::{ast::statment::stmt::Stmt, interpret::env::Environment};
 
-use super::{Call, Interpreter, Value};
-
-pub (crate) struct Func{
-pub (crate) decl:Box<Stmt>
+use super::{Call, Fn_init, Func, Interpreter, Value};
+/**自定义的函数 */
+#[derive(Debug, Clone)]
+pub struct Decl_Fn{
+pub  decl:Box<Stmt>
 }
-impl Func{
-   pub(crate) fn new(decl:Stmt)->Self{
-           Self{decl:Box::from(decl)}
-    }
-    pub (crate) fn to_string(&self)->String{
-         String::from("<native fn>")
-    }
-}
-impl Call for Func{
+impl Call for Decl_Fn{
     fn arity(&self) -> usize {
         todo!()
     }
@@ -30,5 +23,10 @@ impl Call for Func{
         } else {
             panic!("Type error")
         }
+    }
+}
+impl Fn_init<Stmt> for Decl_Fn{
+    fn new(decl:Stmt)->Func{
+         Func::DeclFn(Self{decl:Box::from(decl)})
     }
 }

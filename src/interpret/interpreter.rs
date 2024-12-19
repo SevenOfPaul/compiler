@@ -8,7 +8,7 @@ use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::call::Call;
-use crate::call::native_fn::Funcs;
+use crate::call::Funcs;
 use crate::error;
 use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
