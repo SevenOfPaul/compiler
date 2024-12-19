@@ -91,7 +91,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         for argu in arguments {
             arguments_func.push(self.evaluate(argu)?);
         }
-       Ok(expr.call(self.env.clone(),arguments_func))
+       Ok(expr.call(self,arguments_func))
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         self.evaluate(expr)
@@ -188,7 +188,7 @@ impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
         expr.accept(self)
     }
-    fn execute_block(&mut self, stmts: &Vec<Stmt>, env: Environment) -> Result<(), Run_Err> {
+    pub(crate)  fn execute_block(&mut self, stmts: &Vec<Stmt>, env: Environment) -> Result<(), Run_Err> {
         let pre_env = self.env.clone();
         self.env = Rc::new(RefCell::new(env));
         for stmt in stmts {

@@ -7,7 +7,7 @@ pub (crate) mod decl_fn;
 pub(crate) trait Call{
     //检查参数数量
     fn arity(&self) -> usize;
-    fn call(&self,env:Rc<RefCell<Environment>>,arguments:Vec<Value>)->Value;
+    fn call(&self, inter: &mut Interpreter,arguments:Vec<Value>)->Value;
 }// Box<dyn Fn(Vec<Value>) -> Value + Send + Sync + 'static>
 pub (crate) enum Fn_Type{
     Func,

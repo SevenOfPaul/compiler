@@ -54,7 +54,7 @@ impl Call for Value{
        }
     }
 
-    fn call(&self,_env:Rc<RefCell<Environment>>,arguments:Vec<Value>)->Value {
+    fn call(&self,_inter: &mut Interpreter,arguments:Vec<Value>)->Value {
        return if let Value::Func(n_f)=self{
           Funcs.get(&n_f.name).unwrap().1(arguments)
        }else if let Value::Func(d_f)=self{

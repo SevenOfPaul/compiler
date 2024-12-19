@@ -179,6 +179,7 @@ impl Parser {
         let name=self.consume(&Token_Type::IDENTIFIER,
              &("期望".to_owned()+fn_type.to_str()+"名字"))?;
         let mut params=vec![];
+        self.advance();
         if !self.check(&Token_Type::RIGHT_PAREN){
         loop{
             if params.len()>255{
@@ -191,14 +192,14 @@ impl Parser {
         }
     }
     self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个)");
-     self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个{");
+     self.consume(&Token_Type::LEFT_BRACE, "此处需要一个{");
     //这里需要判断{吗？
      let body=self.block()?;
          Ok(Stmt::Func { name, params, body })
     }
     fn for_stmt(&mut self) -> Result<Stmt, Parse_Err> {
         //准备脱糖
-        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        self.consume(&Token_Type::LEFT_BRACE, "此处应有一个(");
         let mut initializer: Option<Stmt> = None;
         if self.match_token(&[Token_Type::SEMICOLON]) {
             initializer = None;
