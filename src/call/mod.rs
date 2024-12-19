@@ -1,4 +1,4 @@
-use crate::{ast::statment::stmt::Stmt, interpret::{interpreter::Interpreter, value::Value}};
+use crate::{interpret::{interpreter::Interpreter, value::Value}};
 mod native_fn;
 mod decl_fn;
 use native_fn::Native_Fn;
@@ -58,7 +58,7 @@ pub(crate) trait Fn_init<T>{
 }
 impl Func {
    pub(crate) fn to_string(&self)->String{
-      return  if let Func::Native(_)=self{
+        if let Func::Native(_)=self{
             String::from("<native fn>")
         }else{
               String::from("<decl fn>")

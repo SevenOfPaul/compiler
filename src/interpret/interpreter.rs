@@ -7,7 +7,7 @@ use crate::ast::statment::stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::call::Call;
+use crate::call::{Call, Fn_init, Func};
 use crate::call::Funcs;
 use crate::error;
 use crate::interpret::error::Run_Err;
@@ -219,6 +219,12 @@ impl stmt::Visitor<Result<(), Run_Err>> for Interpreter {
         self.evaluate(expr)?;
         Ok(())
     }
+    fn visit_fn(&mut self, name: &Token, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<(), Run_Err> {
+        //这里不明白
+        let func=Stmt::Func {name:name.clone(), params: params.clone(), body: body.clone()};
+        self.env.borrow_mut().add(name,Value::Func(Func::new(func)))?;
+        Ok(())
+    }
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), Run_Err> {
         //添加到变量池中
         let res = self.evaluate(expr);
@@ -252,5 +258,7 @@ impl stmt::Visitor<Result<(), Run_Err>> for Interpreter {
         }
         Ok(())
     }
+
+
 }
 //执行

@@ -14,7 +14,10 @@ impl Fn_init<Stmt> for Func{
 }
 impl Call for Decl_Fn{
     fn arity(&self) -> usize {
-        todo!()
+     match &self.decl.as_ref() {
+         Stmt::Func {name:_name,params, body: _body }=>params.len(),
+        _=>panic!("类型错误")
+     }
     }
 
     fn call(&self, inter: &mut Interpreter, arguments: Vec<Value>) -> Value {

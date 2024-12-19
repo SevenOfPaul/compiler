@@ -34,6 +34,7 @@ pub(crate) enum Stmt {
 pub trait Visitor<T> {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> T;
     fn visit_expr(&mut self, expr: &Expr) -> T;
+    fn visit_fn(&mut self,name:&Token, params:&Vec<Token>, body:&Vec<Stmt>)->T;
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_print(&mut self, expr: &Expr) -> T;
@@ -65,7 +66,7 @@ impl Stmt {
                 }
             }
             Stmt::Func { name, params, body }=>{
-                
+                visitor.visit_fn(name, params, body);
             }
             Stmt::LET { name, expr } => {
                 visitor.visit_let(name, expr);
