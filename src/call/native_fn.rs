@@ -15,7 +15,7 @@ impl Call for Native_Fn{
          Funcs.get(&self.name).unwrap().0
     }
 
-    fn call(&self, inter: &mut Interpreter, arguments: Vec<Value>) -> Value {
+    fn call(&self, _inter: &mut Interpreter, arguments: Vec<Value>) -> Value {
          Funcs.get(&self.name).unwrap().1(arguments)
     }
 }

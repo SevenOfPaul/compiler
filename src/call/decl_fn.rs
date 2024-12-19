@@ -19,7 +19,7 @@ impl Call for Decl_Fn{
 
     fn call(&self, inter: &mut Interpreter, arguments: Vec<Value>) -> Value {
         let mut env = Environment::new(Some(inter.env.clone()));
-        if let Stmt::Func { name, params, body } = self.decl.as_ref() {
+        if let Stmt::Func { name:_, params, body } = self.decl.as_ref() {
             for (i, param) in params.iter().enumerate() {
                 env.add(param, arguments[i].clone()).unwrap();
             }    
