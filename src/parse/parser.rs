@@ -6,6 +6,7 @@ use crate::ast::token::token_type::Token_Type;
 use crate::call::Fn_Type;
 use crate::error::{X_Err};
 use crate::parse::Parse_Err;
+use crate::tools::printf;
 
 #[derive(Debug)]
 pub(crate) struct Parser {
@@ -187,7 +188,8 @@ impl Parser {
                 self.error(String::from("参数数量不可以超过255个"));
             }
             params.push(self.consume(&Token_Type::IDENTIFIER, "期望一个参数名")?);
-            if self.check(&Token_Type::RIGHT_PAREN){
+            // println!("{}")
+            if !self.match_token(&[Token_Type::COMMA]){
                     break;
             }
         }

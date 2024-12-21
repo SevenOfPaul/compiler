@@ -1,7 +1,4 @@
-X();
-print now();
-fn hello(world){
-    print "hello"+world;
-    return "hello";
+fn add(n1){
+return n1;
 }
-print hello(" world!");
+print add(7);
