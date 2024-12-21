@@ -14,7 +14,7 @@ use crate::error::{ X_Err};
 use crate::interpret::value::Value;
 use crate::tools::printf;
 use crate::interpret::env::Environment;
-use crate::interpret::Run_Err;
+use crate::interpret::{Return, Run_Err};
 
 pub(crate) struct Interpreter {
    pub(crate) env: Rc<RefCell<Environment>>,
@@ -260,7 +260,8 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         Ok(())
     }
     fn visit_return(&mut self,keyword:&Token, expr: &Expr) -> Result<(), X_Err> {
-       todo!()
+      let val=self.evaluate(expr)?;
+        Err(Return::new(val))
     }
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), X_Err> {
         while self.evaluate(condition)?.is_truthy() {

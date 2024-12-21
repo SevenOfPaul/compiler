@@ -21,3 +21,8 @@ impl Run_Err{
 pub(crate) struct Return{
     pub(crate) val:Value,
 }
+impl Return{
+    fn new(val:Value) ->X_Err{
+        X_Err::ret(Return{val})
+    }
+}
