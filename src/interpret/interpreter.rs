@@ -208,10 +208,11 @@ impl Interpreter {
     /*
     这里改成执行语句vec
     */
-    pub(crate) fn run(&mut self, stmts: Vec<Stmt>) {
+    pub(crate) fn run(&mut self, stmts: Vec<Stmt>)->Result<(),X_Err> {
         for stmt in stmts {
-            self.execute(stmt);
+            self.execute(stmt)?;
         }
+        Ok(())
     }
 
     //这里其实可以复写
@@ -249,9 +250,9 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         else_branch: Option<&Stmt>,
     ) -> Result<(), X_Err> {
         if self.evaluate(condition)?.is_truthy() {
-            self.execute(then_branch.clone());
+            self.execute(then_branch.clone())?
         } else if else_branch.is_some() {
-            self.execute(else_branch.unwrap().clone());
+            self.execute(else_branch.unwrap().clone())?
         }
         Ok(())
     }
@@ -265,7 +266,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     }
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), X_Err> {
         while self.evaluate(condition)?.is_truthy() {
-            self.execute(body.clone());
+            self.execute(body.clone())?
         }
         Ok(())
     }

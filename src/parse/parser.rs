@@ -183,7 +183,6 @@ impl Parser {
         let mut params=vec![];
         if !self.check(&Token_Type::RIGHT_PAREN){
         loop{
-            println!("{:?}",self.tokens[self.pos]);
             if params.len()>255{
                 self.error(String::from("参数数量不可以超过255个"));
             }
