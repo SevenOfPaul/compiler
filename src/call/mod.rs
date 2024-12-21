@@ -7,6 +7,8 @@ use decl_fn::Decl_Fn;
 use std::collections::HashMap;
 use lazy_static::lazy_static;
 use chrono::prelude::*;
+use crate::error::X_Err;
+
 lazy_static!{
     pub(crate) static ref Funcs: HashMap<String, (usize,Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)> = {
         //内置函数列表
@@ -36,7 +38,7 @@ pub (crate) enum Func{
 pub(crate) trait Call{
     //检查参数数量
     fn arity(&self) -> usize;
-    fn call(&self, inter: &mut Interpreter,arguments:Vec<Value>)->Value;
+    fn call(&self, inter: &mut Interpreter,arguments:Vec<Value>)->Result<Value,X_Err>;
 
 }// Box<dyn Fn(Vec<Value>) -> Value + Send + Sync + 'static>
 impl Call for Func{
@@ -46,7 +48,7 @@ impl Call for Func{
           Func::Decl(d_f)=>d_f.arity()
     }
 }
-    fn call(&self, inter: &mut Interpreter,arguments:Vec<Value>)->Value {
+    fn call(&self, inter: &mut Interpreter,arguments:Vec<Value>)->Result<Value,X_Err> {
        match self{
           Func::Native(n_f)=>n_f.call(inter,arguments),
           Func::Decl(d_f)=>d_f.call(inter,arguments)

@@ -1,3 +1,4 @@
+use crate::error::X_Err;
 use super::{Call, Fn_init, Func, Funcs, Interpreter, Value};
 
 #[derive(Debug, Clone)]
@@ -15,8 +16,9 @@ impl Call for Native_Fn{
          Funcs.get(&self.name).unwrap().0
     }
 
-    fn call(&self, _inter: &mut Interpreter, arguments: Vec<Value>) -> Value {
-         Funcs.get(&self.name).unwrap().1(arguments)
+    fn call(&self, _inter: &mut Interpreter, arguments: Vec<Value>) -> Result<Value,X_Err> {
+        //这里得改
+       Ok(Funcs.get(&self.name).unwrap().1(arguments))
     }
 }
 impl Fn_init<&str> for Native_Fn{

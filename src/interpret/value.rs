@@ -3,6 +3,7 @@ use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 use chrono::{DateTime, Local};
 use crate::call::Call;
 use crate::call::Func;
+use crate::error::X_Err;
 use self::interpreter::Interpreter;
 use super::interpreter;
 
@@ -46,8 +47,8 @@ impl Call for Value{
       }
     }
 
-    fn call(&self,inter: &mut Interpreter,arguments:Vec<Value>)->Value {
-       return if let Value::Func(f)=self{
+    fn call(&self,inter: &mut Interpreter,arguments:Vec<Value>)->Result<Value,X_Err> {
+        if let Value::Func(f)=self{
              f.call(inter, arguments)
        }else{
         panic!("只支持函数调用")

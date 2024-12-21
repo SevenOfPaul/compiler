@@ -1,5 +1,5 @@
 use crate::{ast::statment::stmt::Stmt, interpret::env::Environment};
-
+use crate::error::X_Err;
 use super::{Call, Fn_init, Func, Interpreter, Value};
 /**自定义的函数 */
 #[derive(Debug, Clone)]
@@ -20,15 +20,22 @@ impl Call for Decl_Fn{
      }
     }
 
-    fn call(&self, inter: &mut Interpreter, arguments: Vec<Value>) -> Value {
+    fn call(&self, inter: &mut Interpreter, arguments: Vec<Value>) -> Result<Value,X_Err> {
         let mut env = Environment::new(Some(inter.env.clone()));
         if let Stmt::Func { name:_, params, body } = self.decl.as_ref() {
             for (i, param) in params.iter().enumerate() {
                 env.add(param, arguments[i].clone()).unwrap();
             }    
             //调用执行
-           inter.execute_block(body, env);
-           Value::Nil
+          let res=inter.execute_block(body, env);
+           if let Err(res_val)=res{
+               match res_val {
+                   X_Err::ret(r)=>Ok(r.val),
+                   _=>Err(res_val)
+               }
+           }else{
+               Ok(Value::Nil)
+           }
         } else {
             panic!("Type error")
         }

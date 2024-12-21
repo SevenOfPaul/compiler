@@ -47,13 +47,13 @@ pub trait Visitor<T> {
 }
 
 impl Stmt {
-    pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>) {
+    pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>)->T {
         match self {
             Stmt::Block { stmts } => {
-                visitor.visit_block(stmts);
+                visitor.visit_block(stmts)
             }
             Stmt::Expression { expr } => {
-                visitor.visit_expr(expr);
+                visitor.visit_expr(expr)
             }
             Stmt::IF {
                 condition,
@@ -65,27 +65,27 @@ impl Stmt {
                         condition,
                         then_branch,
                         Some(else_branch.clone().unwrap().as_ref()),
-                    );
+                    )
                 } else {
-                    visitor.visit_if(condition, then_branch, None);
+                    visitor.visit_if(condition, then_branch, None)
                 }
             }
             Stmt::Func { name, params, body }=>{
-                visitor.visit_fn(name, params, body);
+                visitor.visit_fn(name, params, body)
             }
             Stmt::LET { name, expr } => {
-                visitor.visit_let(name, expr);
+                visitor.visit_let(name, expr)
             }
             Stmt::Print { expr } => {
-                visitor.visit_print(expr);
+                visitor.visit_print(expr)
             }
             Stmt::Return {keyword, expr } => {
-                visitor.visit_return(keyword,expr);
+                visitor.visit_return(keyword,expr)
             }
             Stmt::While{
                 condition, body
             }=> {
-                visitor.visit_while(condition,body);
+                visitor.visit_while(condition,body)
             }
         }
     }
