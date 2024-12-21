@@ -26,6 +26,10 @@ pub(crate) enum Stmt {
     Print {
         expr: Box<Expr>,
     },
+    Return{
+        keyword:Token,
+        expr: Box<Expr>,
+    },
     While{
         condition:Box<Expr>,
         body:Box<Stmt>
@@ -38,6 +42,7 @@ pub trait Visitor<T> {
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_print(&mut self, expr: &Expr) -> T;
+    fn visit_return(&mut self,keyword:&Token,expr: &Expr) -> T;
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
 }
 
@@ -73,6 +78,9 @@ impl Stmt {
             }
             Stmt::Print { expr } => {
                 visitor.visit_print(expr);
+            }
+            Stmt::Return {keyword, expr } => {
+                visitor.visit_return(keyword,expr);
             }
             Stmt::While{
                 condition, body

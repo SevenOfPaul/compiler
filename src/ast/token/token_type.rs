@@ -32,6 +32,7 @@ pub enum Token_Type {
     QUESTION,//?
     RIGHT_BRACE,//}
     RIGHT_PAREN,//)
+    RETURN,//return
     STRING, //字符串
     SLASH,// /
     STAR,// *

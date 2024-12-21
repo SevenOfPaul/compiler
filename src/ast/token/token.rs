@@ -20,6 +20,7 @@ lazy_static! {
             (String::from("let"), Token_Type::LET),
             (String::from("nil"), Token_Type::NIL),
             (String::from("print"), Token_Type::PRINT),
+            (String::from("return"), Token_Type::RETURN),
             (String::from("true"), Token_Type::TRUE),
             (String::from("while"), Token_Type::WHILE),
         ])

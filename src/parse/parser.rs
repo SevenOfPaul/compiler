@@ -374,6 +374,12 @@ impl Parser {
             })
         }
     }
+    fn return_stmt(&mut self) ->Result<Stmt, Parse_Err> {
+       let keyword=self.previous();
+      let expr= self.expression();
+        self.consume(&Token_Type::SEMICOLON, "返回值也需要有分号结尾");
+         Ok(Stmt::Return {keyword,expr:Box::from(expr)})
+    }
         //声明语法
     //声明变量的规则
     fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
@@ -399,7 +405,9 @@ impl Parser {
             self.if_stmt()
         } else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
-        } else if self.match_token(&[Token_Type::WHILE]) {
+        }else if self.match_token(&[Token_Type::RETURN]){
+            self.return_stmt()
+        }else if self.match_token(&[Token_Type::WHILE]) {
             self.while_stmt()
         } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
             Ok(Stmt::Block {
