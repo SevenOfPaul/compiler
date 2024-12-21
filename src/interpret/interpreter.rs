@@ -10,10 +10,12 @@ use crate::ast::token::token_type::Token_Type;
 use crate::call::{Call, Fn_init, Func};
 use crate::call::Funcs;
 use crate::error;
-use crate::error::X_Err;
+use crate::error::{ X_Err};
 use crate::interpret::value::Value;
 use crate::tools::printf;
 use crate::interpret::env::Environment;
+use crate::interpret::Run_Err;
+
 pub(crate) struct Interpreter {
    pub(crate) env: Rc<RefCell<Environment>>,
 }
@@ -30,11 +32,15 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     ) -> Result<Value, X_Err> {
         //判断是否出错
         let l = self.evaluate(l_expression).unwrap_or_else(|e| {
-            error::log(e.token.line, &e.token.lexeme, &e.mes);
+            if let X_Err::run(run_err)=e{
+                error::log(run_err.token.line, &run_err.token.lexeme, &run_err.mes);
+            }
             Value::Nil
         });
         let r = self.evaluate(r_expression).unwrap_or_else(|e| {
-            error::log(e.token.line, &e.token.lexeme, &e.mes);
+            if let X_Err::run(run_err)=e{
+                error::log(run_err.token.line, &run_err.token.lexeme, &run_err.mes);
+            }
             Value::Nil
         });
         match operator.token_type {
@@ -84,7 +90,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, X_Err> {
       let  expr=self.evaluate(callee)?;
       if arguments.len()!=expr.arity(){
-         return Err(X_Err::new(paren.clone(), String::from("参数数量不符合调用要求")));
+         return Err(Run_Err::new(paren.clone(), String::from("参数数量不符合调用要求")));
       }
         //感觉这里有问题
         let mut arguments_func =vec![];

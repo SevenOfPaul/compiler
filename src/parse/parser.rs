@@ -4,7 +4,8 @@ use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::call::Fn_Type;
-use crate::error::X_Err;
+use crate::error::{X_Err};
+use crate::parse::Parse_Err;
 
 #[derive(Debug)]
 pub(crate) struct Parser {
@@ -367,7 +368,10 @@ impl Parser {
     fn print_stmt(&mut self) -> Result<Stmt, X_Err> {
         let val = self.expression();
         if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
-            Err(self.error(e.mes))
+            Err(match e {
+                X_Err::parse(parse_e) => self.error(parse_e.mes),
+                _ => e,
+            })
         } else {
             Ok(Stmt::Print {
                 expr: Box::from(val),
@@ -474,7 +478,5 @@ impl Parser {
             body: Box::from(body),
         })
     }
-
-
 }
 //表达式解析的时候看看是不是三元

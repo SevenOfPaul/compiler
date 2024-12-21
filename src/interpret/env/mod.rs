@@ -1,12 +1,12 @@
 pub(crate) mod macors;
-
 use crate::ast::token::token::Token;
 use crate::call::{Fn_init, Func};
 use crate::interpret::value::Value;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::error::X_Err;
+use crate::error::{ X_Err};
+use crate::interpret::Run_Err;
 
 #[derive(Clone)]
 pub(crate) struct Environment {
