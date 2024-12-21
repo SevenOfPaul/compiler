@@ -4,7 +4,7 @@ use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::call::Fn_Type;
-use crate::parse::err::Parse_Err;
+use crate::error::X_Err;
 
 #[derive(Debug)]
 pub(crate) struct Parser {
@@ -15,7 +15,7 @@ impl Parser {
     pub(crate) fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, pos: 0 }
     }
-    fn assign_stmt(&mut self) -> Result<Expr, Parse_Err> {
+    fn assign_stmt(&mut self) -> Result<Expr, X_Err> {
         let expr = self.ternary_expr();
         if self.match_token(&[Token_Type::EQUAL]) {
             let equals = self.previous();
@@ -31,7 +31,7 @@ impl Parser {
         }
         expr
     }
-    fn and(&mut self) -> Result<Expr, Parse_Err> {
+    fn and(&mut self) -> Result<Expr, X_Err> {
         let l = self.equality()?;
         while self.match_token(&[Token_Type::AND]) {
             let oper = self.previous();
@@ -53,7 +53,7 @@ impl Parser {
     }
 
     //添加{}中的语句
-    fn block(&mut self) -> Result<Vec<Stmt>, Parse_Err> {
+    fn block(&mut self) -> Result<Vec<Stmt>, X_Err> {
         let mut res = vec![];
         while !(self.is_end() || self.check(&Token_Type::RIGHT_BRACE)) {
             res.push(self.declaration()?);
@@ -61,7 +61,7 @@ impl Parser {
         self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}");
         Ok(res)
     }
-    fn call(&mut self)->Result<Expr,Parse_Err>{
+    fn call(&mut self)->Result<Expr,X_Err>{
         let mut expr =self.primary()?;
        loop{
            if self.check(&Token_Type::LEFT_PAREN){
@@ -80,7 +80,7 @@ impl Parser {
     //     stmts
     // }
     //或大或小
-    fn comparison(&mut self) -> Result<Expr, Parse_Err> {
+    fn comparison(&mut self) -> Result<Expr, X_Err> {
         let mut expr = self.term();
         while self.match_token(&[
             Token_Type::LESS,
@@ -99,7 +99,7 @@ impl Parser {
         expr
     }
     //判断错误
-    fn consume(&mut self, token_type: &Token_Type, mes: &str) -> Result<Token, Parse_Err> {
+    fn consume(&mut self, token_type: &Token_Type, mes: &str) -> Result<Token, X_Err> {
         if self.check(&token_type) {
             Ok(self.advance())
         } else {
@@ -114,7 +114,7 @@ impl Parser {
             (*self.peek()).token_type == *token_type
         }
     }
-    fn declaration(&mut self) -> Result<Stmt, Parse_Err> {
+    fn declaration(&mut self) -> Result<Stmt, X_Err> {
         if self.match_token(&[Token_Type::FN]){
            self.func(Fn_Type::Func)
         }else if self.match_token(&[Token_Type::LET]) {
@@ -136,7 +136,7 @@ impl Parser {
     }
 
     //看看以等号为中心的表达式 类似 1!=2;1==2; 1==2&&2==1;
-    fn equality(&mut self) -> Result<Expr, Parse_Err> {
+    fn equality(&mut self) -> Result<Expr, X_Err> {
         let mut expr = self.comparison();
         while self.match_token(&[Token_Type::BANG_EQUAL, Token_Type::EQUAL_EQUAL]) {
             let operator = self.previous().clone();
@@ -149,12 +149,12 @@ impl Parser {
         }
         expr
     }
-    fn error(&mut self, mes: String) -> Parse_Err {
+    fn error(&mut self, mes: String) -> X_Err {
         let token = self.peek();
         Parse_Err::new(token.clone(), mes)
     }
     //下面是表达式转语句的代码
-    fn expr_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+    fn expr_stmt(&mut self) -> Result<Stmt, X_Err> {
         let expr = self.assign_stmt()?;
         self.consume(&Token_Type::SEMICOLON, "表达式后需要分号")?;
         Ok(Stmt::Expression {
@@ -162,7 +162,7 @@ impl Parser {
         })
     }
     //是不是乘除
-    fn factor(&mut self) -> Result<Expr, Parse_Err> {
+    fn factor(&mut self) -> Result<Expr, X_Err> {
         let mut expr = self.unary();
         while self.match_token(&[Token_Type::SLASH, Token_Type::STAR]) {
             let operator = self.previous();
@@ -175,7 +175,7 @@ impl Parser {
         }
         expr
     }
-    fn func(&mut self,mut fn_type:Fn_Type)->Result<Stmt,Parse_Err>{
+    fn func(&mut self,mut fn_type:Fn_Type)->Result<Stmt,X_Err>{
         let name=self.consume(&Token_Type::IDENTIFIER,
              &("期望".to_owned()+fn_type.to_str()+"名字"))?;
         self.consume(&Token_Type::LEFT_PAREN,"期望(");
@@ -198,7 +198,7 @@ impl Parser {
      let body=self.block()?;
          Ok(Stmt::Func { name, params, body })
     }
-    fn for_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+    fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
         //准备脱糖
         self.consume(&Token_Type::LEFT_BRACE, "此处应有一个(");
         let mut initializer: Option<Stmt> = None;
@@ -245,7 +245,7 @@ impl Parser {
         }
         Ok(body)
     }
-    fn finish_call(&mut self,callee:Box<Expr>) ->Result<Expr,Parse_Err>{
+    fn finish_call(&mut self,callee:Box<Expr>) ->Result<Expr,X_Err>{
         let mut arguments=vec![];
         //    print!("{:?}",self.tokens[self.pos]);
            self.advance();
@@ -269,7 +269,7 @@ impl Parser {
         self.peek().token_type == Token_Type::EOF
     }
     
-    fn if_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+    fn if_stmt(&mut self) -> Result<Stmt, X_Err> {
         self.consume(&Token_Type::LEFT_PAREN, "此处缺少{")?; //先有个左括号
         let condition = Box::from(self.expression());
         self.consume(&Token_Type::RIGHT_PAREN, "此处缺少}")?; //再有个右括号
@@ -295,7 +295,7 @@ impl Parser {
         false
     }
 
-    fn or(&mut self) -> Result<Expr, Parse_Err> {
+    fn or(&mut self) -> Result<Expr, X_Err> {
         let l = self.and()?;
         while self.match_token(&[Token_Type::OR]) {
             let oper = self.previous();
@@ -311,7 +311,7 @@ impl Parser {
 
     //非运算符的情况下
     //进行递归
-    fn primary(&mut self) -> Result<Expr, Parse_Err> {
+    fn primary(&mut self) -> Result<Expr, X_Err> {
         if self.match_token(&[Token_Type::NIL]) {
             Ok(Expr::Literal { val: Object::Nil })
         } else if self.match_token(&[Token_Type::TRUE]) {
@@ -364,7 +364,7 @@ impl Parser {
     fn previous(&self) -> Token {
         self.tokens[self.pos - 1].clone()
     }
-    fn print_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+    fn print_stmt(&mut self) -> Result<Stmt, X_Err> {
         let val = self.expression();
         if let Err(e) = self.consume(&Token_Type::SEMICOLON, "此处应有分号") {
             Err(self.error(e.mes))
@@ -374,7 +374,7 @@ impl Parser {
             })
         }
     }
-    fn return_stmt(&mut self) ->Result<Stmt, Parse_Err> {
+    fn return_stmt(&mut self) ->Result<Stmt, X_Err> {
        let keyword=self.previous();
       let expr= self.expression();
         self.consume(&Token_Type::SEMICOLON, "返回值也需要有分号结尾");
@@ -382,7 +382,7 @@ impl Parser {
     }
         //声明语法
     //声明变量的规则
-    fn let_declaration(&mut self) -> Result<Stmt, Parse_Err> {
+    fn let_declaration(&mut self) -> Result<Stmt, X_Err> {
         let name = self.consume(&Token_Type::IDENTIFIER, "这个单词不允许作为声明")?;
         let  expr;
         if self.match_token(&[Token_Type::EQUAL]) {
@@ -398,7 +398,7 @@ impl Parser {
     }
 
     //把表达式转为语句
-    fn statement(&mut self) -> Result<Stmt, Parse_Err> {
+    fn statement(&mut self) -> Result<Stmt, X_Err> {
         if self.match_token(&[Token_Type::FOR]) {
             self.for_stmt()
         } else if self.match_token(&[Token_Type::IF]) {
@@ -418,7 +418,7 @@ impl Parser {
         }
     }
     //是不是加减
-    fn term(&mut self) -> Result<Expr, Parse_Err> {
+    fn term(&mut self) -> Result<Expr, X_Err> {
         let mut expr = self.factor();
         while self.match_token(&[Token_Type::MINUS, Token_Type::PLUS]) {
             let operator = self.previous();
@@ -432,7 +432,7 @@ impl Parser {
         expr
     }
     //解析三元表达式
-    fn ternary_expr(&mut self) -> Result<Expr, Parse_Err> {
+    fn ternary_expr(&mut self) -> Result<Expr, X_Err> {
         // 先解析条件表达式 以等号为核心
         let may_expr = self.or()?;
         //不是三元直接返回
@@ -452,7 +452,7 @@ impl Parser {
     }
 
     //
-    fn unary(&mut self) -> Result<Expr, Parse_Err> {
+    fn unary(&mut self) -> Result<Expr, X_Err> {
         if self.match_token(&[Token_Type::BANG, Token_Type::MINUS]) {
             let operator = self.previous();
             let r_expression = Box::from(self.unary()?);
@@ -464,7 +464,7 @@ impl Parser {
         self.call()
     }
 
-    fn while_stmt(&mut self) -> Result<Stmt, Parse_Err> {
+    fn while_stmt(&mut self) -> Result<Stmt, X_Err> {
         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
         let expr = self.expression();
         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");

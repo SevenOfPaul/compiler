@@ -2,11 +2,12 @@ pub(crate) mod macors;
 
 use crate::ast::token::token::Token;
 use crate::call::{Fn_init, Func};
-use crate::interpret::error::Run_Err;
 use crate::interpret::value::Value;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+use crate::error::X_Err;
+
 #[derive(Clone)]
 pub(crate) struct Environment {
     pub(crate) enclose: Option<Rc<RefCell<Environment>>>,
@@ -19,7 +20,7 @@ impl Environment {
             local: HashMap::new(),
         }
     }
-    pub(crate) fn add(&mut self, name: &Token, val: Value) -> Result<(), Run_Err> {
+    pub(crate) fn add(&mut self, name: &Token, val: Value) -> Result<(), X_Err> {
         let key = name.clone().lexeme;
         if self.local.contains_key(&key) {
             Err(Run_Err::new(
@@ -31,7 +32,7 @@ impl Environment {
             Ok(())
         }
     }
-    pub(crate) fn get(&self, name: &Token) -> Result<Value, Run_Err> {
+    pub(crate) fn get(&self, name: &Token) -> Result<Value, X_Err> {
         let key = name.clone().lexeme;
         let res = self.local.get(&key);
         if res.is_some() {
@@ -51,7 +52,7 @@ impl Environment {
         );
      });
     }
-    pub(crate) fn set(&mut self, name: &Token, val: Value) -> Result<Value, Run_Err> {
+    pub(crate) fn set(&mut self, name: &Token, val: Value) -> Result<Value, X_Err> {
         let key = name.clone().lexeme;
         let res = self.local.contains_key(&key);
         if res {

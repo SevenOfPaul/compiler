@@ -10,15 +10,15 @@ use crate::ast::token::token_type::Token_Type;
 use crate::call::{Call, Fn_init, Func};
 use crate::call::Funcs;
 use crate::error;
-use crate::interpret::error::Run_Err;
+use crate::error::X_Err;
 use crate::interpret::value::Value;
 use crate::tools::printf;
 use crate::interpret::env::Environment;
 pub(crate) struct Interpreter {
    pub(crate) env: Rc<RefCell<Environment>>,
 }
-impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
-    fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, Run_Err> {
+impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
+    fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
         let val = self.evaluate(value)?;
         self.env.borrow_mut().set(name, val)
     }
@@ -27,7 +27,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         operator: &Token,
         l_expression: &Expr,
         r_expression: &Expr,
-    ) -> Result<Value, Run_Err> {
+    ) -> Result<Value, X_Err> {
         //判断是否出错
         let l = self.evaluate(l_expression).unwrap_or_else(|e| {
             error::log(e.token.line, &e.token.lexeme, &e.mes);
@@ -81,10 +81,10 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, Run_Err> {
+    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, X_Err> {
       let  expr=self.evaluate(callee)?;
       if arguments.len()!=expr.arity(){
-         return Err(Run_Err::new(paren.clone(), String::from("参数数量不符合调用要求")));
+         return Err(X_Err::new(paren.clone(), String::from("参数数量不符合调用要求")));
       }
         //感觉这里有问题
         let mut arguments_func =vec![];
@@ -93,11 +93,11 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         }
        Ok(expr.call(self,arguments_func))
     }
-    fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
+    fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
     }
 
-    fn visit_literal(&mut self, value: &Object) -> Result<Value, Run_Err> {
+    fn visit_literal(&mut self, value: &Object) -> Result<Value, X_Err> {
         Ok(match value {
             Object::Str(s) => Value::Str(s.clone()),
             Object::Num(n) => Value::Num(*n),
@@ -110,7 +110,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         operator: &Token,
         l_expression: &Box<Expr>,
         r_expression: &Box<Expr>,
-    ) -> Result<Value, Run_Err> {
+    ) -> Result<Value, X_Err> {
         let l = self.evaluate(l_expression)?;
         if operator.token_type == Token_Type::OR {
             if l.is_truthy() {
@@ -128,14 +128,14 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
         condition: &Box<Expr>,
         t_expr: &Box<Expr>,
         f_expr: &Box<Expr>,
-    ) -> Result<Value, Run_Err> {
+    ) -> Result<Value, X_Err> {
         Ok(if self.evaluate(condition)?.is_truthy() {
             self.evaluate(t_expr)?
         } else {
             self.evaluate(f_expr)?
         })
     }
-    fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, Run_Err> {
+    fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, X_Err> {
         let r_value = self.evaluate(r_expression);
         match operator.token_type {
             Token_Type::MINUS => Ok(-r_value?),
@@ -143,7 +143,7 @@ impl expr::Visitor<Result<Value, Run_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_variable(&mut self, name: &Token) -> Result<Value, Run_Err> {
+    fn visit_variable(&mut self, name: &Token) -> Result<Value, X_Err> {
         self.env.borrow().get(name)
     }
 }
@@ -162,7 +162,7 @@ impl Interpreter {
         oper: &Token,
         l: &Value,
         r: &Value,
-    ) -> Result<(), Run_Err> {
+    ) -> Result<(), X_Err> {
         //加法操作支持str+num
         if oper.token_type == Token_Type::PLUS
             && ((l.is_num() && r.is_num()) || l.is_str() && r.is_num())
@@ -187,10 +187,10 @@ impl Interpreter {
     fn execute(&mut self, stmt: Stmt) {
         stmt.accept(self)
     }
-    pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, Run_Err> {
+    pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         expr.accept(self)
     }
-    pub(crate)  fn execute_block(&mut self, stmts: &Vec<Stmt>, env: Environment) -> Result<(), Run_Err> {
+    pub(crate)  fn execute_block(&mut self, stmts: &Vec<Stmt>, env: Environment) -> Result<(), X_Err> {
         let pre_env = self.env.clone();
         self.env = Rc::new(RefCell::new(env));
         for stmt in stmts {
@@ -210,24 +210,24 @@ impl Interpreter {
 
     //这里其实可以复写
 }
-impl stmt::Visitor<Result<(), Run_Err>> for Interpreter {
-    fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), Run_Err> {
+impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
+    fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         //这里要支持嵌套
         //这里得改
         self.execute_block(stmts, Environment::new(Some(self.env.clone())))?;
         Ok(())
     }
-    fn visit_expr(&mut self, expr: &Expr) -> Result<(), Run_Err> {
+    fn visit_expr(&mut self, expr: &Expr) -> Result<(), X_Err> {
         self.evaluate(expr)?;
         Ok(())
     }
-    fn visit_fn(&mut self, name: &Token, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<(), Run_Err> {
+    fn visit_fn(&mut self, name: &Token, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<(), X_Err> {
         //这里不明白
         let func=Stmt::Func {name:name.clone(), params: params.clone(), body: body.clone()};
         self.env.borrow_mut().add(name,Value::Func(Func::new(func)))?;
         Ok(())
     }
-    fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), Run_Err> {
+    fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
         //添加到变量池中
         let res = self.evaluate(expr);
         if let Ok(val) = res {
@@ -241,7 +241,7 @@ impl stmt::Visitor<Result<(), Run_Err>> for Interpreter {
         condition: &Expr,
         then_branch: &Stmt,
         else_branch: Option<&Stmt>,
-    ) -> Result<(), Run_Err> {
+    ) -> Result<(), X_Err> {
         if self.evaluate(condition)?.is_truthy() {
             self.execute(then_branch.clone());
         } else if else_branch.is_some() {
@@ -249,14 +249,14 @@ impl stmt::Visitor<Result<(), Run_Err>> for Interpreter {
         }
         Ok(())
     }
-    fn visit_print(&mut self, expr: &Expr) -> Result<(), Run_Err> {
+    fn visit_print(&mut self, expr: &Expr) -> Result<(), X_Err> {
         printf(self.evaluate(expr)?);
         Ok(())
     }
-    fn visit_return(&mut self,keyword:&Token, expr: &Expr) -> Result<(), Run_Err> {
+    fn visit_return(&mut self,keyword:&Token, expr: &Expr) -> Result<(), X_Err> {
        todo!()
     }
-    fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), Run_Err> {
+    fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), X_Err> {
         while self.evaluate(condition)?.is_truthy() {
             self.execute(body.clone());
         }
