@@ -224,6 +224,9 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         self.execute_block(stmts, Environment::new(Some(self.env.clone())))?;
         Ok(())
     }
+    fn visit_break(&mut self) -> Result<(), X_Err> {
+        todo!()
+    }
     fn visit_expr(&mut self, expr: &Expr) -> Result<(), X_Err> {
         self.evaluate(expr)?;
         Ok(())
@@ -233,15 +236,6 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         let func=Stmt::Func {name:name.clone(), params: params.clone(), body: body.clone()};
         self.env.borrow_mut().add(name,Value::Func(Func::new(func)))?;
         Ok(())
-    }
-    fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
-        //添加到变量池中
-        let res = self.evaluate(expr);
-        if let Ok(val) = res {
-            self.env.borrow_mut().add(name, val)
-        } else {
-            Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
-        }
     }
     fn visit_if(
         &mut self,
@@ -255,6 +249,15 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
             self.execute(else_branch.unwrap().clone())?
         }
         Ok(())
+    }
+    fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
+        //添加到变量池中
+        let res = self.evaluate(expr);
+        if let Ok(val) = res {
+            self.env.borrow_mut().add(name, val)
+        } else {
+            Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
+        }
     }
     fn visit_print(&mut self, expr: &Expr) -> Result<(), X_Err> {
         printf(self.evaluate(expr)?);

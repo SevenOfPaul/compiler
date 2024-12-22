@@ -5,6 +5,7 @@ pub(crate) enum Stmt {
     Block {
         stmts: Vec<Stmt>,
     },
+    Break{},
     Expression {
         expr: Box<Expr>,
     },
@@ -37,6 +38,7 @@ pub(crate) enum Stmt {
 }
 pub trait Visitor<T> {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> T;
+    fn visit_break(&mut self) -> T;
     fn visit_expr(&mut self, expr: &Expr) -> T;
     fn visit_fn(&mut self,name:&Token, params:&Vec<Token>, body:&Vec<Stmt>)->T;
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
@@ -51,6 +53,9 @@ impl Stmt {
         match self {
             Stmt::Block { stmts } => {
                 visitor.visit_block(stmts)
+            }
+            Stmt::Break{}=> {
+                visitor.visit_break()
             }
             Stmt::Expression { expr } => {
                 visitor.visit_expr(expr)

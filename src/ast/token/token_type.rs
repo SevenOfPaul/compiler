@@ -4,6 +4,7 @@ pub enum Token_Type {
     AND, //&&
     BANG, // !
     BANG_EQUAL,//！=
+    BREAK,//break
     COLON,//:
     COMMA,//,
     DOT,//.
