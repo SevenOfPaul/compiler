@@ -6,16 +6,17 @@ use crate::ast::token::token_type::Token_Type;
 use crate::call::Fn_Type;
 use crate::error::{X_Err};
 use crate::parse::Parse_Err;
-use crate::tools::printf;
 
 #[derive(Debug)]
 pub(crate) struct Parser {
     tokens: Vec<Token>,
     pos: usize,
+    //循环的深度
+    loop_depth:usize,
 }
 impl Parser {
     pub(crate) fn new(tokens: Vec<Token>) -> Self {
-        Self { tokens, pos: 0 }
+        Self { tokens, pos: 0,loop_depth:0 }
     }
     fn assign_stmt(&mut self) -> Result<Expr, X_Err> {
         let expr = self.ternary_expr();
@@ -63,6 +64,10 @@ impl Parser {
         self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}");
         Ok(res)
     }
+   fn break_stmt(&mut self)->Result<Stmt, X_Err>{
+       self.consume(&Token_Type::SEMICOLON,"break后须加分号")?;
+       Ok(Stmt::Break {})
+   }
     fn call(&mut self)->Result<Expr,X_Err>{
         let mut expr =self.primary()?;
        loop{
@@ -200,6 +205,7 @@ impl Parser {
          Ok(Stmt::Func { name, params, body })
     }
     fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
+        self.loop_depth+=1;
         //准备脱糖
         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
         let mut initializer: Option<Stmt> = None;
@@ -244,6 +250,7 @@ impl Parser {
                 stmts: vec![initializer.unwrap(), body],
             }
         }
+        self.loop_depth-=1;
         Ok(body)
     }
     fn finish_call(&mut self,callee:Box<Expr>) ->Result<Expr,X_Err>{
@@ -297,6 +304,7 @@ impl Parser {
     }
 
     fn or(&mut self) -> Result<Expr, X_Err> {
+
         let l = self.and()?;
         while self.match_token(&[Token_Type::OR]) {
             let oper = self.previous();
@@ -404,7 +412,9 @@ impl Parser {
 
     //把表达式转为语句
     fn statement(&mut self) -> Result<Stmt, X_Err> {
-        if self.match_token(&[Token_Type::FOR]) {
+        if self.match_token(&[Token_Type::BREAK]){
+          self.break_stmt()
+        }else if self.match_token(&[Token_Type::FOR]) {
             self.for_stmt()
         } else if self.match_token(&[Token_Type::IF]) {
             self.if_stmt()
@@ -470,10 +480,12 @@ impl Parser {
     }
 
     fn while_stmt(&mut self) -> Result<Stmt, X_Err> {
+        self.loop_depth+=1;
         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
         let expr = self.expression();
         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
         let body = self.statement()?;
+        self.loop_depth-=1;
         Ok(Stmt::While {
             condition: Box::from(expr),
             body: Box::from(body),
