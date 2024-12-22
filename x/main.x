@@ -1,4 +1,3 @@
-fn add(n1){
-return n1;
+for(let i=0;i<5;i=i+1){
+print i;
 }
-print add(7);

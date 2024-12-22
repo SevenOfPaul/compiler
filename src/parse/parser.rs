@@ -188,7 +188,6 @@ impl Parser {
                 self.error(String::from("参数数量不可以超过255个"));
             }
             params.push(self.consume(&Token_Type::IDENTIFIER, "期望一个参数名")?);
-            // println!("{}")
             if !self.match_token(&[Token_Type::COMMA]){
                     break;
             }
@@ -202,7 +201,7 @@ impl Parser {
     }
     fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
         //准备脱糖
-        self.consume(&Token_Type::LEFT_BRACE, "此处应有一个(");
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
         let mut initializer: Option<Stmt> = None;
         if self.match_token(&[Token_Type::SEMICOLON]) {
             initializer = None;
@@ -255,7 +254,7 @@ impl Parser {
          loop{
              arguments.push(Box::from(self.expression()));
              //把参数添加进去 按逗号分割参数
-             if !self.check(&Token_Type::COMMA){
+             if !self.match_token(&[Token_Type::COMMA]){
                       break;
              }
              if arguments.len() >= 255 {
@@ -382,6 +381,7 @@ impl Parser {
     fn return_stmt(&mut self) ->Result<Stmt, X_Err> {
        let keyword=self.previous();
       let expr= self.expression();
+        println!("{:?}",expr);
         self.consume(&Token_Type::SEMICOLON, "返回值也需要有分号结尾");
          Ok(Stmt::Return {keyword,expr:Box::from(expr)})
     }
