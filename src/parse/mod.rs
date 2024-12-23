@@ -22,3 +22,12 @@ impl Break{
        X_Err::brk(Break{})
     }
 }
+#[derive(Debug)]
+pub (crate) struct Continue{
+
+}
+impl Continue{
+ pub (crate) fn new() ->X_Err{
+       X_Err::cte(Continue{})
+    }
+}

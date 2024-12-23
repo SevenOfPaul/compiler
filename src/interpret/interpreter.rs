@@ -1,24 +1,24 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-use crate::ast::expression::expr::Expr;
 use crate::ast::expression::expr;
-use crate::ast::statment::stmt::Stmt;
+use crate::ast::expression::expr::Expr;
 use crate::ast::statment::stmt;
+use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::call::{Call, Fn_init, Func};
 use crate::call::Funcs;
+use crate::call::{Call, Fn_init, Func};
 use crate::error;
-use crate::error::{ X_Err};
-use crate::interpret::value::Value;
-use crate::parse::Break;
-use crate::tools::printf;
+use crate::error::X_Err;
 use crate::interpret::env::Environment;
+use crate::interpret::value::Value;
 use crate::interpret::{Return, Run_Err};
+use crate::parse::{Break, Continue};
+use crate::tools::printf;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub(crate) struct Interpreter {
-   pub(crate) env: Rc<RefCell<Environment>>,
+    pub(crate) env: Rc<RefCell<Environment>>,
 }
 impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
@@ -33,13 +33,13 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     ) -> Result<Value, X_Err> {
         //判断是否出错
         let l = self.evaluate(l_expression).unwrap_or_else(|e| {
-            if let X_Err::run(run_err)=e{
+            if let X_Err::run(run_err) = e {
                 error::log(run_err.token.line, &run_err.token.lexeme, &run_err.mes);
             }
             Value::Nil
         });
         let r = self.evaluate(r_expression).unwrap_or_else(|e| {
-            if let X_Err::run(run_err)=e{
+            if let X_Err::run(run_err) = e {
                 error::log(run_err.token.line, &run_err.token.lexeme, &run_err.mes);
             }
             Value::Nil
@@ -88,17 +88,25 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> Result<Value, X_Err> {
-      let  expr=self.evaluate(callee)?;
-      if arguments.len()!=expr.arity(){
-         return Err(Run_Err::new(paren.clone(), String::from("参数数量不符合调用要求")));
-      }
+    fn visit_call(
+        &mut self,
+        callee: &Box<Expr>,
+        paren: &Token,
+        arguments: &Vec<Box<Expr>>,
+    ) -> Result<Value, X_Err> {
+        let expr = self.evaluate(callee)?;
+        if arguments.len() != expr.arity() {
+            return Err(Run_Err::new(
+                paren.clone(),
+                String::from("参数数量不符合调用要求"),
+            ));
+        }
         //感觉这里有问题
-        let mut arguments_func =vec![];
+        let mut arguments_func = vec![];
         for argu in arguments {
             arguments_func.push(self.evaluate(argu)?);
         }
-       expr.call(self, arguments_func)
+        expr.call(self, arguments_func)
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
@@ -156,9 +164,9 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
-        let  mut global=Environment::new(None);
+        let mut global = Environment::new(None);
         //读取所有原生函数 添加到最高作用域中
-           global.init_fn(Funcs.keys().collect::<Vec<&String>>());
+        global.init_fn(Funcs.keys().collect::<Vec<&String>>());
         //最高作用域
         Self {
             env: Rc::from(RefCell::from(global)),
@@ -175,7 +183,7 @@ impl Interpreter {
             && ((l.is_num() && r.is_num()) || l.is_str() && r.is_num())
         {
             Ok(())
-        }else if l.is_str() && r.is_str(){
+        } else if l.is_str() && r.is_str() {
             Ok(())
         } else if l.is_num() && r.is_num() {
             Ok(())
@@ -191,13 +199,17 @@ impl Interpreter {
             ))
         }
     }
-    fn execute(&mut self, stmt: Stmt)->Result<(),X_Err> {
-      stmt.accept(self)
+    fn execute(&mut self, stmt: Stmt) -> Result<(), X_Err> {
+        stmt.accept(self)
     }
     pub(crate) fn evaluate(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         expr.accept(self)
     }
-    pub(crate) fn execute_block(&mut self, stmts: &Vec<Stmt>, env: Environment) -> Result<(), X_Err> {
+    pub(crate) fn execute_block(
+        &mut self,
+        stmts: &Vec<Stmt>,
+        env: Environment,
+    ) -> Result<(), X_Err> {
         let pre_env = self.env.clone();
         self.env = Rc::new(RefCell::new(env));
         for stmt in stmts {
@@ -209,7 +221,7 @@ impl Interpreter {
     /*
     这里改成执行语句vec
     */
-    pub(crate) fn run(&mut self, stmts: Vec<Stmt>)->Result<(),X_Err> {
+    pub(crate) fn run(&mut self, stmts: Vec<Stmt>) -> Result<(), X_Err> {
         for stmt in stmts {
             self.execute(stmt)?;
         }
@@ -226,16 +238,30 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         Ok(())
     }
     fn visit_break(&mut self) -> Result<(), X_Err> {
-       Err(Break::new())
+        Err(Break::new())
+    }
+    fn visit_continue(&mut self) -> Result<(), X_Err> {
+        Err(Continue::new())
     }
     fn visit_expr(&mut self, expr: &Expr) -> Result<(), X_Err> {
         self.evaluate(expr)?;
         Ok(())
     }
-    fn visit_fn(&mut self, name: &Token, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<(), X_Err> {
+    fn visit_fn(
+        &mut self,
+        name: &Token,
+        params: &Vec<Token>,
+        body: &Vec<Stmt>,
+    ) -> Result<(), X_Err> {
         //这里不明白
-        let func=Stmt::Func {name:name.clone(), params: params.clone(), body: body.clone()};
-        self.env.borrow_mut().add(name,Value::Func(Func::new(func)))?;
+        let func = Stmt::Func {
+            name: name.clone(),
+            params: params.clone(),
+            body: body.clone(),
+        };
+        self.env
+            .borrow_mut()
+            .add(name, Value::Func(Func::new(func)))?;
         Ok(())
     }
     fn visit_if(
@@ -264,19 +290,27 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         printf(self.evaluate(expr)?);
         Ok(())
     }
-    fn visit_return(&mut self,keyword:&Token, expr: &Expr) -> Result<(), X_Err> {
-      let val=self.evaluate(expr)?;
+    fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
+        let val = self.evaluate(expr)?;
         Err(Return::new(val))
     }
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), X_Err> {
         while self.evaluate(condition)?.is_truthy() {
-           if self.execute(body.clone()).is_err(){
-            break;
-           }
+            //借用and实现
+            let res = self.execute(body.clone());
+            if let Err(x) = res {
+                println!("{:?}", x);
+                match x {
+                    X_Err::brk(Break) => break,
+                    X_Err::cte(Continue) => {
+                        //continue暂时有问题
+                        continue;
+                    }
+                    _ => return Err(x),
+                }
+            }
         }
         Ok(())
     }
-
-
 }
 //执行

@@ -7,6 +7,7 @@ pub enum Token_Type {
     BREAK,//break
     COLON,//:
     COMMA,//,
+    Continue,
     DOT,//.
     ELSE,//else
     EOF, //结尾符

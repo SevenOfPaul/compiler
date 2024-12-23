@@ -5,11 +5,12 @@ pub(crate) enum Stmt {
     Block {
         stmts: Vec<Stmt>,
     },
-    Break{},
+    Break {},
+    Continue {},
     Expression {
         expr: Box<Expr>,
     },
-        //函数声明
+    //函数声明
     Func {
         name: Token,
         params: Vec<Token>,
@@ -27,39 +28,35 @@ pub(crate) enum Stmt {
     Print {
         expr: Box<Expr>,
     },
-    Return{
-        keyword:Token,
+    Return {
+        keyword: Token,
         expr: Box<Expr>,
     },
-    While{
-        condition:Box<Expr>,
-        body:Box<Stmt>
-    }
+    While {
+        condition: Box<Expr>,
+        body: Box<Stmt>,
+    },
 }
 pub trait Visitor<T> {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> T;
     fn visit_break(&mut self) -> T;
+    fn visit_continue(&mut self) -> T;
     fn visit_expr(&mut self, expr: &Expr) -> T;
-    fn visit_fn(&mut self,name:&Token, params:&Vec<Token>, body:&Vec<Stmt>)->T;
+    fn visit_fn(&mut self, name: &Token, params: &Vec<Token>, body: &Vec<Stmt>) -> T;
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_print(&mut self, expr: &Expr) -> T;
-    fn visit_return(&mut self,keyword:&Token,expr: &Expr) -> T;
+    fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> T;
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
 }
 
 impl Stmt {
-    pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>)->T {
+    pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
         match self {
-            Stmt::Block { stmts } => {
-                visitor.visit_block(stmts)
-            }
-            Stmt::Break{}=> {
-                visitor.visit_break()
-            }
-            Stmt::Expression { expr } => {
-                visitor.visit_expr(expr)
-            }
+            Stmt::Block { stmts } => visitor.visit_block(stmts),
+            Stmt::Break {} => visitor.visit_break(),
+            Stmt::Continue {} => visitor.visit_continue(),
+            Stmt::Expression { expr } => visitor.visit_expr(expr),
             Stmt::IF {
                 condition,
                 then_branch,
@@ -75,23 +72,11 @@ impl Stmt {
                     visitor.visit_if(condition, then_branch, None)
                 }
             }
-            Stmt::Func { name, params, body }=>{
-                visitor.visit_fn(name, params, body)
-            }
-            Stmt::LET { name, expr } => {
-                visitor.visit_let(name, expr)
-            }
-            Stmt::Print { expr } => {
-                visitor.visit_print(expr)
-            }
-            Stmt::Return {keyword, expr } => {
-                visitor.visit_return(keyword,expr)
-            }
-            Stmt::While{
-                condition, body
-            }=> {
-                visitor.visit_while(condition,body)
-            }
+            Stmt::Func { name, params, body } => visitor.visit_fn(name, params, body),
+            Stmt::LET { name, expr } => visitor.visit_let(name, expr),
+            Stmt::Print { expr } => visitor.visit_print(expr),
+            Stmt::Return { keyword, expr } => visitor.visit_return(keyword, expr),
+            Stmt::While { condition, body } => visitor.visit_while(condition, body),
         }
     }
 }

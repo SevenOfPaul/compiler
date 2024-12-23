@@ -72,6 +72,14 @@ impl Parser {
        Ok(Stmt::Break {})  
     }
    }
+   fn continue_stmt(&mut self)->Result<Stmt, X_Err>{
+  return  if self.loop_depth==0{
+        Err(self.error(String::from("continue只能在函数中使用")))
+    }else{
+          self.consume(&Token_Type::SEMICOLON,"continue后须加分号")?;
+       Ok(Stmt::Continue {})  
+    }
+   }
     fn call(&mut self)->Result<Expr,X_Err>{
         let mut expr =self.primary()?;
        loop{
@@ -418,6 +426,8 @@ impl Parser {
     fn statement(&mut self) -> Result<Stmt, X_Err> {
         if self.match_token(&[Token_Type::BREAK]){
           self.break_stmt()
+        }else if self.match_token(&[Token_Type::Continue]){
+          self.continue_stmt()
         }else if self.match_token(&[Token_Type::FOR]) {
             self.for_stmt()
         } else if self.match_token(&[Token_Type::IF]) {
