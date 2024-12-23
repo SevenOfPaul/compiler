@@ -5,8 +5,10 @@ edition = "2021"
 
 [dependencies]
 color-string = "0.1.6"
+chrono="*"
+chinese_detection = "2.0.4"
 lazy_static = "*"
 paste="*"
-chrono="*"
+# 打包为wasm
+wasm-bindgen-cli = "0.2.99"
 wasm-bindgen = "0.2.99"
-chinese_detection = "2.0.4"

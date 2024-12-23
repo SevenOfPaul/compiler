@@ -5,6 +5,7 @@ use crate::error;
 use crate::parse::parser::Parser;
 use crate::ast::scanner;
 use crate::interpret::interpreter::Interpreter;
+use wasm_bindgen::prelude::*;
 fn run(bytes:String){
           let mut sc =scanner::Scanner::new(bytes);
         let mut parser =Parser::new(sc.scan_tokens());
@@ -13,6 +14,7 @@ fn run(bytes:String){
         //调用解析出来的语句
         inter.run(stmts.clone());
 }
+#[wasm_bindgen]
 pub fn run_program(bytes:String){
      run(bytes);
 }

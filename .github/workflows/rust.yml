@@ -32,14 +32,14 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: x
-        path: target/release/x.exe
+        name: p
+        path: target/release/p.exe
         
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
-        files: target/release/x.exe
+        files: target/release/p.exe
         name: Latest Build
         tag_name: latest
       env:
