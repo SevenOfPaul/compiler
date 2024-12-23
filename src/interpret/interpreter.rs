@@ -12,6 +12,7 @@ use crate::call::Funcs;
 use crate::error;
 use crate::error::{ X_Err};
 use crate::interpret::value::Value;
+use crate::parse::Break;
 use crate::tools::printf;
 use crate::interpret::env::Environment;
 use crate::interpret::{Return, Run_Err};
@@ -225,7 +226,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         Ok(())
     }
     fn visit_break(&mut self) -> Result<(), X_Err> {
-        todo!()
+       Err(Break::new())
     }
     fn visit_expr(&mut self, expr: &Expr) -> Result<(), X_Err> {
         self.evaluate(expr)?;
@@ -269,7 +270,9 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     }
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), X_Err> {
         while self.evaluate(condition)?.is_truthy() {
-            self.execute(body.clone())?
+           if self.execute(body.clone()).is_err(){
+            break;
+           }
         }
         Ok(())
     }

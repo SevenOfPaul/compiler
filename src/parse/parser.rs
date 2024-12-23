@@ -4,7 +4,7 @@ use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::call::Fn_Type;
-use crate::error::{X_Err};
+use crate::error::X_Err;
 use crate::parse::Parse_Err;
 
 #[derive(Debug)]
@@ -65,8 +65,12 @@ impl Parser {
         Ok(res)
     }
    fn break_stmt(&mut self)->Result<Stmt, X_Err>{
-       self.consume(&Token_Type::SEMICOLON,"break后须加分号")?;
-       Ok(Stmt::Break {})
+  return  if self.loop_depth==0{
+        Err(self.error(String::from("break只能在函数中使用")))
+    }else{
+          self.consume(&Token_Type::SEMICOLON,"break后须加分号")?;
+       Ok(Stmt::Break {})  
+    }
    }
     fn call(&mut self)->Result<Expr,X_Err>{
         let mut expr =self.primary()?;
