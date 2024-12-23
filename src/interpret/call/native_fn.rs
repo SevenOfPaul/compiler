@@ -2,8 +2,8 @@ use crate::error::X_Err;
 use super::{Call, Fn_init, Func, Funcs, Interpreter, Value};
 
 #[derive(Debug, Clone)]
-pub (crate) struct Native_Fn{
-pub (crate) name:String
+pub(crate) struct Native_Fn{
+pub(crate) name:String
 }
 //语言本身的函数
 impl Fn_init<&str> for Func{

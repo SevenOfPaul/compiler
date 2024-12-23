@@ -18,10 +18,10 @@ lazy_static!{
                  let now = Local::now();
                      Value::Time(now)
                 }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
-            ),    (String::from("X"), 
+            ),    (String::from("P"), 
                (0, Box::new(|_arguments| {
                     println!("{:?}","==================================");
-                    println!("{:?}","==  X-MAN   ======================");
+                    println!("{:?}","==  PP 在此   =====================");
                     println!("{:?}","==================================");
                     Value::Nil
                     
@@ -31,7 +31,7 @@ lazy_static!{
     };
 }
 #[derive(Debug, Clone)]
-pub (crate) enum Func{
+pub(crate) enum Func{
     Native(Native_Fn),
     Decl(Decl_Fn)
 }
@@ -59,7 +59,7 @@ pub(crate) trait Fn_init<T>{
         fn new(name:T)->Func;
 }
 impl Func {
-   pub(crate) fn to_string(&self)->String{
+   pub(crate) fn to_string(&self) ->String{
         if let Func::Native(_)=self{
             String::from("<native fn>")
         }else{
@@ -67,12 +67,12 @@ impl Func {
         }
     }
 }
-pub (crate) enum Fn_Type{
+pub(crate) enum Fn_Type{
     Func,
     Method
 }
 impl Fn_Type{
- pub (crate) fn to_str(&mut self)->&str{
+ pub(crate) fn to_str(&mut self) ->&str{
        return if let Fn_Type::Func=self{
          "Func"
        }else{

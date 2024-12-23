@@ -6,9 +6,8 @@ mod runner;
 mod parse;
 mod tools;
 mod interpret;
-mod call;
 
-use crate::runner::run::{run_program,run_file};
+use crate::runner::run::{run_file, run_program};
 fn main() {
     let mut args = env::args();
     //获取命令行参数

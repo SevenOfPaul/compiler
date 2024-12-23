@@ -1,8 +1,10 @@
 use crate::ast::token::object::Object;
 use crate::ast::token::token::{self, Keywords};
 use crate::ast::token::token_type::Token_Type;
+use chinese_detection::{ClassificationResult, classify};
 use crate::error;
 
+#[derive(Debug)]
 pub(crate) struct Scanner {
     //cur是当前字符 例如let start永远指向l cur可能为 l e t
     cur: usize,
@@ -38,7 +40,7 @@ impl Scanner {
         self.source[self.cur - 1]
     }
     fn get_identifier(&mut self) {
-        while Self::is_alaph_or_digit(self.peek()) {
+        while Self::is_alaph_or_digit_or_chinese(self.peek()) {
             self.advance();
         }
         let text = self.source[self.start..self.cur].iter().collect::<String>();
@@ -84,8 +86,11 @@ impl Scanner {
                 //为什么有个_
                 c == '_'
     }
-    fn is_alaph_or_digit(c: char) -> bool {
-        Self::is_alaph(c) || Self::is_digit(c)
+    fn is_alaph_or_digit_or_chinese(c: char) -> bool {
+        Self::is_alaph(c) || Self::is_digit(c)||Self::is_chinese(c)
+    }
+    fn is_chinese(c:char)->bool{
+       classify(&c.to_string())== ClassificationResult::ZH
     }
     fn is_at_end(&self) -> bool {
         self.cur >= self.source.len()
@@ -239,7 +244,7 @@ impl Scanner {
             _ => {
                 if Self::is_digit(c) {
                     self.get_number();
-                } else if Self::is_alaph_or_digit(c) {
+                } else if Self::is_alaph_or_digit_or_chinese(c) {
                     //看看是不是关键字
                     self.get_identifier();
                 } else {

@@ -1,6 +1,6 @@
 [package]
-name = "x"
-version = "0.3.0"
+name = "p"
+version = "0.8.0"
 edition = "2021"
 
 [dependencies]
@@ -8,3 +8,5 @@ color-string = "0.1.6"
 lazy_static = "*"
 paste="*"
 chrono="*"
+wasm-bindgen = "0.2.99"
+chinese_detection = "2.0.4"

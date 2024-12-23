@@ -1,6 +1,6 @@
 pub(crate) mod macors;
 use crate::ast::token::token::Token;
-use crate::call::{Fn_init, Func};
+use crate::interpret::call::{Fn_init, Func};
 use crate::interpret::value::Value;
 use std::cell::RefCell;
 use std::collections::HashMap;

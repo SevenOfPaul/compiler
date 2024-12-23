@@ -1,8 +1,8 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 use chrono::{DateTime, Local};
-use crate::call::Call;
-use crate::call::Func;
+use crate::interpret::call::Call;
+use crate::interpret::call::Func;
 use crate::error::X_Err;
 use self::interpreter::Interpreter;
 use super::interpreter;

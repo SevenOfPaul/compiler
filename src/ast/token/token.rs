@@ -13,7 +13,7 @@ lazy_static! {
     pub(crate) static ref Keywords: HashMap<String, Token_Type> = {
         HashMap::from([
             (String::from("break"), Token_Type::BREAK),
-            (String::from("continue"),Token_Type::Continue),
+            (String::from("continue"), Token_Type::Continue),
             (String::from("else"), Token_Type::ELSE),
             (String::from("false"), Token_Type::FALSE),
             (String::from("fn"), Token_Type::FN),
@@ -25,6 +25,19 @@ lazy_static! {
             (String::from("return"), Token_Type::RETURN),
             (String::from("true"), Token_Type::TRUE),
             (String::from("while"), Token_Type::WHILE),
+            (String::from("破"), Token_Type::BREAK),
+            (String::from("跃"), Token_Type::Continue),
+            (String::from("则"), Token_Type::ELSE),
+            (String::from("假"), Token_Type::FALSE),
+            (String::from("令"), Token_Type::FN),
+            (String::from("令循环"), Token_Type::FOR),
+            (String::from("若"), Token_Type::IF),
+            (String::from("诏"), Token_Type::LET),
+            (String::from("空"), Token_Type::NIL),
+            (String::from("打印"), Token_Type::PRINT),
+            (String::from("返回"), Token_Type::RETURN),
+            (String::from("真"), Token_Type::TRUE),
+            (String::from("序循环"), Token_Type::WHILE),
         ])
     };
 }
