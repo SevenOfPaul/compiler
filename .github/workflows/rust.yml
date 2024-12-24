@@ -27,7 +27,7 @@ jobs:
     - name: Rename executable
       run: |
         cd target/release
-        ren x.exe x.exe
+        ren p.exe p.exe
         
     - name: Upload artifact
       uses: actions/upload-artifact@v3
