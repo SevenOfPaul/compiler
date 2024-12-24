@@ -44,3 +44,19 @@ jobs:
         tag_name: latest
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Install wasm-pack
+      run: |
+        curl -fsSL https://win.rustup.rs/ -o rustup-init.exe
+        rustup-init.exe -y --default-host x86_64-pc-windows-msvc
+        rustup target add wasm32-unknown-unknown
+        cargo install wasm-pack --force
+        
+    - name: Build WASM
+      run: wasm-pack build --target web --out-name p --release
+
+    - name: Upload WASM Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: p
+        path: p/
