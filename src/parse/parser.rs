@@ -5,6 +5,7 @@ use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::interpret::call::Fn_Type;
 use crate::error::X_Err;
+use crate::interpret::value::Value;
 use crate::parse::Parse_Err;
 
 #[derive(Debug)]
@@ -133,9 +134,16 @@ impl Parser {
             (*self.peek()).token_type == *token_type
         }
     }
+    fn check_next(&self, token_type: &Token_Type)->bool{
+        if self.is_end()||self.tokens[self.pos+1].token_type==Token_Type::EOF {
+            false
+        } else {
+            self.tokens[self.pos+1].token_type == *token_type
+        }
+    }
     fn declaration(&mut self) -> Result<Stmt, X_Err> {
         if self.match_token(&[Token_Type::FN]){
-           self.func(Fn_Type::Func)
+           self.func_stmt(Fn_Type::Func)
         }else if self.match_token(&[Token_Type::LET]) {
             self.let_declaration()
         } else {
@@ -194,7 +202,7 @@ impl Parser {
         }
         expr
     }
-    fn func(&mut self,mut fn_type:Fn_Type)->Result<Stmt,X_Err>{
+    fn func_stmt(&mut self,mut fn_type:Fn_Type)->Result<Stmt,X_Err>{
         let name=self.consume(&Token_Type::IDENTIFIER,
              &("期望".to_owned()+fn_type.to_str()+"名字"))?;
         self.consume(&Token_Type::LEFT_PAREN,"期望(");
@@ -215,6 +223,11 @@ impl Parser {
     //这里需要判断{吗？
      let body=self.block()?;
          Ok(Stmt::Func { name, params, body })
+    }
+        fn func_expr(&mut self,lambda:Box<Expr>)->Result<Stmt,X_Err>{
+        //  return new LoxFunction(null, expr, environment);
+        // Stmt::Func { name: String::new(), params: , body: () }
+        todo!()
     }
     fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
         self.loop_depth+=1;
