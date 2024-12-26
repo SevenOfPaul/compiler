@@ -256,14 +256,11 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     fn visit_func(
         &mut self,
         name: &Token,
-        params: &Vec<Token>,
-        body: &Vec<Stmt>,
+        func:&Box<Expr>
     ) -> Result<(), X_Err> {
         //这里不明白
         let func = Stmt::Func {
-            name: name.clone(),
-            params: params.clone(),
-            body: body.clone(),
+            name: name.clone(),func: func.clone()
         };
         self.env
             .borrow_mut()

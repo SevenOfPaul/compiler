@@ -222,7 +222,8 @@ impl Parser {
      self.consume(&Token_Type::LEFT_BRACE, "此处需要一个{");
     //这里需要判断{吗？
      let body=self.block()?;
-         Ok(Stmt::Func { name, params, body })
+     let func: Expr=Expr::Func { params, body};
+         Ok(Stmt::Func { name,func:Box::from(func) })
     }
         fn func_expr(&mut self,lambda:Box<Expr>)->Result<Stmt,X_Err>{
         //  return new LoxFunction(null, expr, environment);

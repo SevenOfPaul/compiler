@@ -1,3 +1,4 @@
+use crate::ast::expression::expr::Expr;
 use crate::{ast::statment::stmt::Stmt, interpret::env::Environment};
 use crate::error::X_Err;
 use super::{Call, Fn_init, Func, Interpreter, Value};
@@ -15,18 +16,27 @@ impl Fn_init<Stmt> for Func{
 impl Call for Decl_Fn{
     fn arity(&self) -> usize {
      match &self.decl.as_ref() {
-         Stmt::Func {name:_name,params, body: _body }=>params.len(),
+         Stmt::Func {name:_name,func }=>{
+            match func.as_ref() {
+                Expr::Func{params,body:_body}=>{
+                    params.len()
+                }
+                _=>panic!("类型错误")
+            }
+         }
         _=>panic!("类型错误")
      }
     }
 
     fn call(&self, inter: &mut Interpreter, arguments: Vec<Value>) -> Result<Value,X_Err> {
         let mut env = Environment::new(Some(inter.env.clone()));
-        if let Stmt::Func { name:_, params, body } = self.decl.as_ref() {
-            for (i, param) in params.iter().enumerate() {
+        if let Stmt::Func { name:_, func } = self.decl.as_ref() {
+  
+            match func.as_ref() {
+            Expr::Func{params,body}=>{
+             for (i, param) in params.iter().enumerate() {
                 env.add(param, arguments[i].clone()).unwrap();
-            }    
-            //调用执行
+            }  
           let res=inter.execute_block(body, env);
            if let Err(res_val)=res{
                match res_val {
@@ -36,6 +46,11 @@ impl Call for Decl_Fn{
            }else{
                Ok(Value::Nil)
            }
+                }
+                _=>panic!("类型错误")
+            }
+            //调用执行
+
         } else {
             panic!("Type error")
         }
