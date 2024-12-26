@@ -56,7 +56,7 @@ impl Call for Func{
     }
 }
 pub(crate) trait Fn_init<T>{
-        fn new(name:T)->Func;
+        fn new(func:T)->Func;
 }
 impl Func {
    pub(crate) fn to_string(&self) ->String{

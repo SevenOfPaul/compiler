@@ -111,8 +111,8 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<Stmt>)->Result<Value, X_Err> {
               //这里有问题
               //得大改 周末吃透
-    //   Ok(Value::Func(Func::new(body.clone()[0])))
-    todo!()
+        let func_stmt=Stmt::Func { name: (), func: Box::from(Expr::Func { params:params.clone(), body: body.clone() }) };
+      Ok(Value::Func(Func::new(func_stmt)))
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
