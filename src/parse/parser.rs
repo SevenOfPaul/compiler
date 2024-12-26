@@ -142,7 +142,8 @@ impl Parser {
         }
     }
     fn declaration(&mut self) -> Result<Stmt, X_Err> {
-        if self.match_token(&[Token_Type::FN]){
+        if self.match_token(&[Token_Type::FN])&&self.check_next(&Token_Type::IDENTIFIER){
+            self.consume(&Token_Type::FN, "");
            self.func_stmt(Fn_Type::Func)
         }else if self.match_token(&[Token_Type::LET]) {
             self.let_declaration()
