@@ -52,6 +52,10 @@ impl Visitor<String> for ExprVisitor {
     fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> String {
         todo!()
     }
+    
+    fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<crate::ast::statment::stmt::Stmt>)->String {
+        todo!()
+    }
 
 
 }
