@@ -109,7 +109,10 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         expr.call(self, arguments_func)
     }
     fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<Stmt>)->Result<Value, X_Err> {
-        todo!()
+              //这里有问题
+              //得大改 周末吃透
+    //   Ok(Value::Func(Func::new(body.clone()[0])))
+    todo!()
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
@@ -250,7 +253,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         self.evaluate(expr)?;
         Ok(())
     }
-    fn visit_fn(
+    fn visit_func(
         &mut self,
         name: &Token,
         params: &Vec<Token>,
