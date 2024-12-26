@@ -202,7 +202,7 @@ impl Parser {
         }
         expr
     }
-    fn func_stmt(&mut self,mut fn_type:Fn_Type)->Result<Stmt,X_Err>{
+    fn func_expr(&mut self,mut fn_type:Fn_Type)->Result<Expr,X_Err>{
         let name=self.consume(&Token_Type::IDENTIFIER,
              &("期望".to_owned()+fn_type.to_str()+"名字"))?;
         self.consume(&Token_Type::LEFT_PAREN,"期望(");
@@ -222,13 +222,13 @@ impl Parser {
      self.consume(&Token_Type::LEFT_BRACE, "此处需要一个{");
     //这里需要判断{吗？
      let body=self.block()?;
-     let func: Expr=Expr::Func { params, body};
-         Ok(Stmt::Func { name,func:Box::from(func) })
+         Ok(Expr::Func { params, body})
     }
-        fn func_expr(&mut self,lambda:Box<Expr>)->Result<Stmt,X_Err>{
-        //  return new LoxFunction(null, expr, environment);
-        // Stmt::Func { name: String::new(), params: , body: () }
-        todo!()
+    fn func_stmt(&mut self,mut fn_type:Fn_Type)->Result<Stmt,X_Err>{
+          let name=self.consume(&Token_Type::IDENTIFIER,
+             &("期望".to_owned()+fn_type.to_str()+"名字"))?;
+         Ok( Stmt::Func { name, func:Box::from(self.func_expr(fn_type)?)})
+
     }
     fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
         self.loop_depth+=1;
@@ -347,7 +347,9 @@ impl Parser {
     //非运算符的情况下
     //进行递归
     fn primary(&mut self) -> Result<Expr, X_Err> {
-        if self.match_token(&[Token_Type::NIL]) {
+        if self.match_token(&[Token_Type::FN]){
+              Ok(self.func_expr(Fn_Type::Func)?)
+        }else if self.match_token(&[Token_Type::NIL]) {
             Ok(Expr::Literal { val: Object::Nil })
         } else if self.match_token(&[Token_Type::TRUE]) {
             Ok(Expr::Literal {
