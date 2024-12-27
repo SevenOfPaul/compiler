@@ -12,7 +12,7 @@ pub(crate) enum Stmt {
     },
     //函数声明
     Func {
-        name: Token,
+        name: Option<Token>,
         func:Box<Expr>
     },
     IF {
@@ -41,7 +41,7 @@ pub trait Visitor<T> {
     fn visit_break(&mut self) -> T;
     fn visit_continue(&mut self) -> T;
     fn visit_expr(&mut self, expr: &Expr) -> T;
-    fn visit_func(&mut self, name: &Token, func:&Box<Expr>) -> T;
+    fn visit_func(&mut self, name: &Option<Token>, func:&Box<Expr>) -> T;
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_print(&mut self, expr: &Expr) -> T;

@@ -135,6 +135,7 @@ impl Parser {
         }
     }
     fn check_next(&self, token_type: &Token_Type)->bool{
+      
         if self.is_end()||self.tokens[self.pos+1].token_type==Token_Type::EOF {
             false
         } else {
@@ -142,7 +143,8 @@ impl Parser {
         }
     }
     fn declaration(&mut self) -> Result<Stmt, X_Err> {
-        if self.match_token(&[Token_Type::FN])&&self.check_next(&Token_Type::IDENTIFIER){
+                    // println!("{:?}=={:?}",self.match_token(&[Token_Type::FN]),self.check_next(&Token_Type::IDENTIFIER));
+        if self.check(&Token_Type::FN)&&self.check_next(&Token_Type::IDENTIFIER){
             self.consume(&Token_Type::FN, "");
            self.func_stmt(Fn_Type::Func)
         }else if self.match_token(&[Token_Type::LET]) {
@@ -204,8 +206,8 @@ impl Parser {
         expr
     }
     fn func_expr(&mut self,mut fn_type:Fn_Type)->Result<Expr,X_Err>{
-        let name=self.consume(&Token_Type::IDENTIFIER,
-             &("期望".to_owned()+fn_type.to_str()+"名字"))?;
+        // let name=self.consume(&Token_Type::IDENTIFIER,
+        //      &("期望".to_owned()+fn_type.to_str()+"名字"))?;
         self.consume(&Token_Type::LEFT_PAREN,"期望(");
         let mut params=vec![];
         if !self.check(&Token_Type::RIGHT_PAREN){
@@ -228,7 +230,8 @@ impl Parser {
     fn func_stmt(&mut self,mut fn_type:Fn_Type)->Result<Stmt,X_Err>{
           let name=self.consume(&Token_Type::IDENTIFIER,
              &("期望".to_owned()+fn_type.to_str()+"名字"))?;
-         Ok( Stmt::Func { name, func:Box::from(self.func_expr(fn_type)?)})
+
+         Ok( Stmt::Func { name:Some(name), func:Box::from(self.func_expr(fn_type)?)})
 
     }
     fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
@@ -418,7 +421,6 @@ impl Parser {
     fn return_stmt(&mut self) ->Result<Stmt, X_Err> {
        let keyword=self.previous();
       let expr= self.expression();
-        println!("{:?}",expr);
         self.consume(&Token_Type::SEMICOLON, "返回值也需要有分号结尾");
          Ok(Stmt::Return {keyword,expr:Box::from(expr)})
     }

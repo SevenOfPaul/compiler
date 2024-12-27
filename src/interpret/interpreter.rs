@@ -111,7 +111,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<Stmt>)->Result<Value, X_Err> {
               //这里有问题
               //得大改 周末吃透
-        let func_stmt=Stmt::Func { name: (), func: Box::from(Expr::Func { params:params.clone(), body: body.clone() }) };
+        let func_stmt=Stmt::Func { name: None, func: Box::from(Expr::Func { params:params.clone(), body: body.clone() }) };
       Ok(Value::Func(Func::new(func_stmt)))
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
@@ -255,16 +255,16 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     }
     fn visit_func(
         &mut self,
-        name: &Token,
+        name: &Option<Token>,
         func:&Box<Expr>
     ) -> Result<(), X_Err> {
         //这里不明白
         let func = Stmt::Func {
-            name: name.clone(),func: func.clone()
+            name:name.clone(),func: func.clone()
         };
         self.env
             .borrow_mut()
-            .add(name, Value::Func(Func::new(func)))?;
+            .add(&(name.clone().unwrap()), Value::Func(Func::new(func)))?;
         Ok(())
     }
     fn visit_if(
@@ -302,7 +302,6 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
             //借用and实现
             let res = self.execute(body.clone());
             if let Err(x) = res {
-                println!("{:?}", x);
                 match x {
                     X_Err::brk(Break) => break,
                     X_Err::cte(Continue) => {

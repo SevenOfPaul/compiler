@@ -73,7 +73,7 @@ impl Scanner {
         }
         //没找到 后面的"
         if self.is_at_end() {
-            error::log(self.line, &self.peek().to_string(), "Unterminated string.");
+            error::log(self.line, &self.peek().to_string(), "缺失部分");
             return;
         }
         self.advance();
