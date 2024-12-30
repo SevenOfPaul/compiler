@@ -1,4 +1,4 @@
-use crate::{interpret::{interpreter::Interpreter, value::Value}};
+use crate::{interpret::{interpreter::Interpreter, value::Value}, tools::printf};
 mod native_fn;
 mod decl_fn;
 use native_fn::Native_Fn;
@@ -20,9 +20,9 @@ lazy_static!{
                 }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
             ),    (String::from("P"), 
                (0, Box::new(|_arguments| {
-                    println!("{:?}","==================================");
-                    println!("{:?}","==  PP 在此   =====================");
-                    println!("{:?}","==================================");
+                    printf("==================================");
+                    printf("==  PP 在此   =====================");
+                    printf("==================================");
                     Value::Nil
                     
                 }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)

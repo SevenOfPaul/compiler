@@ -170,6 +170,18 @@ impl Value {
         }
     }
 }
+impl std::fmt::Display for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Value::Num(n) => write!(f, "{}", n),
+            Value::Bool(b) => write!(f, "{}", b),
+            Value::Str(s) => write!(f, "{}", s),
+            Value::Time(t) => write!(f, "{}", t),
+            Value::Func(func) => write!(f, "{}", func.to_string()),
+            Value::Nil => write!(f, "nil")
+        }
+    }
+}
 
 
 

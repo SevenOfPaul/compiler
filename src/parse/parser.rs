@@ -143,7 +143,7 @@ impl Parser {
         }
     }
     fn declaration(&mut self) -> Result<Stmt, X_Err> {
-                    // println!("{:?}=={:?}",self.match_token(&[Token_Type::FN]),self.check_next(&Token_Type::IDENTIFIER));
+                    // printf("{:?}=={:?}",self.match_token(&[Token_Type::FN]),self.check_next(&Token_Type::IDENTIFIER));
         if self.check(&Token_Type::FN)&&self.check_next(&Token_Type::IDENTIFIER){
             self.consume(&Token_Type::FN, "");
            self.func_stmt(Fn_Type::Func)
@@ -285,7 +285,7 @@ impl Parser {
     }
     fn finish_call(&mut self,callee:Box<Expr>) ->Result<Expr,X_Err>{
         let mut arguments=vec![];
-        //    print!("{:?}",self.tokens[self.pos]);
+        //    print!(printfself.tokens[self.pos]);
            self.advance();
         if !self.check(&Token_Type::RIGHT_PAREN){
          loop{
