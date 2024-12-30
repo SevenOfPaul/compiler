@@ -40,7 +40,7 @@ impl Scanner {
         self.source[self.cur - 1]
     }
     fn get_identifier(&mut self) {
-        while Self::is_alaph_or_digit_or_chinese(self.peek()) {
+        while !self.is_at_end()&&Self::is_alaph_or_digit_or_chinese(self.peek()) {
             self.advance();
         }
         let text = self.source[self.start..self.cur].iter().collect::<String>();
