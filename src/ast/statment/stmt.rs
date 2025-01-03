@@ -48,7 +48,9 @@ pub trait Visitor<T> {
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> T;
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
 }
-
+//  pub (crate) trait Accept<T>{
+//         fn accept(&self, visitor: &mut dyn Visitor<T>) -> T;
+//  }
 impl Stmt {
     pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
         match self {

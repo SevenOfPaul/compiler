@@ -52,7 +52,9 @@ pub(crate) enum Expr {
         name: Token,
     },
 }
-
+//  pub (crate) trait Accept<T>{
+//         fn accept(&self, visitor: &mut dyn Visitor<T>) -> T;
+//  }
 pub trait Visitor<T> {
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> T;
     fn visit_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> T;
