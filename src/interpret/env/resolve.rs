@@ -45,9 +45,6 @@ impl Resolver {
     fn endScope(&mut self) {
         self.scopes.pop();
     }
-    fn resolve(&mut self, stmt: Stmt)->Result<(), X_Err> {
-        stmt.accept(self)
-    }
 }
 impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
@@ -91,7 +88,10 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         name: &Token,
         expr: &Expr,
     ) -> Result<(), X_Err> {
-        todo!()
+      self.decalre(name);
+    self.resolve(expr.clone())?;
+      self.define(name);
+      Ok(())
     }
 
     fn visit_print(&mut self, expr: &Expr) -> Result<(), X_Err> {
