@@ -16,7 +16,7 @@ use crate::parse::{Break, Continue};
 use crate::tools::printf;
 use std::cell::RefCell;
 use std::rc::Rc;
-
+#[derive(Clone)]
 pub(crate) struct Interpreter {
     pub(crate) env: Rc<RefCell<Environment>>,
 }

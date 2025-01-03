@@ -1,4 +1,5 @@
 pub(crate) mod macors;
+pub (crate) mod resolve;
 use crate::ast::token::token::Token;
 use crate::interpret::call::{Fn_init, Func};
 use crate::interpret::value::Value;
