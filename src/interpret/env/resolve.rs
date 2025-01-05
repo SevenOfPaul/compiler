@@ -1,5 +1,9 @@
-use std::collections::{HashMap};
+use std::collections::HashMap;
 
+use self::expr::Expr;
+use super::Run_Err;
+use super::Token;
+use crate::error::X_Err;
 use crate::{
     ast::{
         expression::expr,
@@ -7,12 +11,6 @@ use crate::{
     },
     interpret::interpreter::Interpreter,
 };
-
-use self::expr::Expr;
-
-use X_Err;
-
-use super::{Token};
 #[derive(Clone)]
 struct Resolver {
     inter: Box<Interpreter>,
@@ -20,9 +18,12 @@ struct Resolver {
 }
 impl Resolver {
     fn new(inter: Box<Interpreter>) -> Self {
-        Self { inter,scopes: vec![] }
+        Self {
+            inter,
+            scopes: vec![],
+        }
     }
-    fn resolve_stmts(&self, stmts: &Vec<Stmt>)->Result<(), X_Err>  {
+    fn resolve_stmts(&self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         for stmt in stmts {
             self.clone().resolve(stmt.clone())?;
         }
@@ -31,22 +32,32 @@ impl Resolver {
     fn beginScope(&mut self) {
         self.scopes.push(HashMap::new());
     }
-    fn decalre(&mut self,name:&Token){
-          if !self.scopes.is_empty() {
-            let scope=self.scopes.last().unwrap();
-            self.scopes.push(HashMap::from([(name.lexeme.clone(),false)]));
-          }
+    fn decalre(&mut self, name: &Token) {
+        if !self.scopes.is_empty() {
+            let _ = self.scopes.last().unwrap();
+            self.scopes
+                .push(HashMap::from([(name.lexeme.clone(), false)]));
+        }
     }
-    fn define(&mut self,name:&Token){
-          if !self.scopes.is_empty() {
-            self.scopes.last_mut().unwrap().insert(name.lexeme.clone(),true);
-          }
+    fn define(&mut self, name: &Token) {
+        if !self.scopes.is_empty() {
+            self.scopes
+                .last_mut()
+                .unwrap()
+                .insert(name.lexeme.clone(), true);
+        }
     }
     fn endScope(&mut self) {
         self.scopes.pop();
     }
-    fn resolve(&mut self, stmt: Stmt)->Result<(), X_Err> {
-        stmt.accept(self)
+    fn resolve_local(&mut self,expr:&Expr,name:&Token)-> Result<(), X_Err> {
+          for (idx,scope) in self.scopes.iter().enumerate().rev() {
+              if scope.contains_key(&name.lexeme){
+                  // interpreter.resolve(expr, self.scopes.len() - 1 - idx);
+                 return Ok(());
+              }
+          }
+          Ok(())
     }
 }
 impl stmt::Visitor<Result<(), X_Err>> for Resolver {
@@ -69,12 +80,13 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         todo!()
     }
 
-    fn visit_func(
-        &mut self,
-        name: &Option<Token>,
-        func: &Box<Expr>,
-    ) -> Result<(), X_Err> {
-        todo!()
+    fn visit_func(&mut self, name: &Option<Token>, func: &Box<Expr>) -> Result<(), X_Err> {
+       if let Some(n)=name{
+           self.decalre(n);
+           self.define(n);
+       }
+        // 
+        Ok(())
     }
 
     fn visit_if(
@@ -86,31 +98,27 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         todo!()
     }
 
-    fn visit_let(
-        &mut self,
-        name: &Token,
-        expr: &Expr,
-    ) -> Result<(), X_Err> {
-        todo!()
+    fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
+       match expr {
+           Expr::Assign {name, val }=>{
+               self.resolve(val.as_ref().clone())?;
+               self.resolve_local(expr,name)?;
+               Ok(())
+           },
+           _=>{ Err(Run_Err::new(name.clone(),
+           String::from("类型错误"))) }
+       }
     }
 
     fn visit_print(&mut self, expr: &Expr) -> Result<(), X_Err> {
         todo!()
     }
 
-    fn visit_return(
-        &mut self,
-        keyword: &Token,
-        expr: &Expr,
-    ) -> Result<(), X_Err> {
+    fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
         todo!()
     }
 
-    fn visit_while(
-        &mut self,
-        condition: &Expr,
-        body: &stmt::Stmt,
-    ) -> Result<(), X_Err> {
+    fn visit_while(&mut self, condition: &Expr, body: &stmt::Stmt) -> Result<(), X_Err> {
         todo!()
     }
 }
@@ -137,12 +145,8 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
         todo!()
     }
 
-    fn visit_func(
-        &mut self,
-        params: &Vec<Token>,
-        body: &Vec<stmt::Stmt>,
-    ) -> Result<(), X_Err> {
-        todo!()
+    fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<(), X_Err> {
+               todo!()
     }
 
     fn visit_grouping(&mut self, expression: &expr::Expr) -> Result<(), X_Err> {
@@ -171,33 +175,33 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
         todo!()
     }
 
-    fn visit_unary(
-        &mut self,
-        operator: &Token,
-        r_expression: &expr::Expr,
-    ) -> Result<(), X_Err> {
+    fn visit_unary(&mut self, operator: &Token, r_expression: &expr::Expr) -> Result<(), X_Err> {
         todo!()
     }
 
     fn visit_variable(&mut self, name: &Token) -> Result<(), X_Err> {
-        if(!self.scopes.is_empty()&&self.scopes.last().unwrap().get(&name.lexeme)==Some(&false)){
-            return Err(X_Err::new(name.clone(),String::from("请不要在变量声明前使用变量")));
-            
+        if (!self.scopes.is_empty()
+            && self.scopes.last().unwrap().get(&name.lexeme) == Some(&false))
+        {
+            return Err(Run_Err::new(
+                name.clone(),
+                String::from("请不要在变量声明前使用变量"),
+            ));
         }
-        /**resolveLocal */
-        return Ok(())
+        self.resolve_local(&Expr::Variable { name: name.clone() }, name);
+        Ok(())
     }
 }
-trait Resolve<T>{
-    fn resolve(&mut self, argu: T)->Result<(), X_Err>;
+trait Resolve<T> {
+    fn resolve(&mut self, argu: T) -> Result<(), X_Err>;
 }
 impl Resolve<Stmt> for Resolver {
-    fn resolve(&mut self, stmt: Stmt)->Result<(), X_Err> {
+    fn resolve(&mut self, stmt: Stmt) -> Result<(), X_Err> {
         stmt.accept(self)
     }
 }
 impl Resolve<Expr> for Resolver {
-    fn resolve(&mut self, expr: Expr)->Result<(), X_Err> {
+    fn resolve(&mut self, expr: Expr) -> Result<(), X_Err> {
         expr.accept(self)
     }
 }
