@@ -10,9 +10,8 @@ use crate::{
 
 use self::expr::Expr;
 
-use X_Err;
+use super::{Run_Err, Token, X_Err};
 
-use super::{Token};
 #[derive(Clone)]
 struct Resolver {
     inter: Box<Interpreter>,
@@ -33,7 +32,7 @@ impl Resolver {
     }
     fn decalre(&mut self,name:&Token){
           if !self.scopes.is_empty() {
-            let scope=self.scopes.last().unwrap();
+            let _=self.scopes.last().unwrap();
             self.scopes.push(HashMap::from([(name.lexeme.clone(),false)]));
           }
     }
@@ -44,6 +43,15 @@ impl Resolver {
     }
     fn endScope(&mut self) {
         self.scopes.pop();
+    }
+    fn resolve_local(&mut self,expr:&Expr,name:&Token)->Result<(),X_Err>{
+        for (idx,scope) in self.scopes.iter().enumerate().rev(){
+            if scope.contains_key(&name.lexeme) {
+                //调用解释器的resolve函数
+                return Ok(());
+            }
+        }
+        Ok(())
     }
 }
 impl stmt::Visitor<Result<(), X_Err>> for Resolver {
@@ -71,7 +79,12 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         name: &Option<Token>,
         func: &Box<Expr>,
     ) -> Result<(), X_Err> {
-        todo!()
+   if let Some(n)=name{
+         self.decalre(&name.clone().unwrap());
+        self.define(&name.clone().unwrap());
+   }
+   self.resolve_func(&Stmt::Func { name: name.clone(), func: func.clone()})?;
+   Ok(())
     }
 
     fn visit_if(
@@ -116,7 +129,9 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
 }
 impl expr::Visitor<Result<(), X_Err>> for Resolver {
     fn visit_assign(&mut self, name: &Token, value: &Box<expr::Expr>) -> Result<(), X_Err> {
-        todo!()
+        self.resolve(value.as_ref().clone())?;
+        self.resolve_local(&Expr::Assign { name: name.clone(), val: value.clone()},name);
+        Ok(())
     }
 
     fn visit_binary(
@@ -180,24 +195,35 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
     }
 
     fn visit_variable(&mut self, name: &Token) -> Result<(), X_Err> {
-        if(!self.scopes.is_empty()&&self.scopes.last().unwrap().get(&name.lexeme)==Some(&false)){
-            return Err(X_Err::new(name.clone(),String::from("请不要在变量声明前使用变量")));
+        if !self.scopes.is_empty()&&self.scopes.last().unwrap().get(&name.lexeme)==Some(&false){
+            return Err(Run_Err::new(name.clone(),String::from("请不要在变量声明前使用变量")));
             
         }
-        /**resolveLocal */
-        return Ok(())
+        self.resolve_local(&Expr::Variable{name:name.clone()},name);
+         Ok(())
     }
 }
 trait Resolve<T>{
     fn resolve(&mut self, argu: T)->Result<(), X_Err>;
+    fn resolve_func(&mut self,argu:&T)->Result<(),X_Err>;
 }
 impl Resolve<Stmt> for Resolver {
     fn resolve(&mut self, stmt: Stmt)->Result<(), X_Err> {
         stmt.accept(self)
     }
+    fn resolve_func(&mut self, stmt: &Stmt)->Result<(), X_Err> {
+      match stmt {
+          Stmt::Func{name,func}=>self.resolve_func(func.as_ref())?,
+          _=>{}
+      }
+      Ok(())
+    }
 }
 impl Resolve<Expr> for Resolver {
     fn resolve(&mut self, expr: Expr)->Result<(), X_Err> {
         expr.accept(self)
+    }
+    fn resolve_func(&mut self,expr:&Expr)->Result<(),X_Err>{
+        todo!()
     }
 }
