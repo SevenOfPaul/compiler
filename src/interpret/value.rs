@@ -34,6 +34,12 @@ impl Add for Value {
             } else {
                 panic!("不支持此类型加法操作");
             }
+        }else if let Value::Time(t1)=self{
+            if let Value::Num(n2) = other {
+                return Value::Time(t1.add(chrono::Duration::seconds(n2 as i64)));
+            } else {
+                panic!("不支持此类型加法操作");
+            }
         }
         panic!("不支持此类型加法操作");
     }
