@@ -1,5 +1,9 @@
-use std::collections::{HashMap};
+use std::collections::HashMap;
 
+use self::expr::Expr;
+use super::Run_Err;
+use super::Token;
+use crate::error::X_Err;
 use crate::{
     ast::{
         expression::expr,
@@ -19,9 +23,12 @@ struct Resolver {
 }
 impl Resolver {
     fn new(inter: Box<Interpreter>) -> Self {
-        Self { inter,scopes: vec![] }
+        Self {
+            inter,
+            scopes: vec![],
+        }
     }
-    fn resolve_stmts(&self, stmts: &Vec<Stmt>)->Result<(), X_Err>  {
+    fn resolve_stmts(&self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         for stmt in stmts {
             self.clone().resolve(stmt.clone())?;
         }
@@ -36,10 +43,13 @@ impl Resolver {
             self.scopes.push(HashMap::from([(name.lexeme.clone(),false)]));
           }
     }
-    fn define(&mut self,name:&Token){
-          if !self.scopes.is_empty() {
-            self.scopes.last_mut().unwrap().insert(name.lexeme.clone(),true);
-          }
+    fn define(&mut self, name: &Token) {
+        if !self.scopes.is_empty() {
+            self.scopes
+                .last_mut()
+                .unwrap()
+                .insert(name.lexeme.clone(), true);
+        }
     }
     fn endScope(&mut self) {
         self.scopes.pop();
@@ -96,34 +106,27 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         todo!()
     }
 
-    fn visit_let(
-        &mut self,
-        name: &Token,
-        expr: &Expr,
-    ) -> Result<(), X_Err> {
-      self.decalre(name);
-    self.resolve(expr.clone())?;
-      self.define(name);
-      Ok(())
+    fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
+       match expr {
+           Expr::Assign {name, val }=>{
+               self.resolve(val.as_ref().clone())?;
+               self.resolve_local(expr,name)?;
+               Ok(())
+           },
+           _=>{ Err(Run_Err::new(name.clone(),
+           String::from("类型错误"))) }
+       }
     }
 
     fn visit_print(&mut self, expr: &Expr) -> Result<(), X_Err> {
         todo!()
     }
 
-    fn visit_return(
-        &mut self,
-        keyword: &Token,
-        expr: &Expr,
-    ) -> Result<(), X_Err> {
+    fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
         todo!()
     }
 
-    fn visit_while(
-        &mut self,
-        condition: &Expr,
-        body: &stmt::Stmt,
-    ) -> Result<(), X_Err> {
+    fn visit_while(&mut self, condition: &Expr, body: &stmt::Stmt) -> Result<(), X_Err> {
         todo!()
     }
 }
@@ -152,12 +155,8 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
         todo!()
     }
 
-    fn visit_func(
-        &mut self,
-        params: &Vec<Token>,
-        body: &Vec<stmt::Stmt>,
-    ) -> Result<(), X_Err> {
-        todo!()
+    fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<(), X_Err> {
+               todo!()
     }
 
     fn visit_grouping(&mut self, expression: &expr::Expr) -> Result<(), X_Err> {
@@ -186,29 +185,29 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
         todo!()
     }
 
-    fn visit_unary(
-        &mut self,
-        operator: &Token,
-        r_expression: &expr::Expr,
-    ) -> Result<(), X_Err> {
+    fn visit_unary(&mut self, operator: &Token, r_expression: &expr::Expr) -> Result<(), X_Err> {
         todo!()
     }
 
     fn visit_variable(&mut self, name: &Token) -> Result<(), X_Err> {
-        if !self.scopes.is_empty()&&self.scopes.last().unwrap().get(&name.lexeme)==Some(&false){
-            return Err(Run_Err::new(name.clone(),String::from("请不要在变量声明前使用变量")));
-            
+        if (!self.scopes.is_empty()
+            && self.scopes.last().unwrap().get(&name.lexeme) == Some(&false))
+        {
+            return Err(Run_Err::new(
+                name.clone(),
+                String::from("请不要在变量声明前使用变量"),
+            ));
         }
-        self.resolve_local(&Expr::Variable{name:name.clone()},name);
-         Ok(())
+        self.resolve_local(&Expr::Variable { name: name.clone() }, name);
+        Ok(())
     }
 }
-trait Resolve<T>{
-    fn resolve(&mut self, argu: T)->Result<(), X_Err>;
-    fn resolve_func(&mut self,argu:&T)->Result<(),X_Err>;
+trait Resolve<T> {
+    fn resolve(&mut self, argu: T) -> Result<(), X_Err>;
+    fn resolve_func(&mut self, argu: &T) -> Result<(), X_Err>;
 }
 impl Resolve<Stmt> for Resolver {
-    fn resolve(&mut self, stmt: Stmt)->Result<(), X_Err> {
+    fn resolve(&mut self, stmt: Stmt) -> Result<(), X_Err> {
         stmt.accept(self)
     }
     fn resolve_func(&mut self, stmt: &Stmt)->Result<(), X_Err> {
@@ -220,7 +219,7 @@ impl Resolve<Stmt> for Resolver {
     }
 }
 impl Resolve<Expr> for Resolver {
-    fn resolve(&mut self, expr: Expr)->Result<(), X_Err> {
+    fn resolve(&mut self, expr: Expr) -> Result<(), X_Err> {
         expr.accept(self)
     }
     fn resolve_func(&mut self,expr:&Expr)->Result<(),X_Err>{

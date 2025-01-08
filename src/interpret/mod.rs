@@ -14,7 +14,7 @@ pub(crate) struct Run_Err{
     pub(crate) mes:String
 }
 impl Run_Err{
-  fn new(token:Token, mes:String) ->X_Err{
+ fn new(token:Token, mes:String) ->X_Err{
         error::log(token.line, &token.lexeme, &mes);
         X_Err::run(Run_Err{token,mes})
     }

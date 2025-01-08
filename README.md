@@ -11,3 +11,7 @@ https://www.bilibili.com/video/BV1Ax4y1t7T1/?spm_id_from=333.1007.top_right_bar_
 1. 添加自增代码 += -= *= /=
 2. 修正代码解析的问题
 3. 增加struct 优先级低
+### 编译rust到wasm
+`cargo build --target wasm32-unknown-unknown --release`
+### 生成对应的js代码
+`wasm-bindgen --out-dir ./out --target web target/wasm32-unknown-unknown/release/p.wasm`
