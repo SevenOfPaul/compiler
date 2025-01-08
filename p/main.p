@@ -15,4 +15,4 @@ fn leibniz(k) {
 
 	return 4*quarter;
 }
-print leibniz(20000);
+print leibniz(200);

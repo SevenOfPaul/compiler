@@ -12,3 +12,5 @@ paste="*"
 # 打包为wasm
 wasm-bindgen-cli = "0.2.99"
 wasm-bindgen = "0.2.99"
+[profile.release]
+lto = true

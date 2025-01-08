@@ -144,7 +144,11 @@ impl Sub for Value {
         if let Value::Num(n1) = self {
             if let Value::Num(n2) = other {
                 return Value::Num(n1 - n2);
+        }else if let Value::Time(t1)=self{
+             if let Value::Time(t2) = other {
+                return Value::Num(t1.signed_duration_since(t2).num_seconds() as f32);
             }
+        }
         }
         panic!("不支持此类型减法操作");
     }
