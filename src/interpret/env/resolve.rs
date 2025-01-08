@@ -12,9 +12,7 @@ use crate::{
     interpret::interpreter::Interpreter,
 };
 
-use self::expr::Expr;
 
-use super::{Run_Err, Token, X_Err};
 
 #[derive(Clone)]
 struct Resolver {
