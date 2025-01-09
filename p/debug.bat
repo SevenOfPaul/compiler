@@ -1,1 +1,1 @@
-cd ../target/debug&&p.exe ../../p/main.p
+cargo build&&cd ../target/debug&&p.exe ../../p/main.p

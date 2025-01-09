@@ -1,2 +1,3 @@
-let func=fn(n){return n;};
-print func(2);
+let t1=now();
+let t2=now();
+print t1<t2;

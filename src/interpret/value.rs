@@ -119,6 +119,13 @@ impl PartialEq<Self> for Value {
                     *b1
                 }
             }
+             Value::Time(t1)=>{
+                 if let Value::Time(t2)=other{
+                     t1.eq(t2)
+                 }else{
+                     false
+                 }
+             }
             Value::Nil => false,
             _ => {
                 panic!("类型错误，不支持此类型比较");
@@ -132,6 +139,10 @@ impl PartialOrd for Value {
         if let Value::Num(n1) = self {
             if let Value::Num(n2) = other {
                 return n1.partial_cmp(n2);
+            }
+        }else if let Value::Time(t1)=self{
+            if let Value::Time(t2) = other {
+                return t1.partial_cmp(&t2);
             }
         }
         panic!("类型错误，不支持此类型比较");
@@ -159,6 +170,12 @@ impl Value {
     pub(crate) fn is_str(&self) -> bool {
         match self {
             Value::Str(s) => true,
+            _ => false,
+        }
+    }
+    pub(crate) fn is_time(&self) -> bool {
+        match self {
+            Value::Time(t) => true,
             _ => false,
         }
     }
