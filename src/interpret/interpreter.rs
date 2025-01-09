@@ -196,11 +196,6 @@ impl Interpreter {
         }else if l.is_time()&&r.is_time(){
             Ok(())
         } else {
-            // error::log(
-            //     oper.line,
-            //     &oper.lexeme,
-            //     &format!("此类型不支持{}操作", oper.lexeme),
-            // );
             Err(Run_Err::new(
                 oper.clone(),
                 format!("此类型不支持{}操作", oper.lexeme),
