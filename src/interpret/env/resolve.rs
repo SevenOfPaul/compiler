@@ -32,7 +32,7 @@ impl Resolver {
         }
         Ok(())
     }
-    fn beginScope(&mut self) {
+    fn begin_scope(&mut self) {
         self.scopes.push(HashMap::new());
     }
     fn decalre(&mut self,name:&Token){
@@ -49,7 +49,7 @@ impl Resolver {
                 .insert(name.lexeme.clone(), true);
         }
     }
-    fn endScope(&mut self) {
+    fn end_scope(&mut self) {
         self.scopes.pop();
     }
     fn resolve_local(&mut self,expr:&Expr,name:&Token)->Result<(),X_Err>{
@@ -64,9 +64,9 @@ impl Resolver {
 }
 impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
-        self.beginScope();
+        self.begin_scope();
         self.resolve_stmts(stmts);
-        self.endScope();
+        self.end_scope();
         Ok(())
     }
 
