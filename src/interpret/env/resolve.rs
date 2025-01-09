@@ -56,9 +56,9 @@ impl Resolver {
 }
 impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
-        self.beginScope();
+        self.begin_scope();
         self.resolve_stmts(stmts);
-        self.endScope();
+        self.end_scope();
         Ok(())
     }
 
