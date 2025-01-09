@@ -34,6 +34,12 @@ impl Add for Value {
             } else {
                 panic!("不支持此类型加法操作");
             }
+        }else if let Value::Time(t1)=self{
+            if let Value::Num(n2) = other {
+                return Value::Time(t1.add(chrono::Duration::seconds(n2 as i64)));
+            } else {
+                panic!("不支持此类型加法操作");
+            }
         }
         panic!("不支持此类型加法操作");
     }
@@ -155,7 +161,11 @@ impl Sub for Value {
         if let Value::Num(n1) = self {
             if let Value::Num(n2) = other {
                 return Value::Num(n1 - n2);
+        }else if let Value::Time(t1)=self{
+             if let Value::Time(t2) = other {
+                return Value::Num(t1.signed_duration_since(t2).num_seconds() as f32);
             }
+        }
         }
         panic!("不支持此类型减法操作");
     }

@@ -27,7 +27,7 @@ impl Resolver {
         }
         Ok(())
     }
-    fn beginScope(&mut self) {
+    fn begin_scope(&mut self) {
         self.scopes.push(HashMap::new());
     }
     fn decalre(&mut self,name:&Token){
@@ -41,7 +41,7 @@ impl Resolver {
             self.scopes.last_mut().unwrap().insert(name.lexeme.clone(),true);
           }
     }
-    fn endScope(&mut self) {
+    fn end_scope(&mut self) {
         self.scopes.pop();
     }
     fn resolve_local(&mut self,expr:&Expr,name:&Token)->Result<(),X_Err>{
@@ -197,7 +197,7 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
     fn visit_variable(&mut self, name: &Token) -> Result<(), X_Err> {
         if !self.scopes.is_empty()&&self.scopes.last().unwrap().get(&name.lexeme)==Some(&false){
             return Err(Run_Err::new(name.clone(),String::from("请不要在变量声明前使用变量")));
-            
+
         }
         self.resolve_local(&Expr::Variable{name:name.clone()},name);
          Ok(())
