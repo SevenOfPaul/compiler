@@ -7,7 +7,11 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="合并" />
+    <list default="true" id="c2c06728-5773-4844-afb8-8dbd54f9cf9f" name="更改" comment="合并">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/interpret/env/macors.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/env/macors.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/interpret/env/resolve.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpret/env/resolve.rs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -245,6 +249,7 @@
       <workItem from="1736236690965" duration="91000" />
       <workItem from="1736236950595" duration="19000" />
       <workItem from="1736321740514" duration="721000" />
+      <workItem from="1736402504823" duration="74000" />
     </task>
     <task id="LOCAL-00017" summary="修改顺序方便查找">
       <option name="closed" value="true" />

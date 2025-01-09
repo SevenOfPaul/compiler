@@ -5,7 +5,7 @@ use crate::{
         expression::expr,
         statment::stmt::{self, Stmt},
     },
-    interpret::interpreter::Interpreter,
+    interpret::interpreter::Interpreter, match_type,
 };
 
 use self::expr::Expr;
@@ -224,6 +224,19 @@ impl Resolve<Expr> for Resolver {
         expr.accept(self)
     }
     fn resolve_func(&mut self,expr:&Expr)->Result<(),X_Err>{
-        todo!()
+       self.begin_scope();
+       match_type!{
+              expr,Expr::Func{params,body},{
+                    for param in params{
+                        self.decalre(param);
+                        self.define(param);
+                    }
+                    for stmt in body{
+                        self.resolve(stmt.clone())?;
+                    }
+              },{}
+       }
+       self.end_scope();
+       Ok(())
     }
 }

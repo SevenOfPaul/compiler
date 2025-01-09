@@ -21,37 +21,4 @@ impl Object{
            }
        }
     }
-    /*
-    需要先修改
-    */
-}
-pub(crate)  trait Get<T>{
- fn get_value(&self)->Option<T>;
-}
-
-impl Get<String> for Object {
-   fn get_value(&self) ->Option<String> {
-      match self {
-          Object::Str(s)=>Some(s.clone()),
-        _=>None
-      }
-    }
-}
-impl Get<f32> for Object {
-    fn get_value(&self) ->Option<f32> {
-         match self {
-            Object::Num(n)=>Some(*n),
-            _=>None
-        }
-    }
-
-}
-impl Get<bool> for Object {
-    fn get_value(&self) ->Option<bool> {
-         match self {
-            Object::Bool(b)=>Some(*b),
-            _=>None
-        }
-    }
-
 }
