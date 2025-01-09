@@ -3,7 +3,7 @@ use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::impl_expr_accept;
 use paste::paste;
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone,PartialEq, Eq,Hash)]
 pub(crate) enum Expr {
     //声明变量
     Assign {

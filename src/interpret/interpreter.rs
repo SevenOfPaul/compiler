@@ -15,10 +15,12 @@ use crate::interpret::{Return, Run_Err};
 use crate::parse::{Break, Continue};
 use crate::tools::printf;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 #[derive(Clone)]
 pub(crate) struct Interpreter {
     pub(crate) env: Rc<RefCell<Environment>>,
+    locals:HashMap<Expr,i32>
 }
 impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
@@ -176,6 +178,8 @@ impl Interpreter {
         //最高作用域
         Self {
             env: Rc::from(RefCell::from(global)),
+            //需要修改
+            locals:HashMap::new()
         }
     }
     pub(crate) fn check_num_operands(
@@ -221,6 +225,10 @@ impl Interpreter {
         self.env = pre_env;
         Ok(())
     }
+    pub(crate) fn resolve(&mut self,expr:&Expr,depth:i32)->Result<(),X_Err>{
+          self.locals.insert(expr.clone(),depth);
+          Ok(())
+    } 
     /*
     这里改成执行语句vec
     */

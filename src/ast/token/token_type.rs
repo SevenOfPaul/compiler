@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq,Hash)]
 pub enum Token_Type {
     //自己就是个token
     AND, //&&

@@ -2,7 +2,7 @@ use crate::ast::token::object::Object;
 use crate::ast::token::token_type::Token_Type;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug,PartialEq, Eq,Hash)]
 pub(crate) struct Token {
     pub(crate) token_type: Token_Type,
     pub(crate) lexeme: String,
