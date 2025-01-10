@@ -129,13 +129,11 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     }
 }
 impl expr::Visitor<Result<(), X_Err>> for Resolver {
-    fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<(), X_Err> {
+    fn visit_assign(&mut self, expr:&Expr,name: &Token, value: &Box<Expr>) -> Result<(), X_Err> {
         self.resolve(value.as_ref().clone())?;
+        //这里得改
         self.resolve_local(
-            &Expr::Assign {
-                name: name.clone(),
-                val: value.clone(),
-            },
+            expr,
             name,
         );
         Ok(())
@@ -214,7 +212,7 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
         Ok(())
     }
 
-    fn visit_variable(&mut self, name: &Token) -> Result<(), X_Err> {
+    fn visit_variable(&mut self,expr:&Expr, name: &Token) -> Result<(), X_Err> {
         if !self.scopes.is_empty() && self.scopes.last().unwrap().get(&name.lexeme) == Some(&false)
         {
             return Err(Run_Err::new(
@@ -222,7 +220,7 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
                 String::from("请不要在变量声明前使用变量"),
             ));
         }
-        self.resolve_local(&Expr::Variable { name: name.clone() }, name);
+        self.resolve_local(expr, name);
         Ok(())
     }
 }

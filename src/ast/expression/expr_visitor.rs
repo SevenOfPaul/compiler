@@ -33,11 +33,11 @@ impl Visitor<String> for ExprVisitor {
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> String {
         self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
     }
-    fn visit_variable(&mut self, _name: &Token) -> String {
+    fn visit_variable(&mut self,expr: &Expr, _name: &Token) -> String {
       todo!();
 
     }
-    fn visit_assign(&mut self, _name: &Token,_value: &Box<Expr>) -> String {
+    fn visit_assign(&mut self,_:&Expr, _name: &Token,_value: &Box<Expr>) -> String {
         String::from("变量已声明")
     }
 

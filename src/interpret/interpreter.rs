@@ -23,7 +23,7 @@ pub(crate) struct Interpreter {
     locals:HashMap<Expr,i32>
 }
 impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
-    fn visit_assign(&mut self, name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
+    fn visit_assign(&mut self,_:&Expr,name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
         let val = self.evaluate(value)?;
         self.env.borrow_mut().set(name, val)
     }
@@ -166,7 +166,8 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_variable(&mut self, name: &Token) -> Result<Value, X_Err> {
+    fn visit_variable(&mut self,expr:&Expr, name: &Token) -> Result<Value, X_Err> {
+        self.lookup_variable(expr,name);
         self.env.borrow().get(name)
     }
 }
@@ -239,7 +240,15 @@ impl Interpreter {
         Ok(())
     }
 
-    //这里其实可以复写
+    pub (crate) fn lookup_variable(&self,expr:&Expr,name:&Token)->Result<Value,X_Err>{
+    let distance=self.locals.get(&expr);
+        if let Some(d)=distance{
+            // return self.env.borrow_mut().local.get()
+            todo!()
+        }else{
+            self.env.borrow().get(name)
+        }
+    }
 }
 impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
