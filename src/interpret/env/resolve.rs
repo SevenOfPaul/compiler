@@ -1,4 +1,4 @@
-use std::{collections::HashMap, rc::Rc};
+use std::collections::HashMap;
 
 use crate::{
     ast::{
@@ -6,7 +6,6 @@ use crate::{
         statment::stmt::{self, Stmt},
     },
     interpret::interpreter::Interpreter,
-    match_type,
 };
 
 use crate::ast::expression::expr::Expr;
@@ -84,7 +83,12 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         Ok(())
     }
 
-    fn visit_func(&mut self, name: &Option<Token>, func: &Box<Expr>) -> Result<(), X_Err> {
+    fn visit_func(
+        &mut self,
+        stmt: &Stmt,
+        name: &Option<Token>,
+        func: &Box<Expr>,
+    ) -> Result<(), X_Err> {
         if let Some(n) = name {
             self.decalre(&name.clone().unwrap());
             self.define(&name.clone().unwrap());
@@ -232,9 +236,15 @@ impl Resolve<Stmt> for Resolver {
         stmt.accept(self)
     }
     fn resolve_func(&mut self, stmt: &Stmt) -> Result<(), X_Err> {
-        match_type! {stmt,Stmt::Func{name,func},{
-            self.resolve_func(&Stmt::Func{name:name.clone(),func:func.clone()})?;
-        },{}};
+        match stmt {
+            Stmt::Func { name, func } => {
+                //这里有问题
+                self.begin_scope();
+                self.resolve_func(func.as_ref())?;
+                self.end_scope();
+            }
+            _ => {}
+        }
         Ok(())
     }
 }
@@ -243,14 +253,13 @@ impl Resolve<Expr> for Resolver {
         expr.accept(self)
     }
     fn resolve_func(&mut self, expr: &Expr) -> Result<(), X_Err> {
-        self.begin_scope();
         match expr {
             Expr::Func { params, body } => {
                 self.visit_func(params, body)?;
             }
             _ => {}
         }
-        self.end_scope();
+
         Ok(())
     }
 }

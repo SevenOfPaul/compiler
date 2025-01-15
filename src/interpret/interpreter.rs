@@ -273,7 +273,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         Ok(())
     }
     fn visit_func(
-        &mut self,
+        &mut self,_:&Stmt,
         name: &Option<Token>,
         func:&Box<Expr>
     ) -> Result<(), X_Err> {

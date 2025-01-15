@@ -41,7 +41,7 @@ pub trait Visitor<T> {
     fn visit_break(&mut self) -> T;
     fn visit_continue(&mut self) -> T;
     fn visit_expr(&mut self, expr: &Expr) -> T;
-    fn visit_func(&mut self, name: &Option<Token>, func:&Box<Expr>) -> T;
+    fn visit_func(&mut self,stmt:&Stmt, name: &Option<Token>, func:&Box<Expr>) -> T;
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_print(&mut self, expr: &Expr) -> T;
@@ -73,7 +73,7 @@ impl Stmt {
                     visitor.visit_if(condition, then_branch, None)
                 }
             }
-            Stmt::Func { name, func } =>visitor.visit_func(name,func),
+            Stmt::Func { name, func } =>visitor.visit_func(self,name,func),
             Stmt::LET { name, expr } => visitor.visit_let(name, expr),
             Stmt::Print { expr } => visitor.visit_print(expr),
             Stmt::Return { keyword, expr } => visitor.visit_return(keyword, expr),

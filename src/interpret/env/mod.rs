@@ -1,4 +1,3 @@
-pub(crate) mod macors;
 pub(crate) mod resolve;
 use crate::ast::token::token::Token;
 use crate::error::X_Err;
