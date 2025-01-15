@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, rc::Rc};
 
 use crate::{
     ast::{
@@ -14,18 +14,18 @@ use crate::ast::expression::expr::Expr;
 use super::{Run_Err, Token, X_Err};
 
 #[derive(Clone)]
-struct Resolver {
+pub(crate) struct Resolver {
     inter: Box<Interpreter>,
     scopes: Vec<HashMap<String, bool>>,
 }
 impl Resolver {
-    fn new(inter: Box<Interpreter>) -> Self {
+  pub(crate)  fn new(inter: Interpreter) -> Self {
         Self {
-            inter,
+            inter:Box::new(inter),
             scopes: vec![],
         }
     }
-    fn resolve_stmts(&self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
+  pub(crate)  fn resolve_stmts(&self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         for stmt in stmts {
             self.clone().resolve(stmt.clone())?;
         }
@@ -56,6 +56,7 @@ impl Resolver {
         for (idx, scope) in self.scopes.iter().enumerate().rev() {
             if scope.contains_key(&name.lexeme) {
                 //调用解释器的resolve函数
+                self.inter.resolve(expr, idx as i32)?;
                 return Ok(());
             }
         }
@@ -65,7 +66,7 @@ impl Resolver {
 impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         self.begin_scope();
-        self.resolve_stmts(stmts);
+        self.resolve_stmts(stmts)?;
         self.end_scope();
         Ok(())
     }
@@ -109,6 +110,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         self.decalre(name);
         self.resolve(expr.clone())?;
         self.define(name);
+       println!("name:{:?}",self.scopes);
         Ok(())
     }
 
@@ -135,7 +137,7 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
         self.resolve_local(
             expr,
             name,
-        );
+        )?;
         Ok(())
     }
 
@@ -220,7 +222,7 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
                 String::from("请不要在变量声明前使用变量"),
             ));
         }
-        self.resolve_local(expr, name);
+        self.resolve_local(expr, name)?;
         Ok(())
     }
 }

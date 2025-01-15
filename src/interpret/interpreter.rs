@@ -23,9 +23,14 @@ pub(crate) struct Interpreter {
     locals:HashMap<Expr,i32>
 }
 impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
-    fn visit_assign(&mut self,_:&Expr,name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
+    fn visit_assign(&mut self,expr:&Expr,name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
         let val = self.evaluate(value)?;
-        self.env.borrow_mut().set(name, val)
+           let distance=self.locals.get(expr);
+         return  if let Some(d)=distance{
+                self.env.borrow_mut().assign_at(*d, name, val)
+           }else{
+            self.env.borrow_mut().set(name, val)
+           }
     }
     fn visit_binary(
         &mut self,
@@ -228,14 +233,15 @@ impl Interpreter {
     }
     pub(crate) fn resolve(&mut self,expr:&Expr,depth:i32)->Result<(),X_Err>{
           self.locals.insert(expr.clone(),depth);
+          println!("{:?}==",self.locals);
           Ok(())
     } 
     /*
     这里改成执行语句vec
     */
-    pub(crate) fn run(&mut self, stmts: Vec<Stmt>) -> Result<(), X_Err> {
+    pub(crate) fn run(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         for stmt in stmts {
-            self.execute(stmt)?;
+            self.execute(stmt.clone())?;
         }
         Ok(())
     }
@@ -243,8 +249,7 @@ impl Interpreter {
     pub (crate) fn lookup_variable(&self,expr:&Expr,name:&Token)->Result<Value,X_Err>{
     let distance=self.locals.get(&expr);
         if let Some(d)=distance{
-            // return self.env.borrow_mut().local.get()
-            todo!()
+             self.env.borrow_mut().get_at(*d,&name.clone())
         }else{
             self.env.borrow().get(name)
         }
@@ -298,7 +303,8 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         //添加到变量池中
         let res = self.evaluate(expr);
         if let Ok(val) = res {
-            self.env.borrow_mut().add(name, val)
+            self.env.borrow_mut().add(name, val)?;
+            Ok(())
         } else {
             Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
         }
