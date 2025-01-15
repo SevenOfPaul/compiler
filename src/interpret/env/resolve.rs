@@ -19,13 +19,13 @@ pub(crate) struct Resolver {
     scopes: Vec<HashMap<String, bool>>,
 }
 impl Resolver {
-  pub(crate)  fn new(inter: Interpreter) -> Self {
+    pub(crate) fn new(inter: Interpreter) -> Self {
         Self {
-            inter:Box::new(inter),
+            inter: Box::new(inter),
             scopes: vec![],
         }
     }
-  pub(crate)  fn resolve_stmts(&self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
+    pub(crate) fn resolve_stmts(&self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         for stmt in stmts {
             self.clone().resolve(stmt.clone())?;
         }
@@ -110,7 +110,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         self.decalre(name);
         self.resolve(expr.clone())?;
         self.define(name);
-       println!("name:{:?}",self.scopes);
+        println!("name:{:?}", self.scopes);
         Ok(())
     }
 
@@ -131,13 +131,10 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     }
 }
 impl expr::Visitor<Result<(), X_Err>> for Resolver {
-    fn visit_assign(&mut self, expr:&Expr,name: &Token, value: &Box<Expr>) -> Result<(), X_Err> {
+    fn visit_assign(&mut self, expr: &Expr, name: &Token, value: &Box<Expr>) -> Result<(), X_Err> {
         self.resolve(value.as_ref().clone())?;
         //这里得改
-        self.resolve_local(
-            expr,
-            name,
-        )?;
+        self.resolve_local(expr, name)?;
         Ok(())
     }
 
@@ -214,7 +211,7 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
         Ok(())
     }
 
-    fn visit_variable(&mut self,expr:&Expr, name: &Token) -> Result<(), X_Err> {
+    fn visit_variable(&mut self, expr: &Expr, name: &Token) -> Result<(), X_Err> {
         if !self.scopes.is_empty() && self.scopes.last().unwrap().get(&name.lexeme) == Some(&false)
         {
             return Err(Run_Err::new(
@@ -247,10 +244,11 @@ impl Resolve<Expr> for Resolver {
     }
     fn resolve_func(&mut self, expr: &Expr) -> Result<(), X_Err> {
         self.begin_scope();
-        match_type! {
-               expr,Expr::Func{params,body},{
-                         self.visit_func(params, body)?;
-               },{}
+        match expr {
+            Expr::Func { params, body } => {
+                self.visit_func(params, body)?;
+            }
+            _ => {}
         }
         self.end_scope();
         Ok(())
