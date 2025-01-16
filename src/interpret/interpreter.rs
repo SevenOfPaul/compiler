@@ -25,12 +25,12 @@ pub(crate) struct Interpreter {
 impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     fn visit_assign(&mut self,expr:&Expr,name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
         let val = self.evaluate(value)?;
-           let distance=self.locals.get(expr);
-         return  if let Some(d)=distance{
-                self.env.borrow_mut().assign_at(*d, name, val)
-           }else{
+        let distance=self.locals.get(expr);
+        return  if let Some(d)=distance{
+            self.env.borrow_mut().assign_at(*d, name, val)
+        }else{
             self.env.borrow_mut().set(name, val)
-           }
+        }
     }
     fn visit_binary(
         &mut self,
@@ -116,10 +116,10 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         expr.call(self, arguments_func)
     }
     fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<Stmt>)->Result<Value, X_Err> {
-              //这里有问题
-              //得大改 周末吃透
+        //这里有问题
+        //得大改 周末吃透
         let func_stmt=Stmt::Func { name: None, func: Box::from(Expr::Func { params:params.clone(), body: body.clone() }) };
-      Ok(Value::Func(Func::new(func_stmt)))
+        Ok(Value::Func(Func::new(func_stmt)))
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
@@ -172,8 +172,8 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         }
     }
     fn visit_variable(&mut self,expr:&Expr, name: &Token) -> Result<Value, X_Err> {
-        self.lookup_variable(expr,name);
-        self.env.borrow().get(name)
+        self.lookup_variable(expr,name)
+        // self.env.borrow().get(name)
     }
 }
 impl Interpreter {
@@ -232,10 +232,11 @@ impl Interpreter {
         Ok(())
     }
     pub(crate) fn resolve(&mut self,expr:&Expr,depth:i32)->Result<(),X_Err>{
-          self.locals.insert(expr.clone(),depth);
-          println!("{:?}==",self.locals);
-          Ok(())
-    } 
+        println!("Interpreter resolving: depth={}", depth);  // 添加调试信息
+        self.locals.insert(expr.clone(),depth);
+        println!("Locals after insert: {:?}", self.locals);
+        Ok(())
+    }
     /*
     这里改成执行语句vec
     */
@@ -247,11 +248,11 @@ impl Interpreter {
     }
 
     pub (crate) fn lookup_variable(&self,expr:&Expr,name:&Token)->Result<Value,X_Err>{
-    let distance=self.locals.get(&expr);
-        if let Some(d)=distance{
-             self.env.borrow_mut().get_at(*d,&name.clone())
-        }else{
-            self.env.borrow().get(name)
+        // let distance=self.locals.get(&expr);
+        if let Some(&distance) = self.locals.get(expr) {
+            self.env.borrow_mut().get_at(distance,name)  // 全局查找
+        } else {
+            self.env.borrow().get(name)  // 降级到全局查找
         }
     }
 }

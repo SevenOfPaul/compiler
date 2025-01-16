@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use crate::{
     ast::{
@@ -14,13 +14,13 @@ use super::{Run_Err, Token, X_Err};
 
 #[derive(Clone)]
 pub(crate) struct Resolver {
-    inter: Box<Interpreter>,
+    inter: Rc<RefCell<Interpreter>>,
     scopes: Vec<HashMap<String, bool>>,
 }
 impl Resolver {
-    pub(crate) fn new(inter: Interpreter) -> Self {
+    pub(crate) fn new(inter: Rc<RefCell<Interpreter>>) -> Self {
         Self {
-            inter: Box::new(inter),
+            inter,
             scopes: vec![],
         }
     }
@@ -55,7 +55,7 @@ impl Resolver {
         for (idx, scope) in self.scopes.iter().enumerate().rev() {
             if scope.contains_key(&name.lexeme) {
                 //调用解释器的resolve函数
-                self.inter.resolve(expr, idx as i32)?;
+                self.inter.borrow_mut().resolve(expr, (self.scopes.len() - 1 -idx) as i32)?;
                 return Ok(());
             }
         }
@@ -216,12 +216,15 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
     }
 
     fn visit_variable(&mut self, expr: &Expr, name: &Token) -> Result<(), X_Err> {
-        if !self.scopes.is_empty() && self.scopes.last().unwrap().get(&name.lexeme) == Some(&false)
-        {
-            return Err(Run_Err::new(
-                name.clone(),
-                String::from("请不要在变量声明前使用变量"),
-            ));
+        if !self.scopes.is_empty() {
+            if let Some(&initialized) = self.scopes.last().unwrap().get(&name.lexeme) {
+                if !initialized {
+                    return Err(Run_Err::new(
+                        name.clone(),
+                        String::from("变量无法在声明前使用"),
+                    ));
+                }
+            }
         }
         self.resolve_local(expr, name)?;
         Ok(())
