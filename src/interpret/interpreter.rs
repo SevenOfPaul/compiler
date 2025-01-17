@@ -17,7 +17,7 @@ use crate::tools::printf;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-#[derive(Clone)]
+/**只能有一个 */
 pub(crate) struct Interpreter {
     pub(crate) env: Rc<RefCell<Environment>>,
     locals:HashMap<Expr,i32>

@@ -11,8 +11,7 @@ use crate::{
 use crate::ast::expression::expr::Expr;
 
 use super::{Run_Err, Token, X_Err};
-
-#[derive(Clone)]
+/**只能有一个 */
 pub(crate) struct Resolver {
     inter: Rc<RefCell<Interpreter>>,
     scopes: Vec<HashMap<String, bool>>,
