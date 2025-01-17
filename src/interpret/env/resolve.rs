@@ -24,9 +24,9 @@ impl Resolver {
             scopes: vec![],
         }
     }
-    pub(crate) fn resolve_stmts(&self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
+    pub(crate) fn resolve_stmts(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         for stmt in stmts {
-            self.clone().resolve(stmt.clone())?;
+            self.resolve(stmt.clone())?;
         }
         Ok(())
     }
@@ -35,9 +35,10 @@ impl Resolver {
     }
     fn decalre(&mut self, name: &Token) {
         if !self.scopes.is_empty() {
-            let _ = self.scopes.last().unwrap();
             self.scopes
-                .push(HashMap::from([(name.lexeme.clone(), false)]));
+                .last_mut()
+                .unwrap()
+                .insert(name.lexeme.clone(), false);
         }
     }
     fn define(&mut self, name: &Token) {
@@ -55,7 +56,9 @@ impl Resolver {
         for (idx, scope) in self.scopes.iter().enumerate().rev() {
             if scope.contains_key(&name.lexeme) {
                 //调用解释器的resolve函数
-                self.inter.borrow_mut().resolve(expr, (self.scopes.len() - 1 -idx) as i32)?;
+                self.inter
+                    .borrow_mut()
+                    .resolve(expr, (self.scopes.len() - 1 - idx) as i32)?;
                 return Ok(());
             }
         }

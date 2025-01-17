@@ -14,8 +14,8 @@ fn run(bytes: String) {
     let mut parser = Parser::new(sc.scan_tokens());
     let stmts = Rc::new(parser.parse());
     let mut inter = Rc::from(RefCell::from(Interpreter::new()));
-    let resolver = Resolver::new(inter.clone());
-    resolver.resolve_stmts(&stmts);
+    let mut resolver = Resolver::new(inter.clone());
+       resolver.resolve_stmts(&stmts);
     //调用解析出来的语句
     inter.borrow_mut().run(&stmts);
 }

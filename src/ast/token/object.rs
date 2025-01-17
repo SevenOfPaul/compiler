@@ -64,10 +64,10 @@ impl Eq for Object {}
 impl Hash for Object {
     fn hash<H: Hasher>(&self, state: &mut H) {
         match self {
-            Object::Str(_) => todo!(),
-            Object::Num(_) => todo!(),
-            Object::Bool(_) => todo!(),
-            Object::Nil => todo!(),
+            Object::Str(s) => s.hash(state),
+            Object::Num(n) => n.to_bits().hash(state),
+            Object::Bool(b) => b.hash(state),
+            Object::Nil => ().hash(state),
         }
     }
 }
