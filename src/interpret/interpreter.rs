@@ -334,5 +334,9 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         }
         Ok(())
     }
+
+    fn visit_struct(&mut self, name: &Token, methods: &Vec<Stmt>,fields:&Vec<Token>) -> Result<(), X_Err> {
+        todo!()
+    }
 }
 //执行

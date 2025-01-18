@@ -1,5 +1,8 @@
+use std::collections::HashMap;
 use crate::ast::expression::expr::Expr;
 use crate::ast::token::token::Token;
+use crate::interpret::value::Value;
+
 #[derive(Clone, Debug,PartialEq, Eq,Hash)]
 pub(crate) enum Stmt {
     Block {
@@ -35,6 +38,11 @@ pub(crate) enum Stmt {
         condition: Box<Expr>,
         body: Box<Stmt>,
     },
+    Struct{
+        name: Token,
+        methods:Vec<Stmt>,
+        fields:Vec<Token>
+    }
 }
 pub trait Visitor<T> {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> T;
@@ -47,10 +55,8 @@ pub trait Visitor<T> {
     fn visit_print(&mut self, expr: &Expr) -> T;
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> T;
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
+    fn visit_struct(&mut self,name:&Token,methods:&Vec<Stmt>,fields:&Vec<Token>)->T;
 }
-//  pub (crate) trait Accept<T>{
-//         fn accept(&self, visitor: &mut dyn Visitor<T>) -> T;
-//  }
 impl Stmt {
     pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
         match self {
@@ -78,6 +84,8 @@ impl Stmt {
             Stmt::Print { expr } => visitor.visit_print(expr),
             Stmt::Return { keyword, expr } => visitor.visit_return(keyword, expr),
             Stmt::While { condition, body } => visitor.visit_while(condition, body),
+            Stmt::Struct { name, methods,fields  } =>
+                visitor.visit_struct(name, methods,fields ),
         }
     }
 }

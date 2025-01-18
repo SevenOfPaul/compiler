@@ -5,7 +5,6 @@ use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::interpret::call::Fn_Type;
 use crate::error::X_Err;
-use crate::interpret::value::Value;
 use crate::parse::Parse_Err;
 
 #[derive(Debug)]
@@ -66,7 +65,7 @@ impl Parser {
         Ok(res)
     }
    fn break_stmt(&mut self)->Result<Stmt, X_Err>{
-  return  if self.loop_depth==0{
+    if self.loop_depth==0{
         Err(self.error(String::from("break只能在函数中使用")))
     }else{
           self.consume(&Token_Type::SEMICOLON,"break后须加分号")?;
@@ -74,7 +73,7 @@ impl Parser {
     }
    }
    fn continue_stmt(&mut self)->Result<Stmt, X_Err>{
-  return  if self.loop_depth==0{
+    if self.loop_depth==0{
         Err(self.error(String::from("continue只能在函数中使用")))
     }else{
           self.consume(&Token_Type::SEMICOLON,"continue后须加分号")?;
@@ -92,14 +91,6 @@ impl Parser {
        }
         Ok(expr)
     }
-    // fn block_stmt(&mut self)->Vec<Stmt>{
-    //     let mut stmts =vec![];
-    //     while !(self.match_token(&[Token_Type::LEFT_BRACE])||self.is_end()) {
-    //         self.declaration().and_then(|stmt| Ok(stmts.push(stmt)));
-    //     }
-    //     stmts
-    // }
-    //或大或小
     fn comparison(&mut self) -> Result<Expr, X_Err> {
         let mut expr = self.term();
         while self.match_token(&[
@@ -143,8 +134,9 @@ impl Parser {
         }
     }
     fn declaration(&mut self) -> Result<Stmt, X_Err> {
-                    // printf("{:?}=={:?}",self.match_token(&[Token_Type::FN]),self.check_next(&Token_Type::IDENTIFIER));
-        if self.check(&Token_Type::FN)&&self.check_next(&Token_Type::IDENTIFIER){
+        if self.match_token(&[Token_Type::STRUCT]){
+           self.struct_decl()
+        }else if self.check(&Token_Type::FN)&&self.check_next(&Token_Type::IDENTIFIER){
             self.consume(&Token_Type::FN, "");
            self.func_stmt(Fn_Type::Func)
         }else if self.match_token(&[Token_Type::LET]) {
@@ -465,6 +457,23 @@ impl Parser {
             self.expr_stmt()
         }
     }
+     fn struct_decl(&mut self)->Result<Stmt,X_Err>{
+        let name=self.consume(&Token_Type::IDENTIFIER, "结构体需要命名")?;
+         let mut fields=vec![];
+         self.consume(&Token_Type::LEFT_BRACE,"结构体内容前需要{")?;
+         while self.match_token(&[Token_Type::IDENTIFIER])&&!self.is_end() {
+                 fields.push(self.previous().clone());
+             if self.check(&Token_Type::RIGHT_BRACE){
+                  break;
+             }else{
+                 self.consume(&Token_Type::COMMA,"属性需要用逗号隔开")?;
+             }
+
+         }
+         self.consume(&Token_Type::RIGHT_BRACE,"结构体内容后需要}")?;
+         println!("{:?}结构体",Stmt::Struct {name:name.clone(),methods:vec![],fields:fields.clone()});
+         Ok(Stmt::Struct {name,methods:vec![],fields})
+     }
     //是不是加减
     fn term(&mut self) -> Result<Expr, X_Err> {
         let mut expr = self.factor();

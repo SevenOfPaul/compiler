@@ -15,3 +15,12 @@ https://www.bilibili.com/video/BV1Ax4y1t7T1/?spm_id_from=333.1007.top_right_bar_
 `cargo build --target wasm32-unknown-unknown --release`
 ### 生成对应的js代码
 `wasm-bindgen --out-dir ./out --target web target/wasm32-unknown-unknown/release/p.wasm`
+```
+struct Obj{
+name,val
+}
+impl Obj{
+fn new(){
+}
+}
+```

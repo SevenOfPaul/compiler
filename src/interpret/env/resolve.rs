@@ -143,8 +143,12 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         self.resolve(body.clone())?;
         Ok(())
     }
+
+    fn visit_struct(&mut self, name: &Token, methods: &Vec<Stmt>,fields:&Vec<Token>) -> Result<(), X_Err> {
+        todo!()
+    }
 }
-impl expr::Visitor<Result<(), X_Err>> for Resolver {
+impl Visitor<Result<(), X_Err>> for Resolver {
     fn visit_assign(&mut self, expr: &Expr, name: &Token, value: &Box<Expr>) -> Result<(), X_Err> {
         self.resolve(value.as_ref().clone())?;
         //这里得改

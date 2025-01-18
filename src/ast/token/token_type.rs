@@ -20,6 +20,7 @@ pub enum Token_Type {
     GREATER_EQUAL, //>=
     IDENTIFIER, //字面量
     IF,//if
+    IMPL,//绑定函数
     LEFT_BRACE,//{
     LEFT_PAREN,//(
     LESS,//<
@@ -36,6 +37,7 @@ pub enum Token_Type {
     RIGHT_PAREN,//)
     RETURN,//return
     STRING, //字符串
+    STRUCT,//结构体
     SLASH,// /
     STAR,// *
     SEMICOLON, //;
