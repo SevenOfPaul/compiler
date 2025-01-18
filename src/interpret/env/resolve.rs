@@ -1,5 +1,5 @@
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
-
+use std::cmp::PartialEq;
 use crate::{
     ast::{
         expression::expr::{self, Visitor},
@@ -15,12 +15,14 @@ use super::{Run_Err, Token, X_Err};
 pub(crate) struct Resolver {
     inter: Rc<RefCell<Interpreter>>,
     scopes: Vec<HashMap<String, bool>>,
+    cur_fn:Rc<FN_TYPE>
 }
 impl Resolver {
     pub(crate) fn new(inter: Rc<RefCell<Interpreter>>) -> Self {
         Self {
             inter,
             scopes: vec![],
+            cur_fn:Rc::from(FN_TYPE::None)
         }
     }
     pub(crate) fn resolve_stmts(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
@@ -32,13 +34,16 @@ impl Resolver {
     fn begin_scope(&mut self) {
         self.scopes.push(HashMap::new());
     }
-    fn decalre(&mut self, name: &Token) {
+    fn declare(&mut self, name: &Token)->Result<(),X_Err> {
         if !self.scopes.is_empty() {
-            self.scopes
-                .last_mut()
-                .unwrap()
-                .insert(name.lexeme.clone(), false);
+           let scope=self.scopes.last_mut().unwrap();
+            if scope.contains_key(&name.lexeme) {
+                return Err(Run_Err::new(name.clone(), String::from("请不要重复声明变量")))
+            }else{
+                scope.insert(name.lexeme.clone(), false);
+            }
         }
+        Ok(())
     }
     fn define(&mut self, name: &Token) {
         if !self.scopes.is_empty() {
@@ -64,6 +69,7 @@ impl Resolver {
         Ok(())
     }
 }
+
 impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         self.begin_scope();
@@ -92,10 +98,10 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         func: &Box<Expr>,
     ) -> Result<(), X_Err> {
         if let Some(n) = name {
-            self.decalre(&name.clone().unwrap());
+            self.declare(&name.clone().unwrap())?;
             self.define(&name.clone().unwrap());
         }
-        self.resolve_func(func.as_ref())?;
+        self.resolve_func(func.as_ref(),Rc::from(FN_TYPE::FN))?;
         Ok(())
     }
     fn visit_if(
@@ -113,7 +119,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     }
 
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
-        self.decalre(name);
+        self.declare(name);
         self.resolve(expr.clone())?;
         self.define(name);
         Ok(())
@@ -126,6 +132,9 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
 
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
         self.resolve(expr.clone())?;
+        if *(self.cur_fn.as_ref()) == FN_TYPE::None {
+          return Err(Run_Err::new(keyword.clone(),String::from("请不要在函数外使用return")));
+        }
         Ok(())
     }
 
@@ -169,7 +178,7 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
 
     fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<stmt::Stmt>) -> Result<(), X_Err> {
         for param in params {
-            self.decalre(param);
+            self.declare(param);
             self.define(param);
         }
         for stmt in body {
@@ -233,22 +242,25 @@ impl expr::Visitor<Result<(), X_Err>> for Resolver {
 }
 trait Resolve<T> {
     fn resolve(&mut self, argu: T) -> Result<(), X_Err>;
-    fn resolve_func(&mut self, argu: &T) -> Result<(), X_Err>;
+    fn resolve_func(&mut self, argu: &T,typ:Rc<FN_TYPE>) -> Result<(), X_Err>;
 }
 impl Resolve<Stmt> for Resolver {
     fn resolve(&mut self, stmt: Stmt) -> Result<(), X_Err> {
         stmt.accept(self)
     }
-    fn resolve_func(&mut self, stmt: &Stmt) -> Result<(), X_Err> {
+    fn resolve_func(&mut self, stmt: &Stmt,typ:Rc<FN_TYPE>) -> Result<(), X_Err> {
+        let enclose_typ=self.cur_fn.clone();
+        self.cur_fn=typ.clone();
         match stmt {
             Stmt::Func { name, func } => {
                 //这里有问题
                 self.begin_scope();
-                self.resolve_func(func.as_ref())?;
+                self.resolve_func(func.as_ref(),typ)?;
                 self.end_scope();
             }
             _ => {}
         }
+        self.cur_fn=enclose_typ;
         Ok(())
     }
 }
@@ -256,14 +268,34 @@ impl Resolve<Expr> for Resolver {
     fn resolve(&mut self, expr: Expr) -> Result<(), X_Err> {
         expr.accept(self)
     }
-    fn resolve_func(&mut self, expr: &Expr) -> Result<(), X_Err> {
+    fn resolve_func(&mut self, expr: &Expr,_:Rc<FN_TYPE>) -> Result<(), X_Err> {
         match expr {
             Expr::Func { params, body } => {
                 self.visit_func(params, body)?;
             }
             _ => {}
         }
-
         Ok(())
+    }
+}
+enum FN_TYPE {
+FN ,
+None
+}
+impl PartialEq for FN_TYPE {
+    fn eq(&self, other: &Self) -> bool {
+       match self {
+           FN_TYPE::FN=>{
+               if let FN_TYPE::FN=other {
+                   return true
+               }
+           },
+           _=>{
+               if let FN_TYPE::None=other {
+                  return true
+               }
+           }
+       }
+        false
     }
 }

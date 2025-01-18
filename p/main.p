@@ -1,3 +1,4 @@
+return "hello";
 let a = "global";
 {
   fn show(){
