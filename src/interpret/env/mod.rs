@@ -8,7 +8,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) struct Environment {
     pub(crate) enclose: Option<Rc<RefCell<Environment>>>,
     pub(crate) local: HashMap<String, Value>,
@@ -76,6 +76,19 @@ impl Environment {
         } else {
             Err(Run_Err::new(name.clone(), String::from(key + "变量未声明")))
         }
+    }
+    pub(crate) fn get_by_global(&mut self, name: &Token) -> Result<Value, X_Err> {
+        let key = name.clone().lexeme;
+        let mut env =self.clone();
+        while env.enclose.is_some() {
+          env=env.enclose.unwrap().borrow().clone();
+        }
+        if let Some(v)=env.local.get(&name.lexeme.clone()){
+                Ok(v.clone())
+        }else{
+            Err(Run_Err::new(name.clone(), String::from(key + "变量未声明")))
+        }
+
     }
 }
 //存储变量的环境

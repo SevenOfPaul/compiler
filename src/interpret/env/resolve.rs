@@ -116,7 +116,6 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         self.decalre(name);
         self.resolve(expr.clone())?;
         self.define(name);
-        println!("name:{:?}", self.scopes);
         Ok(())
     }
 
