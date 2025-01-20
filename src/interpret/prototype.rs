@@ -17,6 +17,6 @@ impl Prototype{
     }
     }
      pub(crate) fn to_string(&self) ->String{
-        return format!("struct {:?}",self.name.to_string());
+        return format!("struct {:?}",self.name.lexeme);
     }
 }

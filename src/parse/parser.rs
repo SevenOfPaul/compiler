@@ -471,7 +471,7 @@ impl Parser {
 
          }
          self.consume(&Token_Type::RIGHT_BRACE,"结构体内容后需要}")?;
-         println!("{:?}结构体",Stmt::Struct {name:name.clone(),methods:vec![],fields:fields.clone()});
+         self.consume(&Token_Type::SEMICOLON,"结构体声明后需要;")?;
          Ok(Stmt::Struct {name,methods:vec![],fields})
      }
     //是不是加减
