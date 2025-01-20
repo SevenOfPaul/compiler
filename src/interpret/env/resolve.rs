@@ -145,7 +145,9 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     }
 
     fn visit_struct(&mut self, name: &Token, methods: &Vec<Stmt>,fields:&Vec<Token>) -> Result<(), X_Err> {
-        todo!()
+        self.declare(name)?;
+        self.define(name);
+        Ok(())
     }
 }
 impl Visitor<Result<(), X_Err>> for Resolver {

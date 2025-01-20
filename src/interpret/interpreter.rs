@@ -17,6 +17,8 @@ use crate::tools::printf;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+
+use super::prototype::Prototype;
 /**只能有一个 */
 pub(crate) struct Interpreter {
     pub(crate) env: Rc<RefCell<Environment>>,
@@ -336,7 +338,11 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     }
 
     fn visit_struct(&mut self, name: &Token, methods: &Vec<Stmt>,fields:&Vec<Token>) -> Result<(), X_Err> {
-        todo!()
+       self.env.borrow_mut().add(name,Value::Nil)?;
+       //这里需要真正声明class
+       let Struct=Value::Struct(Prototype::new(name.clone()));
+       self.env.borrow_mut().assign(name,Struct)?;
+         Ok(())
     }
 }
 //执行

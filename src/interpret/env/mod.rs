@@ -20,6 +20,7 @@ impl Environment {
             local: HashMap::new(),
         }
     }
+    //添加变量
     pub(crate) fn add(&mut self, name: &Token, val: Value) -> Result<Value, X_Err> {
         let key = name.clone().lexeme;
         if self.local.contains_key(&key) {
@@ -30,6 +31,20 @@ impl Environment {
         } else {
             self.local.insert(key, val.clone());
             Ok(val)
+        }
+    }
+    //赋值 实际上就是修改变量
+        pub(crate) fn assign(&mut self, name: &Token, val: Value) -> Result<(), X_Err> {
+        let key = name.clone().lexeme;
+        if self.local.contains_key(&key) {
+              *self.local.get_mut(&key).unwrap() = val;
+               Ok(())
+        } else {
+           Err(Run_Err::new(
+                name.clone(),
+                String::from("变量未定义"),
+            ))
+           
         }
     }
     pub (crate) fn assign_at(&mut self,distance: i32, name: &Token, val: Value)->Result<Value,X_Err>{

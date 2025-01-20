@@ -6,6 +6,7 @@ use crate::interpret::value::Value;
 pub(crate) mod env;
 pub(crate) mod interpreter;
 pub(crate) mod value;
+pub(crate) mod prototype;
 pub mod call;
 
 #[derive(Debug)]

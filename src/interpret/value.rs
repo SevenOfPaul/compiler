@@ -3,6 +3,7 @@ use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 use chrono::{DateTime, Local};
 use crate::interpret::call::Call;
 use crate::interpret::call::Func;
+use crate::interpret::prototype::Prototype;
 use crate::error::X_Err;
 use self::interpreter::Interpreter;
 use super::interpreter;
@@ -14,6 +15,7 @@ pub(crate) enum Value {
     Bool(bool),
     Time(DateTime<Local>),
     Func(Func),
+    Struct(Prototype),
     Nil,
 }
 impl Add for Value {
@@ -205,7 +207,8 @@ impl std::fmt::Display for Value {
             Value::Str(s) => write!(f, "{}", s),
             Value::Time(t) => write!(f, "{}", t),
             Value::Func(func) => write!(f, "{}", func.to_string()),
-            Value::Nil => write!(f, "nil")
+              Value::Struct(prototype) => write!(f,"{}",prototype.to_string()),
+            Value::Nil => write!(f, "nil"),
         }
     }
 }
