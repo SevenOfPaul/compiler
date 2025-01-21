@@ -62,7 +62,7 @@ impl Resolver {
                 //调用解释器的resolve函数
                 self.inter
                     .borrow_mut()
-                    .resolve(expr, (self.scopes.len() - 1 - idx) as i32)?;
+                    .resolve(expr, (self.scopes.len()-1  - idx) as i32)?;
                 return Ok(());
             }
         }

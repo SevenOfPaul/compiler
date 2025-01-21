@@ -7,6 +7,7 @@ use crate::interpret::Run_Err;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+use crate::tools::println;
 
 #[derive(Clone, Debug)]
 pub(crate) struct Environment {
@@ -29,13 +30,14 @@ impl Environment {
                 String::from("变量已存在，不可重复声明"),
             ))
         } else {
-            self.local.insert(key.clone(), val.clone());
+            self.local.insert(key, val.clone());
             Ok(val)
         }
     }
     //赋值 实际上就是修改变量
         pub(crate) fn assign(&mut self, name: &Token, val: Value) -> Result<Value, X_Err> {
         let key = name.clone().lexeme;
+        println!("{:?}",self);
         if self.local.contains_key(&key) {
               *self.local.get_mut(&key).unwrap() = val.clone();
                Ok(val)
@@ -48,7 +50,8 @@ impl Environment {
         }
     }
     pub (crate) fn assign_at(&mut self,distance: i32, name: &Token, val: Value)->Result<Value,X_Err>{
-                 self.ancestor(distance).add(name,val)
+        println!("{:?}赋值",self.ancestor(distance));
+        self.ancestor(distance).assign(name,val)
     }
     pub (crate) fn ancestor(&mut self,distance: i32)->Box<Environment>{
                 let mut env = self.clone();
@@ -58,6 +61,7 @@ impl Environment {
                 Box::new(env)
     }
     pub(crate) fn get_at(&mut self, distance: i32, key: &Token) -> Result<Value, X_Err> {
+        println!("{:?}获取",self.ancestor(distance));
         self.ancestor(distance).get(key)
     }
     pub(crate) fn get(&self, name: &Token) -> Result<Value, X_Err> {

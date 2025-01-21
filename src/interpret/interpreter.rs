@@ -250,7 +250,6 @@ impl Interpreter {
     }
 
     pub (crate) fn lookup_variable(&self,expr:&Expr,name:&Token)->Result<Value,X_Err>{
-        // let distance=self.locals.get(&expr);
         if let Some(&distance) = self.locals.get(expr) {
             self.env.borrow_mut().get_at(distance,name)  // 本地查找
         } else {
