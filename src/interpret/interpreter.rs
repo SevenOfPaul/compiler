@@ -17,6 +17,8 @@ use crate::tools::printf;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+use std::hash::{Hash, Hasher};
+use std::collections::hash_map::DefaultHasher;
 
 use super::prototype::Prototype;
 /**只能有一个 */
@@ -31,7 +33,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
           if let Some(d)=distance{
             self.env.borrow_mut().assign_at(*d, name, val)
         }else{
-            self.env.borrow_mut().add(name, val)
+            self.env.borrow_mut().assign(name, val)
         }
     }
     fn visit_binary(

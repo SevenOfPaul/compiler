@@ -132,7 +132,6 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
 
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
         self.resolve(expr.clone())?;
-        println!("{:?}",self.cur_fn);
         if *(self.cur_fn.as_ref()) == FN_TYPE::None {
           return Err(Run_Err::new(keyword.clone(),String::from("请不要在函数外使用return")));
         }
@@ -257,7 +256,6 @@ impl Resolve<Stmt> for Resolver {
     }
     fn resolve_func(&mut self, stmt: &Stmt,typ:Rc<FN_TYPE>) -> Result<(), X_Err> {
         let enclose_typ=self.cur_fn.clone();
-        println!("{:?}typ",typ);
         self.cur_fn=typ.clone();
         match stmt {
             Stmt::Func { name, func } => {

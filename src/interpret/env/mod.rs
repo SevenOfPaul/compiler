@@ -34,11 +34,11 @@ impl Environment {
         }
     }
     //赋值 实际上就是修改变量
-        pub(crate) fn assign(&mut self, name: &Token, val: Value) -> Result<(), X_Err> {
+        pub(crate) fn assign(&mut self, name: &Token, val: Value) -> Result<Value, X_Err> {
         let key = name.clone().lexeme;
         if self.local.contains_key(&key) {
-              *self.local.get_mut(&key).unwrap() = val;
-               Ok(())
+              *self.local.get_mut(&key).unwrap() = val.clone();
+               Ok(val)
         } else {
            Err(Run_Err::new(
                 name.clone(),
@@ -52,7 +52,7 @@ impl Environment {
     }
     pub (crate) fn ancestor(&mut self,distance: i32)->Box<Environment>{
                 let mut env = self.clone();
-                for _ in 0..distance {
+                for _ in 1..distance {
                     env = env.enclose.unwrap().borrow().clone();
                 }
                 Box::new(env)

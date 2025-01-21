@@ -27,31 +27,13 @@ impl Object{
 
 impl PartialEq for Object {
     fn eq(&self, other: &Self) -> bool {
-       match self {
-              Object::Num(n1)=>{
-                if let Object::Num(n2)=other{
-                     n1.eq(n2)
-                }else{
-                     false
-                }
-              },Object::Bool(b1)=>{
-                if let Object::Bool(b2)=other{
-                     b1.eq(b2)
-                }else{
-                     false
-                }
-              }
-              Object::Nil =>{
-               false
-              }
-              Object::Str(s1)=>{
-                if let Object::Str(s2)=other{
-                     s1.eq(s2)
-                }else{
-                     false
-                }
-              }
-       }
+        match (self, other) {
+            (Object::Num(n1), Object::Num(n2)) => n1.eq(n2),
+            (Object::Bool(b1), Object::Bool(b2)) => b1.eq(b2),
+            (Object::Nil, Object::Nil) => true,  // Nil 应该等于 Nil
+            (Object::Str(s1), Object::Str(s2)) => s1.eq(s2),
+            _ => false
+        }
     }
     
     fn ne(&self, other: &Self) -> bool {
@@ -65,9 +47,11 @@ impl Hash for Object {
     fn hash<H: Hasher>(&self, state: &mut H) {
         match self {
             Object::Str(s) => s.hash(state),
-            Object::Num(n) => n.to_bits().hash(state),
+            Object::Num(n) =>{
+                n.to_bits().hash(state)
+            },
             Object::Bool(b) => b.hash(state),
-            Object::Nil => ().hash(state),
+            Object::Nil => 0.hash(state),
         }
     }
 }
