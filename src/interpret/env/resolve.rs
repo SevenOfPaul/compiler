@@ -101,7 +101,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
             self.declare(&name.clone().unwrap())?;
             self.define(&name.clone().unwrap());
         }
-        self.resolve_func(func.as_ref(),Rc::from(FN_TYPE::FN))?;
+        self.resolve_func(stmt,Rc::from(FN_TYPE::FN))?;
         Ok(())
     }
     fn visit_if(
@@ -132,6 +132,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
 
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
         self.resolve(expr.clone())?;
+        println!("{:?}",self.cur_fn);
         if *(self.cur_fn.as_ref()) == FN_TYPE::None {
           return Err(Run_Err::new(keyword.clone(),String::from("请不要在函数外使用return")));
         }
@@ -184,7 +185,7 @@ impl Visitor<Result<(), X_Err>> for Resolver {
 
     fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<stmt::Stmt>) -> Result<(), X_Err> {
         for param in params {
-            self.declare(param);
+            self.declare(param)?;
             self.define(param);
         }
         for stmt in body {
@@ -256,6 +257,7 @@ impl Resolve<Stmt> for Resolver {
     }
     fn resolve_func(&mut self, stmt: &Stmt,typ:Rc<FN_TYPE>) -> Result<(), X_Err> {
         let enclose_typ=self.cur_fn.clone();
+        println!("{:?}typ",typ);
         self.cur_fn=typ.clone();
         match stmt {
             Stmt::Func { name, func } => {
@@ -284,6 +286,7 @@ impl Resolve<Expr> for Resolver {
         Ok(())
     }
 }
+#[derive(Debug)]
 enum FN_TYPE {
 FN ,
 None

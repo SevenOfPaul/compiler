@@ -29,7 +29,7 @@ impl Environment {
                 String::from("变量已存在，不可重复声明"),
             ))
         } else {
-            self.local.insert(key, val.clone());
+            self.local.insert(key.clone(), val.clone());
             Ok(val)
         }
     }
@@ -79,18 +79,6 @@ impl Environment {
                 Value::Func(Func::new(name.as_str())),
             );
         });
-    }
-    pub(crate) fn set(&mut self, name: &Token, val: Value) -> Result<Value, X_Err> {
-        let key = name.clone().lexeme;
-        let res = self.local.contains_key(&key);
-        if res {
-            self.local.insert(key, val.clone());
-            Ok(val)
-        } else if self.enclose.is_some() {
-            self.enclose.clone().unwrap().borrow_mut().set(name, val)
-        } else {
-            Err(Run_Err::new(name.clone(), String::from(key + "变量未声明")))
-        }
     }
     pub(crate) fn get_by_global(&mut self, name: &Token) -> Result<Value, X_Err> {
         let key = name.clone().lexeme;

@@ -31,7 +31,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
           if let Some(d)=distance{
             self.env.borrow_mut().assign_at(*d, name, val)
         }else{
-            self.env.borrow_mut().set(name, val)
+            self.env.borrow_mut().add(name, val)
         }
     }
     fn visit_binary(
