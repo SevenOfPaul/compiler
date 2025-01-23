@@ -25,13 +25,14 @@ pub fn run_program(bytes: String) {
 }
 pub fn run_file(path: String) {
     //判断文件是否存在
-    let mut bytes = String::from("for(let i=0;i<2;i=i+1){}");
-    run(bytes);
-    // if let Ok(mut res) = File::open(path) {
-    //     res.read_to_string(&mut bytes);
-    //     run(bytes);
-    // } else {
-    //     error::log(0, "", "找不到文件");
-    //     exit(32);
-    // }
+    // let mut bytes = String::from("for(let i=0;i<2;i=i+1){}");
+    let mut bytes = String::new();
+    // run(bytes);
+    if let Ok(mut res) = File::open(path) {
+        res.read_to_string(&mut bytes);
+        run(bytes);
+    } else {
+        error::log(0, "", "找不到文件");
+        exit(32);
+    }
 }

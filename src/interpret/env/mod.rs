@@ -37,20 +37,22 @@ impl Environment {
     //赋值 实际上就是修改变量
         pub(crate) fn assign(&mut self, name: &Token, val: Value) -> Result<Value, X_Err> {
         let key = name.clone().lexeme;
-        println!("{:?}",self);
         if self.local.contains_key(&key) {
               *self.local.get_mut(&key).unwrap() = val.clone();
-               Ok(val)
-        } else {
+               return Ok(val.clone())
+        }  
+
+         if self.enclose.is_some() {
+           return self.enclose.as_ref().unwrap().borrow_mut().assign(name, val)
+         }
            Err(Run_Err::new(
                 name.clone(),
-                String::from("变量未定义"),
+                String::from("变量未定义")
             ))
            
-        }
+        
     }
     pub (crate) fn assign_at(&mut self,distance: i32, name: &Token, val: Value)->Result<Value,X_Err>{
-        println!("{:?}赋值",self.ancestor(distance));
         self.ancestor(distance).assign(name,val)
     }
     pub (crate) fn ancestor(&mut self,distance: i32)->Box<Environment>{
@@ -61,7 +63,6 @@ impl Environment {
                 Box::new(env)
     }
     pub(crate) fn get_at(&mut self, distance: i32, key: &Token) -> Result<Value, X_Err> {
-        println!("{:?}获取",self.ancestor(distance));
         self.ancestor(distance).get(key)
     }
     pub(crate) fn get(&self, name: &Token) -> Result<Value, X_Err> {
