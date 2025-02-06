@@ -357,11 +357,11 @@ impl Parser {
             })
         } else if self.match_token(&[Token_Type::NUMBER]) {
             Ok(Expr::Literal {
-                val: self.previous().literal.unwrap(),
+                val: self.previous().literal,
             })
         } else if self.match_token(&[Token_Type::STRING]) {
             Ok(Expr::Literal {
-                val: self.previous().literal.unwrap(),
+                val: self.previous().literal,
             })
         } else if self.match_token(&[Token_Type::IDENTIFIER]) {
             Ok(Expr::Variable {

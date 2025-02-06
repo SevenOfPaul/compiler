@@ -6,7 +6,7 @@ use std::collections::HashMap;
 pub(crate) struct Token {
     pub(crate) token_type: Token_Type,
     pub(crate) lexeme: String,
-    pub(crate) literal: Option<Object>,
+    pub(crate) literal: Object,
     pub(crate) line: usize,
 }
 lazy_static! {
@@ -47,7 +47,7 @@ impl Token {
     pub fn new(
         token_type: Token_Type,
         lexeme: String,
-        literal: Option<Object>,
+        literal: Object,
         line: usize,
     ) -> Token {
         Self {
@@ -58,11 +58,6 @@ impl Token {
         }
     }
     pub fn to_string(&self) -> String {
-        let liter = if let Some(l) = &self.literal {
-            &l.to_string()
-        } else {
-            ""
-        };
-        self.token_type.to_string() + &self.lexeme + liter + &self.line.to_string()
+        self.token_type.to_string() + &self.lexeme +  &self.literal.to_string() + &self.line.to_string()
     }
 }

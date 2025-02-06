@@ -25,7 +25,7 @@ impl Scanner {
             line: 1,
         }
     }
-    fn add_token(&mut self, token_type: Token_Type, literal: Option<Object>) {
+    fn add_token(&mut self, token_type: Token_Type, literal: Object) {
         let text = &self.source[self.start..self.cur].iter().collect::<String>();
         self.tokens.push(token::Token::new(
             token_type,
@@ -45,9 +45,9 @@ impl Scanner {
         }
         let text = self.source[self.start..self.cur].iter().collect::<String>();
         if let Some(token_type) = Keywords.get(&text) {
-            self.add_token(token_type.clone(), Some(Object::Str(text)));
+            self.add_token(token_type.clone(), Object::Str(text));
         } else {
-            self.add_token(Token_Type::IDENTIFIER, Some(Object::Str(text)));
+            self.add_token(Token_Type::IDENTIFIER, Object::Str(text));
         }
     }
     fn get_number(&mut self) {
@@ -61,7 +61,7 @@ impl Scanner {
             self.advance();
         }
         let val: String = self.source[self.start..self.cur].iter().collect();
-        self.add_token(Token_Type::NUMBER, Some(Object::Num(val.parse().unwrap())));
+        self.add_token(Token_Type::NUMBER, Object::Num(val.parse().unwrap()));
     }
     fn get_string(&mut self) {
         while self.peek() != '"' && !self.is_at_end() {
@@ -78,7 +78,7 @@ impl Scanner {
         }
         self.advance();
         let val: String = self.source[self.start + 1..self.cur - 1].iter().collect();
-        self.add_token(Token_Type::STRING, Some(Object::Str(val)));
+        self.add_token(Token_Type::STRING, Object::Str(val));
     }
     fn is_alaph(c: char) -> bool {
         (c >= 'a' && c <= 'z') ||
@@ -132,7 +132,7 @@ impl Scanner {
         self.tokens.push(token::Token::new(
             Token_Type::EOF,
             String::from(""),
-            Some(Object::Nil),
+            Object::Nil,
             self.line,
         ));
         //添加token
@@ -142,28 +142,28 @@ impl Scanner {
         //没到头
         let c = self.advance();
         match c {
-            '(' => self.add_token(Token_Type::LEFT_PAREN, Some(Object::Nil)),
-            ')' => self.add_token(Token_Type::RIGHT_PAREN, Some(Object::Nil)),
-            '{' => self.add_token(Token_Type::LEFT_BRACE, Some(Object::Nil)),
-            '}' => self.add_token(Token_Type::RIGHT_BRACE, Some(Object::Nil)),
-            ',' => self.add_token(Token_Type::COMMA, Some(Object::Nil)),
-            '.' => self.add_token(Token_Type::DOT, Some(Object::Nil)),
-            '-' => self.add_token(Token_Type::MINUS, Some(Object::Nil)),
-            '+' => self.add_token(Token_Type::PLUS, Some(Object::Nil)),
-            ';' => self.add_token(Token_Type::SEMICOLON, Some(Object::Nil)),
-            '*' => self.add_token(Token_Type::STAR, Some(Object::Nil)),
-            '?' => self.add_token(Token_Type::QUESTION, Some(Object::Nil)),
-            ':' => self.add_token(Token_Type::COLON, Some(Object::Nil)),
+            '(' => self.add_token(Token_Type::LEFT_PAREN, Object::Nil),
+            ')' => self.add_token(Token_Type::RIGHT_PAREN, Object::Nil),
+            '{' => self.add_token(Token_Type::LEFT_BRACE, Object::Nil),
+            '}' => self.add_token(Token_Type::RIGHT_BRACE, Object::Nil),
+            ',' => self.add_token(Token_Type::COMMA, Object::Nil),
+            '.' => self.add_token(Token_Type::DOT, Object::Nil),
+            '-' => self.add_token(Token_Type::MINUS, Object::Nil),
+            '+' => self.add_token(Token_Type::PLUS, Object::Nil),
+            ';' => self.add_token(Token_Type::SEMICOLON, Object::Nil),
+            '*' => self.add_token(Token_Type::STAR, Object::Nil),
+            '?' => self.add_token(Token_Type::QUESTION, Object::Nil),
+            ':' => self.add_token(Token_Type::COLON, Object::Nil),
             '&' => {
                 if self.is_match('&') {
-                    self.add_token(Token_Type::AND, Some(Object::Nil))
+                    self.add_token(Token_Type::AND, Object::Nil)
                 } else {
                     error::log(self.line, &self.peek().to_string(), "暂不支持位与运算");
                 }
             }
             '|' => {
                 if self.is_match('|') {
-                    self.add_token(Token_Type::OR, Some(Object::Nil))
+                    self.add_token(Token_Type::OR, Object::Nil)
                 } else {
                     error::log(self.line, &self.peek().to_string(), "暂不支持位或运算");
                 }
@@ -175,7 +175,7 @@ impl Scanner {
                 } else {
                     Token_Type::BANG
                 };
-                self.add_token(tok, Some(Object::Nil));
+                self.add_token(tok, Object::Nil);
             }
             '=' => {
                 let tok = if self.is_match('=') {
@@ -183,7 +183,7 @@ impl Scanner {
                 } else {
                     Token_Type::EQUAL
                 };
-                self.add_token(tok, Some(Object::Nil));
+                self.add_token(tok, Object::Nil);
             }
             '<' => {
                 let tok = if self.is_match('=') {
@@ -191,7 +191,7 @@ impl Scanner {
                 } else {
                     Token_Type::LESS
                 };
-                self.add_token(tok, Some(Object::Nil));
+                self.add_token(tok, Object::Nil);
             }
             '>' => {
                 let tok = if self.is_match('=') {
@@ -199,7 +199,7 @@ impl Scanner {
                 } else {
                     Token_Type::GREATER
                 };
-                self.add_token(tok, Some(Object::Nil));
+                self.add_token(tok, Object::Nil);
             }
             '/' => {
                 //说明是注释
@@ -226,7 +226,7 @@ impl Scanner {
                         error::log(self.line, &self.peek().to_string(), "需要*/");
                     }
                 } else {
-                    self.add_token(Token_Type::SLASH, Some(Object::Nil));
+                    self.add_token(Token_Type::SLASH, Object::Nil);
                 };
             }
             //这几个无意义
