@@ -7,7 +7,6 @@ use crate::interpret::Run_Err;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::tools::println;
 
 #[derive(Clone, Debug)]
 pub(crate) struct Environment {
