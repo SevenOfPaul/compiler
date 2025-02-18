@@ -345,5 +345,10 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
        self.env.borrow_mut().assign(name,Struct)?;
          Ok(())
     }
+    
+    fn visit_Impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->Result<(), X_Err> {
+        //需要修改
+        todo!()
+    }
 }
 //执行

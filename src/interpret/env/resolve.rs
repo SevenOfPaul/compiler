@@ -149,6 +149,11 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         self.define(name);
         Ok(())
     }
+    
+    fn visit_Impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->Result<(), X_Err> {
+        //需要修改
+        todo!()
+    }
 }
 impl Visitor<Result<(), X_Err>> for Resolver {
     fn visit_assign(&mut self, expr: &Expr, name: &Token, value: &Box<Expr>) -> Result<(), X_Err> {

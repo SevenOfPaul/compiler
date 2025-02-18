@@ -42,6 +42,10 @@ pub(crate) enum Stmt {
         name: Token,
         methods:Vec<Stmt>,
         fields:Vec<Token>
+    },
+    Impl{
+        prototype:Token,
+        methods:Vec<Stmt>
     }
 }
 pub trait Visitor<T> {
@@ -56,6 +60,7 @@ pub trait Visitor<T> {
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> T;
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
     fn visit_struct(&mut self,name:&Token,methods:&Vec<Stmt>,fields:&Vec<Token>)->T;
+    fn visit_Impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->T;
 }
 impl Stmt {
     pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
@@ -84,8 +89,8 @@ impl Stmt {
             Stmt::Print { expr } => visitor.visit_print(expr),
             Stmt::Return { keyword, expr } => visitor.visit_return(keyword, expr),
             Stmt::While { condition, body } => visitor.visit_while(condition, body),
-            Stmt::Struct { name, methods,fields  } =>
-                visitor.visit_struct(name, methods,fields ),
+            Stmt::Struct { name, methods,fields  } =>visitor.visit_struct(name, methods,fields ),
+            Stmt::Impl { prototype, methods }=>visitor.visit_Impl(prototype,methods)
         }
     }
 }
