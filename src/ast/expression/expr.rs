@@ -24,6 +24,10 @@ pub(crate) enum Expr {
         params: Vec<Token>,
         body: Vec<Stmt>,
     },
+    Get{
+        object:Box<Expr>,
+        name:Token
+    },
     Grouping {
         expression: Box<Expr>,
     },
@@ -60,6 +64,7 @@ pub trait Visitor<T> {
     fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> T;
     fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> T;
     fn visit_grouping(&mut self, expression: &Expr) -> T;
+    fn visit_get(&mut self,object:&Expr,name:&Token)->T;
     fn visit_literal(&mut self, value: &Object) -> T;
     fn visit_logical(
         &mut self,
@@ -104,6 +109,7 @@ impl Expr {
                 l_expression,
                 r_expression,
             } => visitor.visit_logical(operator, l_expression, r_expression),
+            Expr::Get { object, name } => todo!(),
         }
     }
 }

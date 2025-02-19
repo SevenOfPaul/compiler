@@ -150,10 +150,11 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         Ok(())
     }
     
-    fn visit_Impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->Result<(), X_Err> {
+    fn visit_impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->Result<(), X_Err> {
         //需要修改
         todo!()
     }
+    
 }
 impl Visitor<Result<(), X_Err>> for Resolver {
     fn visit_assign(&mut self, expr: &Expr, name: &Token, value: &Box<Expr>) -> Result<(), X_Err> {
@@ -249,6 +250,10 @@ impl Visitor<Result<(), X_Err>> for Resolver {
         }
         self.resolve_local(expr, name)?;
         Ok(())
+    }
+    
+    fn visit_get(&mut self,object:&Expr,name:&Token)->Result<(), X_Err> {
+        todo!()
     }
 }
 trait Resolve<T> {

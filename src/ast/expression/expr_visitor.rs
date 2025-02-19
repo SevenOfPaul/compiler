@@ -56,6 +56,10 @@ impl Visitor<String> for ExprVisitor {
     fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<crate::ast::statment::stmt::Stmt>)->String {
         todo!()
     }
+    
+    fn visit_get(&mut self,object:&Expr,name:&Token)->String {
+        todo!()
+    }
 
 
 }

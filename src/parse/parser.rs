@@ -80,11 +80,16 @@ impl Parser {
        Ok(Stmt::Continue {})  
     }
    }
+   //函数相关调用的代码
     fn call(&mut self)->Result<Expr,X_Err>{
         let mut expr =self.primary()?;
        loop{
            if self.check(&Token_Type::LEFT_PAREN){
              expr=self.finish_call(Box::from(expr))?;
+           }else if self.check(&Token_Type::DOT){
+            let object=Box::from(expr.clone());
+            let name=self.consume(&Token_Type::IDENTIFIER,"属性名")?;
+            expr=Expr::Get {object,name}
            }else{
                break;
            }

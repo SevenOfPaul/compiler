@@ -55,12 +55,13 @@ pub trait Visitor<T> {
     fn visit_expr(&mut self, expr: &Expr) -> T;
     fn visit_func(&mut self,stmt:&Stmt, name: &Option<Token>, func:&Box<Expr>) -> T;
     fn visit_if(&mut self, condition: &Expr, then_branch: &Stmt, else_branch: Option<&Stmt>) -> T;
+    fn visit_impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->T;
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> T;
     fn visit_print(&mut self, expr: &Expr) -> T;
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> T;
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
     fn visit_struct(&mut self,name:&Token,methods:&Vec<Stmt>,fields:&Vec<Token>)->T;
-    fn visit_Impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->T;
+   
 }
 impl Stmt {
     pub(crate) fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
@@ -90,7 +91,7 @@ impl Stmt {
             Stmt::Return { keyword, expr } => visitor.visit_return(keyword, expr),
             Stmt::While { condition, body } => visitor.visit_while(condition, body),
             Stmt::Struct { name, methods,fields  } =>visitor.visit_struct(name, methods,fields ),
-            Stmt::Impl { prototype, methods }=>visitor.visit_Impl(prototype,methods)
+            Stmt::Impl { prototype, methods }=>visitor.visit_impl(prototype,methods)
         }
     }
 }

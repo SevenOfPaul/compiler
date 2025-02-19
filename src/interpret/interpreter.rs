@@ -125,6 +125,9 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         let func_stmt=Stmt::Func { name: None, func: Box::from(Expr::Func { params:params.clone(), body: body.clone() }) };
         Ok(Value::Func(Func::new(func_stmt)))
     }
+        fn visit_get(&mut self,object:&Expr,name:&Token)->Result<Value, X_Err> {
+        todo!()
+    }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
     }
@@ -179,6 +182,8 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         self.lookup_variable(expr,name)
         // self.env.borrow().get(name)
     }
+    
+
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
@@ -346,7 +351,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
          Ok(())
     }
     
-    fn visit_Impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->Result<(), X_Err> {
+    fn visit_impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->Result<(), X_Err> {
         //需要修改
         todo!()
     }
