@@ -61,7 +61,7 @@ impl Parser {
         while !(self.is_end() || self.check(&Token_Type::RIGHT_BRACE)) {
             res.push(self.declaration()?);
         }
-        self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}");
+        self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}")?;
         Ok(res)
     }
    fn break_stmt(&mut self)->Result<Stmt, X_Err>{
@@ -142,7 +142,7 @@ impl Parser {
         if self.match_token(&[Token_Type::STRUCT]){
            self.struct_decl()
         }else if self.check(&Token_Type::FN)&&self.check_next(&Token_Type::IDENTIFIER){
-            self.consume(&Token_Type::FN, "");
+            self.consume(&Token_Type::FN, "此处应该是个函数")?;
            self.func_stmt(Fn_Type::Func)
         }else if self.match_token(&[Token_Type::LET]) {
             self.let_declaration()
@@ -202,10 +202,10 @@ impl Parser {
         }
         expr
     }
-    fn func_expr(&mut self,mut fn_type:Fn_Type)->Result<Expr,X_Err>{
+    fn func_expr(&mut self,fn_type:Fn_Type)->Result<Expr,X_Err>{
         // let name=self.consume(&Token_Type::IDENTIFIER,
         //      &("期望".to_owned()+fn_type.to_str()+"名字"))?;
-        self.consume(&Token_Type::LEFT_PAREN,"期望(");
+        self.consume(&Token_Type::LEFT_PAREN,"期望(")?;
         let mut params=vec![];
         if !self.check(&Token_Type::RIGHT_PAREN){
         loop{
@@ -218,8 +218,8 @@ impl Parser {
             }
         }
     }
-    self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个)");
-     self.consume(&Token_Type::LEFT_BRACE, "此处需要一个{");
+    self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个)")?;
+     self.consume(&Token_Type::LEFT_BRACE, "此处需要一个{")?;
     //这里需要判断{吗？
      let body=self.block()?;
          Ok(Expr::Func { params, body})
@@ -234,7 +234,7 @@ impl Parser {
     fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
         self.loop_depth+=1;
         //准备脱糖
-        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(")?;
         let mut initializer: Option<Stmt> = None;
         if self.match_token(&[Token_Type::SEMICOLON]) {
             initializer = None;
@@ -242,7 +242,7 @@ impl Parser {
             initializer = Some(self.let_declaration()?);
         } else {
             initializer = Some(self.expr_stmt()?);
-            self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
+            self.consume(&Token_Type::SEMICOLON, "此处应有一个;")?;
         };
         let mut condition: Expr = Expr::Literal {
             val: Object::Bool(true),
@@ -250,12 +250,12 @@ impl Parser {
         if !self.match_token(&[Token_Type::SEMICOLON]) {
             condition = self.expression();
         };
-        self.consume(&Token_Type::SEMICOLON, "此处应有一个;");
+        self.consume(&Token_Type::SEMICOLON, "此处应有一个;")?;
         let mut increment = None;
         if !self.match_token(&[Token_Type::RIGHT_PAREN]) {
             increment = Some(self.expression());
         };
-        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)")?;
         let mut body = self.statement()?;
         //从后往前分类
         if increment.is_some() {
@@ -418,7 +418,7 @@ impl Parser {
     fn return_stmt(&mut self) ->Result<Stmt, X_Err> {
        let keyword=self.previous();
       let expr= self.expression();
-        self.consume(&Token_Type::SEMICOLON, "返回值也需要有分号结尾");
+        self.consume(&Token_Type::SEMICOLON, "返回值也需要有分号结尾")?;
          Ok(Stmt::Return {keyword,expr:Box::from(expr)})
     }
         //声明语法
@@ -528,9 +528,9 @@ impl Parser {
 
     fn while_stmt(&mut self) -> Result<Stmt, X_Err> {
         self.loop_depth+=1;
-        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(");
+        self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(")?;
         let expr = self.expression();
-        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)");
+        self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)")?;
         let body = self.statement()?;
         self.loop_depth-=1;
         Ok(Stmt::While {

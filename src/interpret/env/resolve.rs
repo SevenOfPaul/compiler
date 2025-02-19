@@ -2,7 +2,7 @@ use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use std::cmp::PartialEq;
 use crate::{
     ast::{
-        expression::expr::{self, Visitor},
+        expression::expr::Visitor,
         statment::stmt::{self, Stmt},
     },
     interpret::interpreter::Interpreter,
