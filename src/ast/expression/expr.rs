@@ -109,7 +109,7 @@ impl Expr {
                 l_expression,
                 r_expression,
             } => visitor.visit_logical(operator, l_expression, r_expression),
-            Expr::Get { object, name } => todo!(),
+            Expr::Get { object, name } => visitor.visit_get(object,name),
         }
     }
 }

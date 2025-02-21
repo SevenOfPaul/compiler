@@ -126,7 +126,12 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         Ok(Value::Func(Func::new(func_stmt)))
     }
         fn visit_get(&mut self,object:&Expr,name:&Token)->Result<Value, X_Err> {
-        todo!()
+            let prototype=self.evaluate(object)?;
+           return if let prototype=Value::Struct {
+                 Ok(prototype.get(name)?)
+            }else{
+               Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))   
+            }
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)

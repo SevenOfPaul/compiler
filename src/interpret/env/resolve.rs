@@ -253,7 +253,8 @@ impl Visitor<Result<(), X_Err>> for Resolver {
     }
     
     fn visit_get(&mut self,object:&Expr,name:&Token)->Result<(), X_Err> {
-        todo!()
+        self.resolve(object.clone())?;
+        Ok(())
     }
 }
 trait Resolve<T> {
