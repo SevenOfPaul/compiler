@@ -40,7 +40,8 @@ pub(crate) enum Stmt {
     },
     Struct{
         name: Token,
-        methods:Vec<Stmt>,
+        //函数需要显式声明
+        // methods:Vec<Stmt>,
         fields:Vec<Token>
     },
     Impl{
@@ -60,7 +61,7 @@ pub trait Visitor<T> {
     fn visit_print(&mut self, expr: &Expr) -> T;
     fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> T;
     fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> T;
-    fn visit_struct(&mut self,name:&Token,methods:&Vec<Stmt>,fields:&Vec<Token>)->T;
+    fn visit_struct(&mut self,name:&Token,fields:&Vec<Token>)->T;
    
 }
 impl Stmt {
@@ -90,7 +91,7 @@ impl Stmt {
             Stmt::Print { expr } => visitor.visit_print(expr),
             Stmt::Return { keyword, expr } => visitor.visit_return(keyword, expr),
             Stmt::While { condition, body } => visitor.visit_while(condition, body),
-            Stmt::Struct { name, methods,fields  } =>visitor.visit_struct(name, methods,fields ),
+            Stmt::Struct { name, fields  } =>visitor.visit_struct(name, fields ),
             Stmt::Impl { prototype, methods }=>visitor.visit_impl(prototype,methods)
         }
     }

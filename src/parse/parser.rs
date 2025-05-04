@@ -477,7 +477,7 @@ impl Parser {
          }
          self.consume(&Token_Type::RIGHT_BRACE,"结构体内容后需要}")?;
          self.consume(&Token_Type::SEMICOLON,"结构体声明后需要;")?;
-         Ok(Stmt::Struct {name,methods:vec![],fields})
+         Ok(Stmt::Struct {name,fields})
      }
     //是不是加减
     fn term(&mut self) -> Result<Expr, X_Err> {

@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 use chrono::{DateTime, Local};
+use crate::ast::token::token::Token;
 use crate::interpret::call::Call;
 use crate::interpret::call::Func;
 use crate::interpret::prototype::Prototype;
@@ -33,7 +34,7 @@ impl Add for Value {
 }
 impl Call for Value{
     fn arity(&self) -> usize {
-      return if let Value::Func(f)=self{
+       if let Value::Func(f)=self{
         f.arity()
       }else{
         panic!("只支持函数调用") 
@@ -163,6 +164,7 @@ impl std::fmt::Display for Value {
         }
     }
 }
+
 
 
 

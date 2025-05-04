@@ -1,3 +1,4 @@
+use crate::interpret::prototype::Property;
 use crate::ast::expression::expr;
 use crate::ast::expression::expr::Expr;
 use crate::ast::statment::stmt;
@@ -127,10 +128,10 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     }
         fn visit_get(&mut self,object:&Expr,name:&Token)->Result<Value, X_Err> {
             let prototype=self.evaluate(object)?;
-           return if let prototype=Value::Struct {
-                 Ok(prototype.get(name)?)
+            if let Value::Struct(obj)= prototype{
+                 Ok(obj.get(name))
             }else{
-               Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))   
+               Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
             }
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
@@ -348,7 +349,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         Ok(())
     }
 
-    fn visit_struct(&mut self, name: &Token, methods: &Vec<Stmt>,fields:&Vec<Token>) -> Result<(), X_Err> {
+    fn visit_struct(&mut self, name: &Token,fields:&Vec<Token>) -> Result<(), X_Err> {
        self.env.borrow_mut().add(name,Value::Nil)?;
        //这里需要真正声明class
        let Struct=Value::Struct(Prototype::new(name.clone()));

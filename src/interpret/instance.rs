@@ -7,6 +7,6 @@ impl Instance {
         Self { prototype }
     }
     pub(crate) fn to_string(&self) -> String {
-        return format!("instance {:?}", self.prototype.name.lexeme);
+         format!("instance {:?}", self.prototype.name.lexeme)
     }
 }

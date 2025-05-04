@@ -1,4 +1,4 @@
 struct Obj{name};
-impl Obj{
-    fn new(){}
-}
+print Obj;
+//let obj=Obj{name:"你好"};
+
