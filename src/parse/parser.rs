@@ -1,10 +1,12 @@
+use std::collections::HashMap;
 use crate::ast::expression::expr::Expr;
 use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::interpret::call::Fn_Type;
 use crate::error::X_Err;
+use crate::interpret::call::Fn_Type;
+use crate::interpret::prototype::Prototype;
 use crate::parse::Parse_Err;
 
 #[derive(Debug)]
@@ -12,17 +14,21 @@ pub(crate) struct Parser {
     tokens: Vec<Token>,
     pos: usize,
     //循环的深度
-    loop_depth:usize,
+    loop_depth: usize,
 }
 impl Parser {
     pub(crate) fn new(tokens: Vec<Token>) -> Self {
-        Self { tokens, pos: 0,loop_depth:0 }
+        Self {
+            tokens,
+            pos: 0,
+            loop_depth: 0,
+        }
     }
     fn assign_stmt(&mut self) -> Result<Expr, X_Err> {
         let expr = self.ternary_expr();
         if self.match_token(&[Token_Type::EQUAL]) {
-            let equals = self.previous();
-            let val = self.assign_stmt()?;
+            let _ = self.previous();
+            let  val= self.assign_stmt()?;
             return if let Expr::Variable { name } = expr?.clone() {
                 Ok(Expr::Assign {
                     name,
@@ -64,36 +70,36 @@ impl Parser {
         self.consume(&Token_Type::RIGHT_BRACE, "此处缺少}")?;
         Ok(res)
     }
-   fn break_stmt(&mut self)->Result<Stmt, X_Err>{
-    if self.loop_depth==0{
-        Err(self.error(String::from("break只能在函数中使用")))
-    }else{
-          self.consume(&Token_Type::SEMICOLON,"break后须加分号")?;
-       Ok(Stmt::Break {})  
+    fn break_stmt(&mut self) -> Result<Stmt, X_Err> {
+        if self.loop_depth == 0 {
+            Err(self.error(String::from("break只能在函数中使用")))
+        } else {
+            self.consume(&Token_Type::SEMICOLON, "break后须加分号")?;
+            Ok(Stmt::Break {})
+        }
     }
-   }
-   fn continue_stmt(&mut self)->Result<Stmt, X_Err>{
-    if self.loop_depth==0{
-        Err(self.error(String::from("continue只能在函数中使用")))
-    }else{
-          self.consume(&Token_Type::SEMICOLON,"continue后须加分号")?;
-       Ok(Stmt::Continue {})  
+    fn continue_stmt(&mut self) -> Result<Stmt, X_Err> {
+        if self.loop_depth == 0 {
+            Err(self.error(String::from("continue只能在函数中使用")))
+        } else {
+            self.consume(&Token_Type::SEMICOLON, "continue后须加分号")?;
+            Ok(Stmt::Continue {})
+        }
     }
-   }
-   //函数相关调用的代码
-    fn call(&mut self)->Result<Expr,X_Err>{
-        let mut expr =self.primary()?;
-       loop{
-           if self.check(&Token_Type::LEFT_PAREN){
-             expr=self.finish_call(Box::from(expr))?;
-           }else if self.check(&Token_Type::DOT){
-            let object=Box::from(expr.clone());
-            let name=self.consume(&Token_Type::IDENTIFIER,"属性名")?;
-            expr=Expr::Get {object,name}
-           }else{
-               break;
-           }
-       }
+    //函数相关调用的代码
+    fn call(&mut self) -> Result<Expr, X_Err> {
+        let mut expr = self.primary()?;
+        loop {
+            if self.check(&Token_Type::LEFT_PAREN) {
+                expr = self.finish_call(Box::from(expr))?;
+            } else if self.check(&Token_Type::DOT) {
+                let object = Box::from(expr.clone());
+                let name = self.consume(&Token_Type::IDENTIFIER, "属性名")?;
+                expr = Expr::Get { object, name }
+            } else {
+                break;
+            }
+        }
         Ok(expr)
     }
     fn comparison(&mut self) -> Result<Expr, X_Err> {
@@ -130,21 +136,20 @@ impl Parser {
             (*self.peek()).token_type == *token_type
         }
     }
-    fn check_next(&self, token_type: &Token_Type)->bool{
-      
-        if self.is_end()||self.tokens[self.pos+1].token_type==Token_Type::EOF {
+    fn check_next(&self, token_type: &Token_Type) -> bool {
+        if self.is_end() || self.tokens[self.pos + 1].token_type == Token_Type::EOF {
             false
         } else {
-            self.tokens[self.pos+1].token_type == *token_type
+            self.tokens[self.pos + 1].token_type == *token_type
         }
     }
     fn declaration(&mut self) -> Result<Stmt, X_Err> {
-        if self.match_token(&[Token_Type::STRUCT]){
-           self.struct_decl()
-        }else if self.check(&Token_Type::FN)&&self.check_next(&Token_Type::IDENTIFIER){
+        if self.match_token(&[Token_Type::STRUCT]) {
+            self.struct_decl()
+        } else if self.check(&Token_Type::FN) && self.check_next(&Token_Type::IDENTIFIER) {
             self.consume(&Token_Type::FN, "此处应该是个函数")?;
-           self.func_stmt(Fn_Type::Func)
-        }else if self.match_token(&[Token_Type::LET]) {
+            self.func_stmt(Fn_Type::Func)
+        } else if self.match_token(&[Token_Type::LET]) {
             self.let_declaration()
         } else {
             self.statement()
@@ -155,9 +160,13 @@ impl Parser {
     */
     fn expression(&mut self) -> Expr {
         //先看看是不是三元
-        if let Ok(expr) = self.assign_stmt() {
+        if self.check(&Token_Type::IDENTIFIER)&&self.check_next(&Token_Type::LEFT_BRACE){
+
+            self.prototype_expr().unwrap()}
+        else if let Ok(expr) = self.assign_stmt() {
+            println!("{:?}",self.tokens[self.pos]);
             expr
-        } else {
+        }else{
             Expr::Literal { val: Object::Nil }
         }
     }
@@ -202,37 +211,41 @@ impl Parser {
         }
         expr
     }
-    fn func_expr(&mut self,fn_type:Fn_Type)->Result<Expr,X_Err>{
+    fn func_expr(&mut self, fn_type: Fn_Type) -> Result<Expr, X_Err> {
         // let name=self.consume(&Token_Type::IDENTIFIER,
         //      &("期望".to_owned()+fn_type.to_str()+"名字"))?;
-        self.consume(&Token_Type::LEFT_PAREN,"期望(")?;
-        let mut params=vec![];
-        if !self.check(&Token_Type::RIGHT_PAREN){
-        loop{
-            if params.len()>255{
-                self.error(String::from("参数数量不可以超过255个"));
-            }
-            params.push(self.consume(&Token_Type::IDENTIFIER, "期望一个参数名")?);
-            if !self.match_token(&[Token_Type::COMMA]){
+        self.consume(&Token_Type::LEFT_PAREN, "期望(")?;
+        let mut params = vec![];
+        if !self.check(&Token_Type::RIGHT_PAREN) {
+            loop {
+                if params.len() > 255 {
+                    self.error(String::from("参数数量不可以超过255个"));
+                }
+                params.push(self.consume(&Token_Type::IDENTIFIER, "期望一个参数名")?);
+                if !self.match_token(&[Token_Type::COMMA]) {
                     break;
+                }
             }
         }
+        self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个)")?;
+        self.consume(&Token_Type::LEFT_BRACE, "此处需要一个{")?;
+        //这里需要判断{吗？
+        let body = self.block()?;
+        Ok(Expr::Func { params, body })
     }
-    self.consume(&Token_Type::RIGHT_PAREN, "此处需要一个)")?;
-     self.consume(&Token_Type::LEFT_BRACE, "此处需要一个{")?;
-    //这里需要判断{吗？
-     let body=self.block()?;
-         Ok(Expr::Func { params, body})
-    }
-    fn func_stmt(&mut self,mut fn_type:Fn_Type)->Result<Stmt,X_Err>{
-          let name=self.consume(&Token_Type::IDENTIFIER,
-             &("期望".to_owned()+fn_type.to_str()+"名字"))?;
+    fn func_stmt(&mut self, mut fn_type: Fn_Type) -> Result<Stmt, X_Err> {
+        let name = self.consume(
+            &Token_Type::IDENTIFIER,
+            &("期望".to_owned() + fn_type.to_str() + "名字"),
+        )?;
 
-         Ok( Stmt::Func { name:Some(name), func:Box::from(self.func_expr(fn_type)?)})
-
+        Ok(Stmt::Func {
+            name: Some(name),
+            func: Box::from(self.func_expr(fn_type)?),
+        })
     }
     fn for_stmt(&mut self) -> Result<Stmt, X_Err> {
-        self.loop_depth+=1;
+        self.loop_depth += 1;
         //准备脱糖
         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(")?;
         let mut initializer: Option<Stmt> = None;
@@ -277,33 +290,36 @@ impl Parser {
                 stmts: vec![initializer.unwrap(), body],
             }
         }
-        self.loop_depth-=1;
+        self.loop_depth -= 1;
         Ok(body)
     }
-    fn finish_call(&mut self,callee:Box<Expr>) ->Result<Expr,X_Err>{
-        let mut arguments=vec![];
+    fn finish_call(&mut self, callee: Box<Expr>) -> Result<Expr, X_Err> {
+        let mut arguments = vec![];
         //    print!(printfself.tokens[self.pos]);
-           self.advance();
-        if !self.check(&Token_Type::RIGHT_PAREN){
-         loop{
-             arguments.push(Box::from(self.expression()));
-             //把参数添加进去 按逗号分割参数
-             if !self.match_token(&[Token_Type::COMMA]){
-                      break;
-             }
-             if arguments.len() >= 255 {
-              return Err(self.error(String::from("参数数量最大为255")));
-             }
-         }
+        self.advance();
+        if !self.check(&Token_Type::RIGHT_PAREN) {
+            loop {
+                arguments.push(Box::from(self.expression()));
+                //把参数添加进去 按逗号分割参数
+                if !self.match_token(&[Token_Type::COMMA]) {
+                    break;
+                }
+                if arguments.len() >= 255 {
+                    return Err(self.error(String::from("参数数量最大为255")));
+                }
+            }
         };
-        let paren=self.consume(&Token_Type::RIGHT_PAREN,"这里必须得有个)")?;
-         Ok(Expr::Call {callee,paren,arguments})
-
+        let paren = self.consume(&Token_Type::RIGHT_PAREN, "这里必须得有个)")?;
+        Ok(Expr::Call {
+            callee,
+            paren,
+            arguments,
+        })
     }
     fn is_end(&self) -> bool {
         self.peek().token_type == Token_Type::EOF
     }
-    
+
     fn if_stmt(&mut self) -> Result<Stmt, X_Err> {
         self.consume(&Token_Type::LEFT_PAREN, "此处缺少{")?; //先有个左括号
         let condition = Box::from(self.expression());
@@ -331,7 +347,6 @@ impl Parser {
     }
 
     fn or(&mut self) -> Result<Expr, X_Err> {
-
         let l = self.and()?;
         while self.match_token(&[Token_Type::OR]) {
             let oper = self.previous();
@@ -344,13 +359,33 @@ impl Parser {
         }
         Ok(l)
     }
+    fn prototype_expr(&mut self) -> Result<Expr, X_Err> {
+        //这里用来分析结构
+        let name = self.consume(&Token_Type::IDENTIFIER, "此处缺少struct的名字")?;
+        self.consume(&Token_Type::LEFT_BRACE, "此处缺少{")?;
+        let mut keys =vec![];
+        let mut vals=vec![];
+        loop{
+            if self.check(&Token_Type::RIGHT_BRACE){
+                break;
+            }
+            let key=self.consume(&Token_Type::IDENTIFIER, "此处缺少字段名")?;
+            self.consume(&Token_Type::COLON, "此处缺少:")?;
+            println!("{:?}",self.tokens[self.pos]);
+                keys.push(key);
+               vals.push(self.primary()?);
 
+        }
+        //补充消费掉}
+        self.consume(&Token_Type::RIGHT_BRACE,"")?;
+        Ok(Expr::Instance { name, keys, vals } )
+    }
     //非运算符的情况下
     //进行递归
     fn primary(&mut self) -> Result<Expr, X_Err> {
-        if self.match_token(&[Token_Type::FN]){
-              Ok(self.func_expr(Fn_Type::Func)?)
-        }else if self.match_token(&[Token_Type::NIL]) {
+        if self.match_token(&[Token_Type::FN]) {
+            Ok(self.func_expr(Fn_Type::Func)?)
+        } else if self.match_token(&[Token_Type::NIL]) {
             Ok(Expr::Literal { val: Object::Nil })
         } else if self.match_token(&[Token_Type::TRUE]) {
             Ok(Expr::Literal {
@@ -415,17 +450,20 @@ impl Parser {
             })
         }
     }
-    fn return_stmt(&mut self) ->Result<Stmt, X_Err> {
-       let keyword=self.previous();
-      let expr= self.expression();
+    fn return_stmt(&mut self) -> Result<Stmt, X_Err> {
+        let keyword = self.previous();
+        let expr = self.expression();
         self.consume(&Token_Type::SEMICOLON, "返回值也需要有分号结尾")?;
-         Ok(Stmt::Return {keyword,expr:Box::from(expr)})
+        Ok(Stmt::Return {
+            keyword,
+            expr: Box::from(expr),
+        })
     }
-        //声明语法
+    //声明语法
     //声明变量的规则
     fn let_declaration(&mut self) -> Result<Stmt, X_Err> {
         let name = self.consume(&Token_Type::IDENTIFIER, "这个单词不允许作为声明")?;
-        let  expr;
+        let expr;
         if self.match_token(&[Token_Type::EQUAL]) {
             expr = self.expression();
             self.consume(&Token_Type::SEMICOLON, "此处应有分号结尾")?;
@@ -440,19 +478,19 @@ impl Parser {
 
     //把表达式转为语句
     fn statement(&mut self) -> Result<Stmt, X_Err> {
-        if self.match_token(&[Token_Type::BREAK]){
-          self.break_stmt()
-        }else if self.match_token(&[Token_Type::Continue]){
-          self.continue_stmt()
-        }else if self.match_token(&[Token_Type::FOR]) {
+        if self.match_token(&[Token_Type::BREAK]) {
+            self.break_stmt()
+        } else if self.match_token(&[Token_Type::Continue]) {
+            self.continue_stmt()
+        } else if self.match_token(&[Token_Type::FOR]) {
             self.for_stmt()
         } else if self.match_token(&[Token_Type::IF]) {
             self.if_stmt()
         } else if self.match_token(&[Token_Type::PRINT]) {
             self.print_stmt()
-        }else if self.match_token(&[Token_Type::RETURN]){
+        } else if self.match_token(&[Token_Type::RETURN]) {
             self.return_stmt()
-        }else if self.match_token(&[Token_Type::WHILE]) {
+        } else if self.match_token(&[Token_Type::WHILE]) {
             self.while_stmt()
         } else if self.match_token(&[Token_Type::LEFT_BRACE]) {
             Ok(Stmt::Block {
@@ -462,23 +500,22 @@ impl Parser {
             self.expr_stmt()
         }
     }
-     fn struct_decl(&mut self)->Result<Stmt,X_Err>{
-        let name=self.consume(&Token_Type::IDENTIFIER, "结构体需要命名")?;
-         let mut fields=vec![];
-         self.consume(&Token_Type::LEFT_BRACE,"结构体内容前需要{")?;
-         while self.match_token(&[Token_Type::IDENTIFIER])&&!self.is_end() {
-                 fields.push(self.previous().clone());
-             if self.check(&Token_Type::RIGHT_BRACE){
-                  break;
-             }else{
-                 self.consume(&Token_Type::COMMA,"属性需要用逗号隔开")?;
-             }
-
-         }
-         self.consume(&Token_Type::RIGHT_BRACE,"结构体内容后需要}")?;
-         self.consume(&Token_Type::SEMICOLON,"结构体声明后需要;")?;
-         Ok(Stmt::Struct {name,fields})
-     }
+    fn struct_decl(&mut self) -> Result<Stmt, X_Err> {
+        let name = self.consume(&Token_Type::IDENTIFIER, "结构体需要命名")?;
+        let mut fields = vec![];
+        self.consume(&Token_Type::LEFT_BRACE, "结构体内容前需要{")?;
+        while self.match_token(&[Token_Type::IDENTIFIER]) && !self.is_end() {
+            fields.push(self.previous().clone());
+            if self.check(&Token_Type::RIGHT_BRACE) {
+                break;
+            } else {
+                self.consume(&Token_Type::COMMA, "属性需要用逗号隔开")?;
+            }
+        }
+        self.consume(&Token_Type::RIGHT_BRACE, "结构体内容后需要}")?;
+        self.consume(&Token_Type::SEMICOLON, "结构体声明后需要;")?;
+        Ok(Stmt::Struct { name, fields })
+    }
     //是不是加减
     fn term(&mut self) -> Result<Expr, X_Err> {
         let mut expr = self.factor();
@@ -527,12 +564,12 @@ impl Parser {
     }
 
     fn while_stmt(&mut self) -> Result<Stmt, X_Err> {
-        self.loop_depth+=1;
+        self.loop_depth += 1;
         self.consume(&Token_Type::LEFT_PAREN, "此处应有一个(")?;
         let expr = self.expression();
         self.consume(&Token_Type::RIGHT_PAREN, "此处应有一个)")?;
         let body = self.statement()?;
-        self.loop_depth-=1;
+        self.loop_depth -= 1;
         Ok(Stmt::While {
             condition: Box::from(expr),
             body: Box::from(body),

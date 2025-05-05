@@ -9,15 +9,18 @@ use std::io::Read;
 use std::process::exit;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
-fn run(bytes: String) {
+use crate::error::X_Err;
+
+fn run(bytes: String)->Result<(),X_Err> {
     let mut sc = scanner::Scanner::new(bytes);
     let mut parser = Parser::new(sc.scan_tokens());
     let stmts = Rc::new(parser.parse());
-    let mut inter = Rc::from(RefCell::from(Interpreter::new()));
+    let inter = Rc::from(RefCell::from(Interpreter::new()));
     let mut resolver = Resolver::new(inter.clone());
-       resolver.resolve_stmts(&stmts);
+       resolver.resolve_stmts(&stmts)?;
     //调用解析出来的语句
-    inter.borrow_mut().run(&stmts);
+    inter.borrow_mut().run(&stmts)?;
+   Ok(())
 }
 #[wasm_bindgen]
 pub fn run_program(bytes: String) {
@@ -29,7 +32,7 @@ pub fn run_file(path: String) {
     let mut bytes = String::new();
     // run(bytes);
     if let Ok(mut res) = File::open(path) {
-        res.read_to_string(&mut bytes);
+        let _=res.read_to_string(&mut bytes);
         run(bytes);
     } else {
         error::log(0, "", "找不到文件");

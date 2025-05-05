@@ -120,6 +120,9 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         }
         expr.call(self, arguments_func)
     }
+    fn visitor_instance(&mut self, name: &Token, keys: &Vec<Token>, vals: &Vec<Expr>) -> Result<Value, X_Err> {
+        todo!()
+    }
     fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<Stmt>)->Result<Value, X_Err> {
         //这里有问题
         //得大改 周末吃透
@@ -188,7 +191,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         self.lookup_variable(expr,name)
         // self.env.borrow().get(name)
     }
-    
+
 
 }
 impl Interpreter {
@@ -313,6 +316,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         }
         Ok(())
     }
+
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
         //添加到变量池中
         let res = self.evaluate(expr);
@@ -337,8 +341,8 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
             let res = self.execute(body.clone());
             if let Err(x) = res {
                 match x {
-                    X_Err::brk(Break) => break,
-                    X_Err::cte(Continue) => {
+                    X_Err::brk(r#break) => break,
+                    X_Err::cte(r#continue) => {
                         //continue暂时有问题
                         continue;
                     }
@@ -352,8 +356,8 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     fn visit_struct(&mut self, name: &Token,fields:&Vec<Token>) -> Result<(), X_Err> {
        self.env.borrow_mut().add(name,Value::Nil)?;
        //这里需要真正声明class
-       let Struct=Value::Struct(Prototype::new(name.clone()));
-       self.env.borrow_mut().assign(name,Struct)?;
+       let r#struct=Value::Struct(Prototype::new(name.clone()));
+       self.env.borrow_mut().assign(name,r#struct)?;
          Ok(())
     }
     

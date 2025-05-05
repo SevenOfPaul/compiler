@@ -119,7 +119,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
     }
 
     fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
-        self.declare(name);
+        let _=self.declare(name);
         self.resolve(expr.clone())?;
         self.define(name);
         Ok(())
@@ -144,7 +144,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Resolver {
         Ok(())
     }
 
-    fn visit_struct(&mut self, name: &Token, methods: &Vec<Stmt>,fields:&Vec<Token>) -> Result<(), X_Err> {
+    fn visit_struct(&mut self, name: &Token,fields:&Vec<Token>) -> Result<(), X_Err> {
         self.declare(name)?;
         self.define(name);
         Ok(())
@@ -198,7 +198,9 @@ impl Visitor<Result<(), X_Err>> for Resolver {
         }
         Ok(())
     }
-
+    fn visitor_instance(&mut self, name: &Token, keys: &Vec<Token>, vals: &Vec<Expr>) -> Result<(), X_Err> {
+        todo!()
+    }
     fn visit_grouping(&mut self, expression: &Expr) -> Result<(), X_Err> {
         self.resolve(expression.clone())?;
         Ok(())
@@ -256,6 +258,7 @@ impl Visitor<Result<(), X_Err>> for Resolver {
         self.resolve(object.clone())?;
         Ok(())
     }
+
 }
 trait Resolve<T> {
     fn resolve(&mut self, argu: T) -> Result<(), X_Err>;

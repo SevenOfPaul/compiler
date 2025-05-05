@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
@@ -23,6 +24,11 @@ pub(crate) enum Expr {
     Func {
         params: Vec<Token>,
         body: Vec<Stmt>,
+    },
+    Instance{
+        name:Token,
+        keys:Vec<Token>,
+        vals:Vec<Expr>
     },
     Get{
         object:Box<Expr>,
@@ -76,6 +82,7 @@ pub trait Visitor<T> {
         -> T;
     fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
     fn visit_variable(&mut self, expr: &Expr, name: &Token) -> T;
+    fn visitor_instance(&mut self, name: &Token, keys: &Vec<Token>,vals:&Vec<Expr>) -> T;
 }
 impl Expr {
     pub fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
@@ -98,6 +105,7 @@ impl Expr {
                 r_expression,
             } => visitor.visit_unary(operator, r_expression),
             Expr::Variable {  name } => visitor.visit_variable(self, name),
+            Expr::Instance {name, keys, vals } =>visitor.visitor_instance(name, keys,vals),
             Expr::Assign { name, val } => visitor.visit_assign(self,name, val),
             Expr::Ternary {
                 condition,
