@@ -1,4 +1,5 @@
 pub(crate) mod resolve;
+pub(crate) mod fn_type;
 use crate::ast::token::token::Token;
 use crate::error::X_Err;
 use crate::interpret::call::{Fn_init, Func};

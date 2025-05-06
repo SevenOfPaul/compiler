@@ -1,5 +1,5 @@
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
-use std::cmp::PartialEq;
+use crate::interpret::env::fn_type::FN_TYPE;
 use crate::{
     ast::{
         expression::expr::Visitor,
@@ -198,8 +198,12 @@ impl Visitor<Result<(), X_Err>> for Resolver {
         }
         Ok(())
     }
-    fn visitor_instance(&mut self, name: &Token, keys: &Vec<Token>, vals: &Vec<Expr>) -> Result<(), X_Err> {
-        todo!()
+    fn visitor_instance(&mut self, struct_name: &Box<Stmt>, keys: &Vec<Token>, vals: &Vec<Expr>) -> Result<(), X_Err> {
+       self.resolve(struct_name.as_ref().clone())?;
+        for val in vals{
+            self.resolve(val.clone())?;
+        }
+       Ok(())
     }
     fn visit_grouping(&mut self, expression: &Expr) -> Result<(), X_Err> {
         self.resolve(expression.clone())?;
@@ -298,25 +302,4 @@ impl Resolve<Expr> for Resolver {
         Ok(())
     }
 }
-#[derive(Debug)]
-enum FN_TYPE {
-FN ,
-None
-}
-impl PartialEq for FN_TYPE {
-    fn eq(&self, other: &Self) -> bool {
-       match self {
-           FN_TYPE::FN=>{
-               if let FN_TYPE::FN=other {
-                   return true
-               }
-           },
-           _=>{
-               if let FN_TYPE::None=other {
-                  return true
-               }
-           }
-       }
-        false
-    }
-}
+

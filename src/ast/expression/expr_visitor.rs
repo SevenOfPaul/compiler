@@ -1,4 +1,5 @@
 use crate::ast::expression::expr::{Expr, Visitor};
+use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 
@@ -60,8 +61,9 @@ impl Visitor<String> for ExprVisitor {
     fn visit_get(&mut self,object:&Expr,name:&Token)->String {
         todo!()
     }
-
-    fn visitor_instance(&mut self, name: &Token, keys: &Vec<Token>, vals: &Vec<Expr>) -> String {
+    
+    fn visitor_instance(&mut self,struct_name:&Box<Stmt>, keys: &Vec<Token>,vals:&Vec<Expr>) -> String {
         todo!()
-    }
+    }  
+
 }

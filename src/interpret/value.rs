@@ -16,7 +16,8 @@ pub(crate) enum Value {
     Bool(bool),
     Time(DateTime<Local>),
     Func(Func),
-    Struct(Prototype),
+    Struct{name:Token},
+    Instance(Prototype),
     Nil,
 }
 impl Add for Value {
@@ -159,7 +160,8 @@ impl std::fmt::Display for Value {
             Value::Str(s) => write!(f, "{}", s),
             Value::Time(t) => write!(f, "{}", t),
             Value::Func(func) => write!(f, "{}", func.to_string()),
-              Value::Struct(prototype) => write!(f,"{}",prototype.to_string()),
+            Value::Struct{name} => write!(f,"{}",name.to_string()),
+            Value::Instance(p) => write!(f, "{}", p.to_string()),
             Value::Nil => write!(f, "nil"),
         }
     }

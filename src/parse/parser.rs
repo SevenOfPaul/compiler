@@ -161,7 +161,6 @@ impl Parser {
     fn expression(&mut self) -> Expr {
         //先看看是不是三元
         if self.check(&Token_Type::IDENTIFIER)&&self.check_next(&Token_Type::LEFT_BRACE){
-
             self.prototype_expr().unwrap()}
         else if let Ok(expr) = self.assign_stmt() {
             println!("{:?}",self.tokens[self.pos]);
@@ -361,7 +360,7 @@ impl Parser {
     }
     fn prototype_expr(&mut self) -> Result<Expr, X_Err> {
         //这里用来分析结构
-        let name = self.consume(&Token_Type::IDENTIFIER, "此处缺少struct的名字")?;
+        let struct_name = self.consume(&Token_Type::IDENTIFIER, "此处缺少struct的名字")?;
         self.consume(&Token_Type::LEFT_BRACE, "此处缺少{")?;
         let mut keys =vec![];
         let mut vals=vec![];
@@ -378,7 +377,7 @@ impl Parser {
         }
         //补充消费掉}
         self.consume(&Token_Type::RIGHT_BRACE,"")?;
-        Ok(Expr::Instance { name, keys, vals } )
+        Ok(Expr::Instance { struct_name:Box::new(Stmt::Struct { name:struct_name, fields:keys.clone() }), keys, vals } )
     }
     //非运算符的情况下
     //进行递归

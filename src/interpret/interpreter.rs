@@ -1,4 +1,3 @@
-use crate::interpret::prototype::Property;
 use crate::ast::expression::expr;
 use crate::ast::expression::expr::Expr;
 use crate::ast::statment::stmt;
@@ -6,11 +5,12 @@ use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
-use crate::interpret::call::Funcs;
-use crate::interpret::call::{Call, Fn_init, Func};
 use crate::error;
 use crate::error::X_Err;
+use crate::interpret::call::Funcs;
+use crate::interpret::call::{Call, Fn_init, Func};
 use crate::interpret::env::Environment;
+use crate::interpret::prototype::Property;
 use crate::interpret::value::Value;
 use crate::interpret::{Return, Run_Err};
 use crate::parse::{Break, Continue};
@@ -18,22 +18,23 @@ use crate::tools::printf;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::hash::{Hash, Hasher};
-use std::collections::hash_map::DefaultHasher;
-
-use super::prototype::Prototype;
 /**只能有一个 */
 pub(crate) struct Interpreter {
     pub(crate) env: Rc<RefCell<Environment>>,
-    locals:HashMap<Expr,i32>
+    locals: HashMap<Expr, i32>,
 }
 impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
-    fn visit_assign(&mut self,expr:&Expr,name: &Token, value: &Box<Expr>) -> Result<Value, X_Err> {
+    fn visit_assign(
+        &mut self,
+        expr: &Expr,
+        name: &Token,
+        value: &Box<Expr>,
+    ) -> Result<Value, X_Err> {
         let val = self.evaluate(value)?;
-        let distance=self.locals.get(expr);
-          if let Some(d)=distance{
+        let distance = self.locals.get(expr);
+        if let Some(d) = distance {
             self.env.borrow_mut().assign_at(*d, name, val)
-        }else{
+        } else {
             self.env.borrow_mut().assign(name, val)
         }
     }
@@ -120,22 +121,33 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         }
         expr.call(self, arguments_func)
     }
-    fn visitor_instance(&mut self, name: &Token, keys: &Vec<Token>, vals: &Vec<Expr>) -> Result<Value, X_Err> {
+    fn visitor_instance(
+        &mut self,
+        struct_name: &Box<Stmt>,
+        keys: &Vec<Token>,
+        vals: &Vec<Expr>,
+    ) -> Result<Value, X_Err> {
         todo!()
     }
-    fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<Stmt>)->Result<Value, X_Err> {
+    fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<Value, X_Err> {
         //这里有问题
         //得大改 周末吃透
-        let func_stmt=Stmt::Func { name: None, func: Box::from(Expr::Func { params:params.clone(), body: body.clone() }) };
+        let func_stmt = Stmt::Func {
+            name: None,
+            func: Box::from(Expr::Func {
+                params: params.clone(),
+                body: body.clone(),
+            }),
+        };
         Ok(Value::Func(Func::new(func_stmt)))
     }
-        fn visit_get(&mut self,object:&Expr,name:&Token)->Result<Value, X_Err> {
-            let prototype=self.evaluate(object)?;
-            if let Value::Struct(obj)= prototype{
-                 Ok(obj.get(name))
-            }else{
-               Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
-            }
+    fn visit_get(&mut self, object: &Expr, name: &Token) -> Result<Value, X_Err> {
+        let prototype = self.evaluate(object)?;
+        if let Value::Instance(obj) = prototype {
+            Ok(obj.get(name))
+        } else {
+            Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
+        }
     }
     fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
@@ -187,12 +199,10 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_variable(&mut self,expr:&Expr, name: &Token) -> Result<Value, X_Err> {
-        self.lookup_variable(expr,name)
+    fn visit_variable(&mut self, expr: &Expr, name: &Token) -> Result<Value, X_Err> {
+        self.lookup_variable(expr, name)
         // self.env.borrow().get(name)
     }
-
-
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {
@@ -203,7 +213,7 @@ impl Interpreter {
         Self {
             env: Rc::from(RefCell::from(global)),
             //需要修改
-            locals:HashMap::new()
+            locals: HashMap::new(),
         }
     }
     pub(crate) fn check_num_operands(
@@ -221,7 +231,7 @@ impl Interpreter {
             Ok(())
         } else if l.is_num() && r.is_num() {
             Ok(())
-        }else if l.is_time()&&r.is_time(){
+        } else if l.is_time() && r.is_time() {
             Ok(())
         } else {
             Err(Run_Err::new(
@@ -249,8 +259,8 @@ impl Interpreter {
         self.env = pre_env;
         Ok(())
     }
-    pub(crate) fn resolve(&mut self,expr:&Expr,depth:i32)->Result<(),X_Err>{
-        self.locals.insert(expr.clone(),depth);
+    pub(crate) fn resolve(&mut self, expr: &Expr, depth: i32) -> Result<(), X_Err> {
+        self.locals.insert(expr.clone(), depth);
         Ok(())
     }
     /*
@@ -263,9 +273,9 @@ impl Interpreter {
         Ok(())
     }
 
-    pub (crate) fn lookup_variable(&self,expr:&Expr,name:&Token)->Result<Value,X_Err>{
+    pub(crate) fn lookup_variable(&self, expr: &Expr, name: &Token) -> Result<Value, X_Err> {
         if let Some(&distance) = self.locals.get(expr) {
-            self.env.borrow_mut().get_at(distance,name)  // 本地查找
+            self.env.borrow_mut().get_at(distance, name) // 本地查找
         } else {
             //这里没有降级到全局查找
             self.env.borrow_mut().get_by_global(name) // 降级到全局查找
@@ -290,13 +300,15 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         Ok(())
     }
     fn visit_func(
-        &mut self,_:&Stmt,
+        &mut self,
+        _: &Stmt,
         name: &Option<Token>,
-        func:&Box<Expr>
+        func: &Box<Expr>,
     ) -> Result<(), X_Err> {
         //这里不明白
         let func = Stmt::Func {
-            name:name.clone(),func: func.clone()
+            name: name.clone(),
+            func: func.clone(),
         };
         self.env
             .borrow_mut()
@@ -352,16 +364,16 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         }
         Ok(())
     }
-
-    fn visit_struct(&mut self, name: &Token,fields:&Vec<Token>) -> Result<(), X_Err> {
-       self.env.borrow_mut().add(name,Value::Nil)?;
-       //这里需要真正声明class
-       let r#struct=Value::Struct(Prototype::new(name.clone()));
-       self.env.borrow_mut().assign(name,r#struct)?;
-         Ok(())
+    ///在作用于中声明class
+    fn visit_struct(&mut self, name: &Token, fields: &Vec<Token>) -> Result<(), X_Err> {
+        self.env.borrow_mut().add(name, Value::Nil)?;
+        //这里需要真正声明class
+        let r#struct = Value::Struct { name: name.clone() };
+        self.env.borrow_mut().assign(name, r#struct)?;
+        Ok(())
     }
-    
-    fn visit_impl(&mut self,prototype:&Token,methods:&Vec<Stmt>)->Result<(), X_Err> {
+
+    fn visit_impl(&mut self, prototype: &Token, methods: &Vec<Stmt>) -> Result<(), X_Err> {
         //需要修改
         todo!()
     }
