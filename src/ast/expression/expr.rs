@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
 use crate::impl_expr_accept;
+use std::collections::HashMap;
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) enum Expr {
     //声明变量
@@ -25,14 +25,14 @@ pub(crate) enum Expr {
         params: Vec<Token>,
         body: Vec<Stmt>,
     },
-    Instance{
-        struct_name:Box<Stmt>,
-        keys:Vec<Token>,
-        vals:Vec<Expr>
+    Instance {
+        struct_name: Box<Expr>,
+        keys: Vec<Token>,
+        vals: Vec<Expr>,
     },
-    Get{
-        object:Box<Expr>,
-        name:Token
+    Get {
+        object: Box<Expr>,
+        name: Token,
     },
     Grouping {
         expression: Box<Expr>,
@@ -45,6 +45,12 @@ pub(crate) enum Expr {
         operator: Token,
         l_expression: Box<Expr>,
         r_expression: Box<Expr>,
+    },
+    Struct {
+        name: Token,
+        //函数需要显式声明
+        // methods:Vec<Stmt>,
+        fields: Vec<Token>,
     },
     //三元
     Ternary {
@@ -62,63 +68,77 @@ pub(crate) enum Expr {
     },
 }
 //  pub (crate) trait Accept<T>{
-//         fn accept(&self, visitor: &mut dyn Visitor<T>) -> T;
+//         fn accept(&self, visitor: &mut dyn visitor<T>) -> T;
 //  }
 pub trait Visitor<T> {
-    fn visit_assign(&mut self,expr:&Expr, name: &Token, value: &Box<Expr>) -> T;
-    fn visit_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> T;
-    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> T;
-    fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> T;
-    fn visit_grouping(&mut self, expression: &Expr) -> T;
-    fn visit_get(&mut self,object:&Expr,name:&Token)->T;
-    fn visit_literal(&mut self, value: &Object) -> T;
-    fn visit_logical(
+    fn visitor_assign(&mut self, expr: &Expr, name: &Token, value: &Box<Expr>) -> T;
+    fn visitor_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> T;
+    fn visitor_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> T;
+    fn visitor_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> T;
+    fn visitor_grouping(&mut self, expression: &Expr) -> T;
+    fn visitor_get(&mut self, object: &Expr, name: &Token) -> T;
+    fn visitor_literal(&mut self, value: &Object) -> T;
+    fn visitor_logical(
         &mut self,
         operator: &Token,
         l_expression: &Box<Expr>,
         r_expression: &Box<Expr>,
     ) -> T;
-    fn visit_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>)
+    fn visitor_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>)
         -> T;
-    fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
-    fn visit_variable(&mut self, expr: &Expr, name: &Token) -> T;
-    fn visitor_instance(&mut self,struct_name:&Box<Stmt>, keys: &Vec<Token>,vals:&Vec<Expr>) -> T;
+    fn visitor_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
+    fn visitor_variable(&mut self, expr: &Expr, name: &Token) -> T;
+    fn visitor_instance(
+        &mut self,
+        struct_name: &Box<Expr>,
+        keys: &Vec<Token>,
+        vals: &Vec<Expr>,
+    ) -> T;
+     fn visitor_struct(
+        &mut self,
+         name: &Token,
+       fields: &Vec<Token>,
+    ) -> T;
 }
 impl Expr {
     pub fn accept<T>(&self, visitor: &mut dyn Visitor<T>) -> T {
         match self {
-            Expr::Literal { val } => visitor.visit_literal(val),
-            Expr::Func { params, body } => visitor.visit_func(params, body),
-            Expr::Grouping { expression } => visitor.visit_grouping(expression),
+            Expr::Literal { val } => visitor.visitor_literal(val),
+            Expr::Func { params, body } => visitor.visitor_func(params, body),
+            Expr::Grouping { expression } => visitor.visitor_grouping(expression),
             Expr::Binary {
                 operator,
                 l_expression,
                 r_expression,
-            } => visitor.visit_binary(operator, l_expression, r_expression),
+            } => visitor.visitor_binary(operator, l_expression, r_expression),
             Expr::Call {
                 callee,
                 paren,
                 arguments,
-            } => visitor.visit_call(callee, paren, arguments),
+            } => visitor.visitor_call(callee, paren, arguments),
             Expr::Unary {
                 operator,
                 r_expression,
-            } => visitor.visit_unary(operator, r_expression),
-            Expr::Variable {  name } => visitor.visit_variable(self, name),
-            Expr::Instance {struct_name, keys, vals,  } =>
-            visitor.visitor_instance( struct_name,keys,vals),
-            Expr::Assign { name, val } => visitor.visit_assign(self,name, val),
+            } => visitor.visitor_unary(operator, r_expression),
+            Expr::Variable { name } => visitor.visitor_variable(self, name),
+            Expr::Instance {
+                struct_name,
+                keys,
+                vals,
+            } => visitor.visitor_instance(struct_name, keys, vals),
+            Expr::Assign { name, val } => visitor.visitor_assign(self, name, val),
             Expr::Ternary {
                 condition,
                 t_expr,
                 f_expr,
-            } => visitor.visit_ternary(condition, t_expr, f_expr),
+            } => visitor.visitor_ternary(condition, t_expr, f_expr),
+            Expr::Struct { name, fields } => visitor.visitor_struct(name, fields),
             Expr::Logical {
                 operator,
                 l_expression,
                 r_expression,
-            } => visitor.visit_logical(operator, l_expression, r_expression),
-            Expr::Get { object, name } => visitor.visit_get(object,name),
+            } => visitor.visitor_logical(operator, l_expression, r_expression),
+            Expr::Get { object, name } => visitor.visitor_get(object, name),
         }
     }
 }

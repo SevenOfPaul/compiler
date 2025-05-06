@@ -145,7 +145,7 @@ impl Parser {
     }
     fn declaration(&mut self) -> Result<Stmt, X_Err> {
         if self.match_token(&[Token_Type::STRUCT]) {
-            self.struct_decl()
+            Ok(Stmt::Expression { expr: Box::new(self.struct_decl()?) })
         } else if self.check(&Token_Type::FN) && self.check_next(&Token_Type::IDENTIFIER) {
             self.consume(&Token_Type::FN, "此处应该是个函数")?;
             self.func_stmt(Fn_Type::Func)
@@ -377,7 +377,7 @@ impl Parser {
         }
         //补充消费掉}
         self.consume(&Token_Type::RIGHT_BRACE,"")?;
-        Ok(Expr::Instance { struct_name:Box::new(Stmt::Struct { name:struct_name, fields:keys.clone() }), keys, vals } )
+        Ok(Expr::Instance { struct_name:Box::new(Expr::Struct { name:struct_name, fields:keys.clone() }), keys, vals } )
     }
     //非运算符的情况下
     //进行递归
@@ -499,7 +499,7 @@ impl Parser {
             self.expr_stmt()
         }
     }
-    fn struct_decl(&mut self) -> Result<Stmt, X_Err> {
+    fn struct_decl(&mut self) -> Result<Expr, X_Err> {
         let name = self.consume(&Token_Type::IDENTIFIER, "结构体需要命名")?;
         let mut fields = vec![];
         self.consume(&Token_Type::LEFT_BRACE, "结构体内容前需要{")?;
@@ -513,7 +513,7 @@ impl Parser {
         }
         self.consume(&Token_Type::RIGHT_BRACE, "结构体内容后需要}")?;
         self.consume(&Token_Type::SEMICOLON, "结构体声明后需要;")?;
-        Ok(Stmt::Struct { name, fields })
+        Ok(Expr::Struct { name, fields })
     }
     //是不是加减
     fn term(&mut self) -> Result<Expr, X_Err> {

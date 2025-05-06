@@ -1,7 +1,9 @@
-use crate::ast::expression::expr::{Expr, Visitor};
+use crate::ast::expression::expr::{Expr};
 use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
 use crate::ast::token::token::Token;
+
+use super::expr::Visitor;
 
 pub (crate) struct ExprVisitor {}
 impl ExprVisitor{
@@ -20,49 +22,57 @@ impl ExprVisitor{
     }
 }
 impl Visitor<String> for ExprVisitor {
-    fn visit_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> String {
+    fn visitor_binary(&mut self, operator: &Token, l_expression: &Expr, r_expression: &Expr) -> String {
         self.parenthesize(operator.lexeme.as_str(),vec![l_expression,r_expression])
     }
 
-    fn visit_grouping(&mut self, expression: &Expr) -> String {
+    fn visitor_grouping(&mut self, expression: &Expr) -> String {
         self.parenthesize("group",vec![expression])
     }
 
-    fn visit_literal(&mut self, value: &Object) -> String {
+    fn visitor_literal(&mut self, value: &Object) -> String {
       value.to_string()
     }
-    fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> String {
+    fn visitor_unary(&mut self, operator: &Token, r_expression: &Expr) -> String {
         self.parenthesize(operator.lexeme.as_str(),vec![r_expression])
     }
-    fn visit_variable(&mut self,expr: &Expr, _name: &Token) -> String {
+    fn visitor_variable(&mut self,expr: &Expr, _name: &Token) -> String {
       todo!();
 
     }
-    fn visit_assign(&mut self,_:&Expr, _name: &Token,_value: &Box<Expr>) -> String {
+    fn visitor_assign(&mut self,_:&Expr, _name: &Token,_value: &Box<Expr>) -> String {
         String::from("变量已声明")
     }
 
-    fn visit_ternary(&mut self, _condition: &Box<Expr>, _t_expr: &Box<Expr>, _f_expr: &Box<Expr>) -> String {
+    fn visitor_ternary(&mut self, _condition: &Box<Expr>, _t_expr: &Box<Expr>, _f_expr: &Box<Expr>) -> String {
         todo!()
     }
 
-    fn visit_logical(&mut self, _operator: &Token, _l_expression: &Box<Expr>, _r_expression: &Box<Expr>) -> String {
+    fn visitor_logical(&mut self, _operator: &Token, _l_expression: &Box<Expr>, _r_expression: &Box<Expr>) -> String {
         todo!()
     }
 
-    fn visit_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> String {
+    fn visitor_call(&mut self, callee: &Box<Expr>, paren: &Token, arguments: &Vec<Box<Expr>>) -> String {
         todo!()
     }
     
-    fn visit_func(&mut self,params:&Vec<Token>,body:&Vec<crate::ast::statment::stmt::Stmt>)->String {
+    fn visitor_func(&mut self,params:&Vec<Token>,body:&Vec<crate::ast::statment::stmt::Stmt>)->String {
         todo!()
     }
     
-    fn visit_get(&mut self,object:&Expr,name:&Token)->String {
+    fn visitor_get(&mut self,object:&Expr,name:&Token)->String {
         todo!()
     }
     
-    fn visitor_instance(&mut self,struct_name:&Box<Stmt>, keys: &Vec<Token>,vals:&Vec<Expr>) -> String {
+    fn visitor_instance(&mut self,struct_name:&Box<Expr>, keys: &Vec<Token>,vals:&Vec<Expr>) -> String {
+        todo!()
+    }
+    
+    fn visitor_struct(
+        &mut self,
+         name: &Token,
+       fields: &Vec<Token>,
+    ) -> String {
         todo!()
     }  
 

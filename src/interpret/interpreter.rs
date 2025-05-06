@@ -18,13 +18,15 @@ use crate::tools::printf;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+
+use super::prototype::Prototype;
 /**只能有一个 */
 pub(crate) struct Interpreter {
     pub(crate) env: Rc<RefCell<Environment>>,
     locals: HashMap<Expr, i32>,
 }
 impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
-    fn visit_assign(
+    fn visitor_assign(
         &mut self,
         expr: &Expr,
         name: &Token,
@@ -38,7 +40,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             self.env.borrow_mut().assign(name, val)
         }
     }
-    fn visit_binary(
+    fn visitor_binary(
         &mut self,
         operator: &Token,
         l_expression: &Expr,
@@ -101,7 +103,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_call(
+    fn visitor_call(
         &mut self,
         callee: &Box<Expr>,
         paren: &Token,
@@ -123,13 +125,15 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     }
     fn visitor_instance(
         &mut self,
-        struct_name: &Box<Stmt>,
+        struct_name: &Box<Expr>,
         keys: &Vec<Token>,
         vals: &Vec<Expr>,
     ) -> Result<Value, X_Err> {
-        todo!()
+        Ok(Value::Instance(Prototype::new(
+            struct_name.clone()
+        )))
     }
-    fn visit_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<Value, X_Err> {
+    fn visitor_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<Value, X_Err> {
         //这里有问题
         //得大改 周末吃透
         let func_stmt = Stmt::Func {
@@ -141,7 +145,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         };
         Ok(Value::Func(Func::new(func_stmt)))
     }
-    fn visit_get(&mut self, object: &Expr, name: &Token) -> Result<Value, X_Err> {
+    fn visitor_get(&mut self, object: &Expr, name: &Token) -> Result<Value, X_Err> {
         let prototype = self.evaluate(object)?;
         if let Value::Instance(obj) = prototype {
             Ok(obj.get(name))
@@ -149,11 +153,11 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
         }
     }
-    fn visit_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
+    fn visitor_grouping(&mut self, expr: &Expr) -> Result<Value, X_Err> {
         self.evaluate(expr)
     }
 
-    fn visit_literal(&mut self, value: &Object) -> Result<Value, X_Err> {
+    fn visitor_literal(&mut self, value: &Object) -> Result<Value, X_Err> {
         Ok(match value {
             Object::Str(s) => Value::Str(s.clone()),
             Object::Num(n) => Value::Num(*n),
@@ -161,7 +165,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             _ => Value::Nil,
         })
     }
-    fn visit_logical(
+    fn visitor_logical(
         &mut self,
         operator: &Token,
         l_expression: &Box<Expr>,
@@ -179,7 +183,15 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         }
         Ok(self.evaluate(r_expression)?)
     }
-    fn visit_ternary(
+        ///在作用于中声明class
+    fn visitor_struct(&mut self, name: &Token, fields: &Vec<Token>) -> Result<Value, X_Err> {
+        self.env.borrow_mut().add(name, Value::Nil)?;
+        //这里需要真正声明class
+        let r#struct = Value::Struct { name: name.clone() };
+        self.env.borrow_mut().assign(name, r#struct.clone())?;
+        Ok(r#struct)
+    }
+    fn visitor_ternary(
         &mut self,
         condition: &Box<Expr>,
         t_expr: &Box<Expr>,
@@ -191,7 +203,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             self.evaluate(f_expr)?
         })
     }
-    fn visit_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, X_Err> {
+    fn visitor_unary(&mut self, operator: &Token, r_expression: &Expr) -> Result<Value, X_Err> {
         let r_value = self.evaluate(r_expression);
         match operator.token_type {
             Token_Type::MINUS => Ok(-r_value?),
@@ -199,7 +211,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
             _ => Err(Run_Err::new(operator.clone(), String::from("操作符错误"))),
         }
     }
-    fn visit_variable(&mut self, expr: &Expr, name: &Token) -> Result<Value, X_Err> {
+    fn visitor_variable(&mut self, expr: &Expr, name: &Token) -> Result<Value, X_Err> {
         self.lookup_variable(expr, name)
         // self.env.borrow().get(name)
     }
@@ -283,23 +295,23 @@ impl Interpreter {
     }
 }
 impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
-    fn visit_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
+    fn visitor_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {
         //这里要支持嵌套
         //这里得改
         self.execute_block(stmts, Environment::new(Some(self.env.clone())))?;
         Ok(())
     }
-    fn visit_break(&mut self) -> Result<(), X_Err> {
+    fn visitor_break(&mut self) -> Result<(), X_Err> {
         Err(Break::new())
     }
-    fn visit_continue(&mut self) -> Result<(), X_Err> {
+    fn visitor_continue(&mut self) -> Result<(), X_Err> {
         Err(Continue::new())
     }
-    fn visit_expr(&mut self, expr: &Expr) -> Result<(), X_Err> {
+    fn visitor_expr(&mut self, expr: &Expr) -> Result<(), X_Err> {
         self.evaluate(expr)?;
         Ok(())
     }
-    fn visit_func(
+    fn visitor_func(
         &mut self,
         _: &Stmt,
         name: &Option<Token>,
@@ -315,7 +327,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
             .add(&(name.clone().unwrap()), Value::Func(Func::new(func)))?;
         Ok(())
     }
-    fn visit_if(
+    fn visitor_if(
         &mut self,
         condition: &Expr,
         then_branch: &Stmt,
@@ -329,7 +341,7 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         Ok(())
     }
 
-    fn visit_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
+    fn visitor_let(&mut self, name: &Token, expr: &Expr) -> Result<(), X_Err> {
         //添加到变量池中
         let res = self.evaluate(expr);
         if let Ok(val) = res {
@@ -339,15 +351,15 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
             Err(Run_Err::new(name.clone(), String::from("变量声明错误")))
         }
     }
-    fn visit_print(&mut self, expr: &Expr) -> Result<(), X_Err> {
+    fn visitor_print(&mut self, expr: &Expr) -> Result<(), X_Err> {
         printf(self.evaluate(expr)?);
         Ok(())
     }
-    fn visit_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
+    fn visitor_return(&mut self, keyword: &Token, expr: &Expr) -> Result<(), X_Err> {
         let val = self.evaluate(expr)?;
         Err(Return::new(val))
     }
-    fn visit_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), X_Err> {
+    fn visitor_while(&mut self, condition: &Expr, body: &Stmt) -> Result<(), X_Err> {
         while self.evaluate(condition)?.is_truthy() {
             //借用and实现
             let res = self.execute(body.clone());
@@ -364,16 +376,8 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         }
         Ok(())
     }
-    ///在作用于中声明class
-    fn visit_struct(&mut self, name: &Token, fields: &Vec<Token>) -> Result<(), X_Err> {
-        self.env.borrow_mut().add(name, Value::Nil)?;
-        //这里需要真正声明class
-        let r#struct = Value::Struct { name: name.clone() };
-        self.env.borrow_mut().assign(name, r#struct)?;
-        Ok(())
-    }
 
-    fn visit_impl(&mut self, prototype: &Token, methods: &Vec<Stmt>) -> Result<(), X_Err> {
+    fn visitor_impl(&mut self, prototype: &Token, methods: &Vec<Stmt>) -> Result<(), X_Err> {
         //需要修改
         todo!()
     }
