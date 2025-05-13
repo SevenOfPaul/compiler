@@ -38,7 +38,11 @@ pub trait Property{
 }
 impl Property for Prototype{
     fn get(&self, name: &Token) -> Value {
-        todo!()
+        if let Some(val) = self.fields.get(name) {
+            val.clone() // 确保返回值是一个新的 Value 实例 
+        }else{
+            Value::Nil
+        }
     }
     fn set(&self, name: &Token, val: Value) {
         todo!()

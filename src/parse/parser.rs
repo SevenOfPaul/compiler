@@ -94,6 +94,7 @@ impl Parser {
                 expr = self.finish_call(Box::from(expr))?;
             } else if self.check(&Token_Type::DOT) {
                 let object = Box::from(expr.clone());
+                let _ = self.consume(&Token_Type::DOT, "消耗一个.")?;
                 let name = self.consume(&Token_Type::IDENTIFIER, "属性名")?;
                 expr = Expr::Get { object, name }
             } else {
