@@ -7,15 +7,16 @@ use super::Token;
 #[derive(Debug,Clone)]
 pub (crate) struct Prototype {
     pub struct_name:Box<Expr>,
-    pub fns: HashMap<Token,Stmt>,
-    pub fields: HashMap<Token,Value>,
+    pub fns: HashMap<String,Stmt>,
+    pub fields: HashMap<String,Value>,
 }
+
 impl Prototype{
-    pub(crate) fn new(struct_name:Box<Expr>)->Prototype{
+    pub(crate) fn new(struct_name:Box<Expr>,keys:&Vec<Token>,vals:&Vec<Value>)->Prototype{
     Self{
         struct_name,
         fns:HashMap::new(),
-        fields:HashMap::new()
+        fields: keys.iter().zip(vals.iter()).map(|(k,v)| (k.lexeme.clone(), v.clone())).collect(),
     }
     }
      pub(crate) fn to_string(&self) ->String{
@@ -38,7 +39,7 @@ pub trait Property{
 }
 impl Property for Prototype{
     fn get(&self, name: &Token) -> Value {
-        if let Some(val) = self.fields.get(name) {
+        if let Some(val) = self.fields.get(&name.lexeme) {
             val.clone() // 确保返回值是一个新的 Value 实例 
         }else{
             Value::Nil

@@ -1,6 +1,3 @@
-struct Obj{name};
-print Obj;
-let obj=Obj{name:"你好"};
-print obj;
-print obj.a;
-
+struct Obj{};
+let a=Obj{key:1};
+print a.key;

@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use crate::ast::expression::expr::Expr;
 use crate::ast::statment::stmt::Stmt;
 use crate::ast::token::object::Object;
@@ -6,7 +5,6 @@ use crate::ast::token::token::Token;
 use crate::ast::token::token_type::Token_Type;
 use crate::error::X_Err;
 use crate::interpret::call::Fn_Type;
-use crate::interpret::prototype::Prototype;
 use crate::parse::Parse_Err;
 
 #[derive(Debug)]

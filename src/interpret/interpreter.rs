@@ -129,8 +129,9 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         keys: &Vec<Token>,
         vals: &Vec<Expr>,
     ) -> Result<Value, X_Err> {
+        let vals = &vals.iter().map(|v| self.evaluate(v)).collect::<Result<Vec<Value>, X_Err>>()?;
         Ok(Value::Instance(Prototype::new(
-            struct_name.clone()
+            struct_name.clone(),keys,vals
         )))
     }
     fn visitor_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<Value, X_Err> {
