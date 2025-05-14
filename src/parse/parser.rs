@@ -162,7 +162,6 @@ impl Parser {
         if self.check(&Token_Type::IDENTIFIER)&&self.check_next(&Token_Type::LEFT_BRACE){
             self.prototype_expr().unwrap()}
         else if let Ok(expr) = self.assign_stmt() {
-            println!("{:?}",self.tokens[self.pos]);
             expr
         }else{
             Expr::Literal { val: Object::Nil }
@@ -369,7 +368,6 @@ impl Parser {
             }
             let key=self.consume(&Token_Type::IDENTIFIER, "此处缺少字段名")?;
             self.consume(&Token_Type::COLON, "此处缺少:")?;
-            println!("{:?}",self.tokens[self.pos]);
                 keys.push(key);
                vals.push(self.primary()?);
 

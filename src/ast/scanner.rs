@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::ast::token::object::Object;
 use crate::ast::token::token::{self, Keywords};
 use crate::ast::token::token_type::Token_Type;
@@ -13,6 +15,7 @@ pub(crate) struct Scanner {
     //start是被处理的第一个字符
     start: usize,
     tokens: Vec<token::Token>,
+    operators: HashSet<char>,
 }
 impl Scanner {
     pub(crate) fn new(source: String) -> Scanner {
@@ -23,6 +26,7 @@ impl Scanner {
             start: 0,
             cur: 0,
             line: 1,
+            operators:HashSet::from(['*','+','-','/','(',')','{','}',';','=','<','>','&','|','!','.','?',':','[',']'])
         }
     }
     fn add_token(&mut self, token_type: Token_Type, literal: Object) {
@@ -40,7 +44,7 @@ impl Scanner {
         self.source[self.cur - 1]
     }
     fn get_identifier(&mut self) {
-        while  !self.is_at_end()&&Self::is_alaph_or_digit_or_chinese(self.peek()) {
+        while  !self.is_at_end()&&Self::is_alaph_or_digit_or_chinese(self.peek())&&!self.is_operator() {
             self.advance();
         }
         let text = self.source[self.start..self.cur].iter().collect::<String>();
@@ -63,6 +67,7 @@ impl Scanner {
         let val: String = self.source[self.start..self.cur].iter().collect();
         self.add_token(Token_Type::NUMBER, Object::Num(val.parse().unwrap()));
     }
+
     fn get_string(&mut self) {
         while self.peek() != '"' && !self.is_at_end() {
             //跳过换行
@@ -91,6 +96,10 @@ impl Scanner {
     }
     fn is_chinese(c:char)->bool{
        classify(&c.to_string())== ClassificationResult::ZH
+    }
+    fn is_operator(&mut self) -> bool {
+        let c = &self.peek();
+        self.operators.contains(c)
     }
     fn is_at_end(&self) -> bool {
         self.cur >= self.source.len()

@@ -1,3 +1,3 @@
-struct Obj{};
-let a=Obj{key:1};
-print a.key;
+print fn(n1){
+        return n1*2;
+    }(7);
