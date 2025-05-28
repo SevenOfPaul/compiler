@@ -137,6 +137,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     fn visitor_func(&mut self, params: &Vec<Token>, body: &Vec<Stmt>) -> Result<Value, X_Err> {
         //这里有问题
         //得大改 周末吃透
+        //这个是匿名函数表达式
         let func_stmt = Stmt::Func {
             name: None,
             func: Box::from(Expr::Func {
@@ -184,6 +185,17 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         }
         Ok(self.evaluate(r_expression)?)
     }
+    ///设置对象的属性
+    fn visitor_set(&mut self, object: &Expr, name: &Token, val: &Box<Expr>) -> Result<Value, X_Err> {
+      let mut obj = self.evaluate(object)?;
+      if let Value::Instance(mut obj) = obj {
+        let val=self.evaluate(val)?;
+        obj.set(name, val.clone());
+        Ok(val)
+      }else{
+        Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
+      } 
+    }
         ///在作用于中声明class
     fn visitor_struct(&mut self, name: &Token, fields: &Vec<Token>) -> Result<Value, X_Err> {
         self.env.borrow_mut().add(name, Value::Nil)?;
@@ -216,6 +228,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         self.lookup_variable(expr, name)
         // self.env.borrow().get(name)
     }
+    
 }
 impl Interpreter {
     pub(crate) fn new() -> Self {

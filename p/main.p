@@ -1,3 +1,4 @@
-print fn(n1){
-        return n1*2;
-    }(7);
+struct Obj{};
+let obj=Obj{};
+obj.a=1;
+print obj;

@@ -27,12 +27,15 @@ impl Parser {
         if self.match_token(&[Token_Type::EQUAL]) {
             let _ = self.previous();
             let  val= self.assign_stmt()?;
-            return if let Expr::Variable { name } = expr?.clone() {
+            let expr=expr?.clone();
+            return if let Expr::Variable { name } =expr  {
                 Ok(Expr::Assign {
                     name,
                     val: Box::from(val),
                 })
-            } else {
+            }else if let Expr::Get { object,name}=expr{
+                Ok(Expr::Set { object, name, val: Box::from(val) })
+            }else {
                 Err(self.error(String::from("无效声明")))
             };
         }

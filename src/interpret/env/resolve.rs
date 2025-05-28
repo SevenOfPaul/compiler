@@ -22,6 +22,7 @@ impl Resolver {
         Self {
             inter,
             scopes: vec![],
+            //当前函数栈
             cur_fn:Rc::from(FN_TYPE::None)
         }
     }
@@ -59,7 +60,6 @@ impl Resolver {
     fn resolve_local(&mut self, expr: &Expr, name: &Token) -> Result<(), X_Err> {
         for (idx, scope) in self.scopes.iter().enumerate().rev() {
             if scope.contains_key(&name.lexeme) {
-                //调用解释器的resolve函数
                 self.inter
                     .borrow_mut()
                     .resolve(expr, (self.scopes.len()-1  - idx) as i32)?;
@@ -184,13 +184,10 @@ impl Visitor<Result<(), X_Err>> for Resolver {
     }
 
     fn visitor_func(&mut self, params: &Vec<Token>, body: &Vec<stmt::Stmt>) -> Result<(), X_Err> {
-        for param in params {
-            self.declare(param)?;
-            self.define(param);
-        }
-        for stmt in body {
-            self.resolve(stmt.clone())?;
-        }
+
+        //需要在这里定义函数栈
+        self.resolve_func(&Expr::Func { params:params.clone(), body:body.clone() },Rc::from(FN_TYPE::FN))?;
+
         Ok(())
     }
     fn visitor_instance(&mut self, struct_name: &Box<Expr>, keys: &Vec<Token>, vals: &Vec<Expr>) -> Result<(), X_Err> {
@@ -261,6 +258,12 @@ impl Visitor<Result<(), X_Err>> for Resolver {
         self.resolve(object.clone())?;
         Ok(())
     }
+    fn visitor_set(&mut self, object: &Expr, name: &Token, val: &Box<Expr>) -> Result<(), X_Err> {
+        self.resolve(val.as_ref().clone())?;
+        self.resolve(object.clone())?;
+        //这里需要修改
+        Ok(())
+    }
 
 }
 trait Resolve<T> {
@@ -291,13 +294,25 @@ impl Resolve<Expr> for Resolver {
     fn resolve(&mut self, expr: Expr) -> Result<(), X_Err> {
         expr.accept(self)
     }
-    fn resolve_func(&mut self, expr: &Expr,_:Rc<FN_TYPE>) -> Result<(), X_Err> {
+    fn resolve_func(&mut self, expr: &Expr,typ:Rc<FN_TYPE>) -> Result<(), X_Err> {
+        let enclose_typ=self.cur_fn.clone();
+        self.cur_fn=typ.clone();
+        //开启局部作用域
+        self.begin_scope();
         match expr {
             Expr::Func { params, body } => {
-                self.visitor_func(params, body)?;
+                for param in params {
+                    self.declare(param)?;
+                    self.define(param);
+                }
+                for stmt in body {
+                    self.resolve(stmt.clone())?;
+                }
             }
             _ => {}
         }
+        self.end_scope();
+        self.cur_fn=enclose_typ;
         Ok(())
     }
 }

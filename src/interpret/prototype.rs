@@ -7,7 +7,6 @@ use super::Token;
 #[derive(Debug,Clone)]
 pub (crate) struct Prototype {
     pub struct_name:Box<Expr>,
-    pub fns: HashMap<String,Stmt>,
     pub fields: HashMap<String,Value>,
 }
 
@@ -15,7 +14,6 @@ impl Prototype{
     pub(crate) fn new(struct_name:Box<Expr>,keys:&Vec<Token>,vals:&Vec<Value>)->Prototype{
     Self{
         struct_name,
-        fns:HashMap::new(),
         fields: keys.iter().zip(vals.iter()).map(|(k,v)| (k.lexeme.clone(), v.clone())).collect(),
     }
     }
@@ -35,17 +33,20 @@ impl Prototype{
 }
 pub trait Property{
     fn get(&self,name:&Token)->Value;
-    fn set(&self,name:&Token,val:Value);
+    fn set(&mut self,name:&Token,val:Value);
 }
 impl Property for Prototype{
     fn get(&self, name: &Token) -> Value {
+        println!("get {:?}",self.fields);
         if let Some(val) = self.fields.get(&name.lexeme) {
             val.clone() // 确保返回值是一个新的 Value 实例 
         }else{
             Value::Nil
         }
     }
-    fn set(&self, name: &Token, val: Value) {
-        todo!()
+    fn set(&mut self, name: &Token, val: Value) {
+        println!("set1 prototype {:?}=={:?}=={:?}",self.fields,name.lexeme,val);
+        self.fields.insert(name.lexeme.clone(), val); 
+        println!("set2 prototype {:?}",self.fields);
     }
 }

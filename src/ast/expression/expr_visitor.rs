@@ -74,6 +74,10 @@ impl Visitor<String> for ExprVisitor {
        fields: &Vec<Token>,
     ) -> String {
         todo!()
+    }
+    
+    fn visitor_set(&mut self, object: &Expr, name: &Token, val: &Box<Expr>) -> String {
+        todo!()
     }  
 
 }

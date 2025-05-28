@@ -48,9 +48,13 @@ pub(crate) enum Expr {
     },
     Struct {
         name: Token,
-        //函数需要显式声明
-        // methods:Vec<Stmt>,
+        ///这个是struct的静态数据
         fields: Vec<Token>,
+    },
+    Set{
+        object: Box<Expr>,
+        name: Token,
+        val: Box<Expr>, 
     },
     //三元
     Ternary {
@@ -86,6 +90,7 @@ pub trait Visitor<T> {
     ) -> T;
     fn visitor_ternary(&mut self, condition: &Box<Expr>, t_expr: &Box<Expr>, f_expr: &Box<Expr>)
         -> T;
+    fn visitor_set(&mut self, object: &Expr, name: &Token, val: &Box<Expr>) -> T;
     fn visitor_unary(&mut self, operator: &Token, r_expression: &Expr) -> T;
     fn visitor_variable(&mut self, expr: &Expr, name: &Token) -> T;
     fn visitor_instance(
@@ -133,6 +138,7 @@ impl Expr {
                 f_expr,
             } => visitor.visitor_ternary(condition, t_expr, f_expr),
             Expr::Struct { name, fields } => visitor.visitor_struct(name, fields),
+            Expr::Set { object, name, val }=> visitor.visitor_set(object, name,val),
             Expr::Logical {
                 operator,
                 l_expression,
