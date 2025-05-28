@@ -1,0 +1,6 @@
+get_by_global {"obj": RefCell { value: Instance(Prototype { struct_name: Struct { name: Token { token_type: IDENTIFIER, 
+lexeme: "Obj", literal: Str("Obj"), line: 2 }, fields: [Token { token_type: IDENTIFIER, lexeme: "b",
+ literal: Str("b"), line: 2 }] }, fields: {"b": Num(1.0)} }) }, "now": RefCell
+  { value: Func(Native(Native_Fn { name: "now" })) }, "P": RefCell 
+  { value: Func(Native(Native_Fn { name: "P" })) }, "Obj": 
+RefCell { value: Struct { name: Token { token_type: IDENTIFIER, lexeme: "Obj", literal: Str("Obj"), line: 1 } } }}

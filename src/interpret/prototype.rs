@@ -37,7 +37,6 @@ pub trait Property{
 }
 impl Property for Prototype{
     fn get(&self, name: &Token) -> Value {
-        println!("get {:?}",self.fields);
         if let Some(val) = self.fields.get(&name.lexeme) {
             val.clone() // 确保返回值是一个新的 Value 实例 
         }else{

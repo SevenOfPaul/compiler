@@ -188,9 +188,11 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     ///设置对象的属性
     fn visitor_set(&mut self, object: &Expr, name: &Token, val: &Box<Expr>) -> Result<Value, X_Err> {
       let mut obj = self.evaluate(object)?;
-      if let Value::Instance(mut obj) = obj {
+      if let Value::Instance(ref mut obj) = obj {
         let val=self.evaluate(val)?;
-        obj.set(name, val.clone());
+         obj.set(name, val.clone());
+         todo!();
+        //这里要存回去
         Ok(val)
       }else{
         Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
@@ -298,7 +300,7 @@ impl Interpreter {
         }
         Ok(())
     }
-
+    ///查找变量
     pub(crate) fn lookup_variable(&self, expr: &Expr, name: &Token) -> Result<Value, X_Err> {
         if let Some(&distance) = self.locals.get(expr) {
             self.env.borrow_mut().get_at(distance, name) // 本地查找
@@ -396,4 +398,3 @@ impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
         todo!()
     }
 }
-//执行
