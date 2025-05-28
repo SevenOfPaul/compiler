@@ -60,13 +60,13 @@ impl Environment {
         }
         Box::new(env)
     }
-    pub(crate) fn get_at(&mut self, distance: i32, key: &Token) -> Result<Value, X_Err> {
+    pub(crate) fn get_at(&mut self, distance: i32, key: &Token) -> Result<Rc<RefCell<Value>>, X_Err> {
         self.ancestor(distance).get(key)
     }
-    pub(crate) fn get(&self, name: &Token) -> Result<Value, X_Err> {
+    pub(crate) fn get(&self, name: &Token) -> Result<Rc<RefCell<Value>>, X_Err> {
         let key = name.clone().lexeme;
         if let Some(rc_val) = self.local.get(&key) {
-            Ok(rc_val.borrow().clone())
+            Ok(rc_val.clone()) // 直接返回 Rc<RefCell<Value>>
         } else if self.enclose.is_some() {
             self.enclose.as_ref().unwrap().borrow().get(name)
         } else {
@@ -82,14 +82,14 @@ impl Environment {
         });
     }
     ///全局查找
-    pub(crate) fn get_by_global(&mut self, name: &Token) -> Result<Value, X_Err> {
+    pub(crate) fn get_by_global(&mut self, name: &Token) -> Result<Rc<RefCell<Value>>, X_Err> {
         let key = name.clone().lexeme;
         let mut env = self.clone();
         while env.enclose.is_some() {
             env = env.enclose.unwrap().borrow().clone();
         }
         if let Some(rc_val) = env.local.get(&name.lexeme.clone()) {
-            Ok(rc_val.borrow().clone())
+            Ok(rc_val.clone()) // 直接返回 Rc<RefCell<Value>>
         } else {
             Err(Run_Err::new(name.clone(), String::from(key + "变量未声明")))
         }

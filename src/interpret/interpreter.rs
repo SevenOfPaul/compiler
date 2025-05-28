@@ -187,16 +187,22 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
     }
     ///设置对象的属性
     fn visitor_set(&mut self, object: &Expr, name: &Token, val: &Box<Expr>) -> Result<Value, X_Err> {
-      let mut obj = self.evaluate(object)?;
-      if let Value::Instance(ref mut obj) = obj {
-        let val=self.evaluate(val)?;
-         obj.set(name, val.clone());
-         todo!();
-        //这里要存回去
-        Ok(val)
-      }else{
-        Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
-      } 
+        //这里因为需要获取作用于中唯一的数据 所以使用额外的辅助函数
+        if let Expr::Variable { name: var_name } = object {
+            // 获取变量引用
+            let rc_val = self.get_variable_ref(object, var_name)?;
+            let val = self.evaluate(val)?;
+            // 修改引用指向的值
+            let mut value = rc_val.borrow_mut();
+            if let Value::Instance(ref mut instance) = *value {
+                instance.set(name, val.clone());
+                Ok(val)
+            } else {
+                Err(Run_Err::new(name.clone(), String::from("不是一个结构体")))
+            }
+        } else {
+            Err(Run_Err::new(name.clone(), String::from("无效的赋值目标")))
+        }
     }
         ///在作用于中声明class
     fn visitor_struct(&mut self, name: &Token, fields: &Vec<Token>) -> Result<Value, X_Err> {
@@ -227,8 +233,11 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         }
     }
     fn visitor_variable(&mut self, expr: &Expr, name: &Token) -> Result<Value, X_Err> {
-        self.lookup_variable(expr, name)
-        // self.env.borrow().get(name)
+        // 获取引用
+        let rc_val = self.lookup_variable(expr, name)?;
+        // 克隆值并存储在新变量中
+        let value = rc_val.borrow().clone();
+        Ok(value)
     }
     
 }
@@ -301,7 +310,7 @@ impl Interpreter {
         Ok(())
     }
     ///查找变量
-    pub(crate) fn lookup_variable(&self, expr: &Expr, name: &Token) -> Result<Value, X_Err> {
+    pub(crate) fn lookup_variable(&self, expr: &Expr, name: &Token) -> Result<Rc<RefCell<Value>>, X_Err> {
         if let Some(&distance) = self.locals.get(expr) {
             self.env.borrow_mut().get_at(distance, name) // 本地查找
         } else {
@@ -309,6 +318,10 @@ impl Interpreter {
             self.env.borrow_mut().get_by_global(name) // 降级到全局查找
         }
     }
+    pub(crate) fn get_variable_ref(&self, expr: &Expr, name: &Token) -> Result<Rc<RefCell<Value>>, X_Err> {
+        self.lookup_variable(expr, name)
+    }
+    // 新增帮助函数,用于需要获取引用的场景
 }
 impl stmt::Visitor<Result<(), X_Err>> for Interpreter {
     fn visitor_block(&mut self, stmts: &Vec<Stmt>) -> Result<(), X_Err> {

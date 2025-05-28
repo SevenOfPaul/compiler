@@ -44,8 +44,6 @@ impl Property for Prototype{
         }
     }
     fn set(&mut self, name: &Token, val: Value) {
-        println!("set1 prototype {:?}=={:?}=={:?}",self.fields,name.lexeme,val);
         self.fields.insert(name.lexeme.clone(), val); 
-        println!("set2 prototype {:?}",self.fields);
     }
 }
