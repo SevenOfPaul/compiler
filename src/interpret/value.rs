@@ -120,7 +120,8 @@ impl Sub for Value {
     fn sub(self, other: Self) -> Self::Output {
         match (self, other) {
             (Value::Num(n1), Value::Num(n2)) => Value::Num(n1 - n2),
-            (Value::Time(t1), Value::Time(t2)) => Value::Num(t1.signed_duration_since(t2).num_seconds() as f32),
+            (Value::Time(t1), Value::Time(t2)) => 
+            Value::Num(t1.signed_duration_since(t2).num_milliseconds() as f32),
             _ => panic!("不支持此类型减法操作")
         }
     }
