@@ -20,7 +20,11 @@ lazy_static! {
             (1, Box::new(|arguments: Vec<Value>| {
                 Value::Str(arguments[0].to_string())
             }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
-        ),
+        ),(
+            String::from("TypeOf"),
+            (1, Box::new(|arguments: Vec<Value>| {
+                arguments[0].get_type()
+            }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)),
             (String::from("now"),
                (0, Box::new(|_arguments| {
                  let now = Local::now();

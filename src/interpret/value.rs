@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Div, Mul, Neg, Not, Sub};
 use chrono::{DateTime, Local};
+use crate::ast::expression::expr::Expr;
 use crate::ast::token::token::Token;
 use crate::interpret::call::Call;
 use crate::interpret::call::Func;
@@ -20,6 +21,7 @@ pub(crate) enum Value {
     Instance(Prototype),
     Nil,
 }
+
 impl Add for Value {
     type Output = Self;
 
@@ -127,6 +129,25 @@ impl Sub for Value {
     }
 }
 impl Value {
+    pub (crate) fn get_type(&self) -> Value {
+        match self {
+            Value::Num(_) => Value::Str(String::from("Num")),
+            Value::Bool(_) => Value::Str(String::from("Bool")),
+            Value::Str(_) => Value::Str(String::from("Str")),
+            Value::Time(_) => Value::Str(String::from("Time")),
+            Value::Func(_) => Value::Str(String::from("Function")),
+            Value::Struct{name} => Value::Str(format!("Struct {}", name.lexeme)),
+            Value::Instance(p) => {
+                if let Expr::Struct { name, fields: _ } = p.struct_name.as_ref() {
+                    return Value::Str(format!("Instance of {}", name.lexeme));
+                }else{
+                    return Value::Str(String::from("Instance"));
+                }
+            }
+            Value::Nil => Value::Str(String::from("Nil")),
+        }
+        
+    }
     pub(crate) fn is_num(&self) -> bool {
         match self {
             Value::Num(n) => true,
