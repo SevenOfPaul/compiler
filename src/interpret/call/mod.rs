@@ -11,32 +11,32 @@ use lazy_static::lazy_static;
 use native_fn::Native_Fn;
 /**语言内部自带的函数 */
 use std::collections::HashMap;
-
+type Native_Fn_Trait=dyn Fn(Vec<Value>)->Value+Send+Sync+'static;
 lazy_static! {
         ///内置函数列表 使用hashmap存储 存储一个元组 0为函数名 1为参数数量 2为函数实现
-    pub(crate) static ref Funcs: HashMap<String, (usize,Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)> = {
+    pub(crate) static ref Funcs: HashMap<String, (usize,Box<Native_Fn_Trait>)> = {
         HashMap::from([(
             String::from("String"),
             (1, Box::new(|arguments: Vec<Value>| {
                 Value::Str(arguments[0].to_string())
-            }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
+            }) as Box<Native_Fn_Trait>)
         ),(
             String::from("TypeOf"),
             (1, Box::new(|arguments: Vec<Value>| {
                 arguments[0].get_type()
-            }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)),
+            }) as Box<Native_Fn_Trait>)),
             (String::from("now"),
                (0, Box::new(|_arguments| {
                  let now = Local::now();
                      Value::Time(now)
-                }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
+                }) as Box<Native_Fn_Trait>)
             ),    (String::from("PP"),
                (0, Box::new(|_arguments| {
                     printf("==================================");
                     printf("==  PP 在此   =====================");
                     printf("==================================");
                     Value::Nil
-                }) as Box<dyn Fn(Vec<Value>)->Value+Send+Sync+'static>)
+                }) as Box<Native_Fn_Trait>)
             )
         ])
     };
