@@ -156,7 +156,7 @@ impl Value {
     }
     pub(crate) fn is_str(&self) -> bool {
         match self {
-            Value::Str(s) => true,
+            Value::Str(_) => true,
             _ => false,
         }
     }
