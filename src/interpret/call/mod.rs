@@ -9,8 +9,10 @@ use chrono::prelude::*;
 use decl_fn::Decl_Fn;
 use lazy_static::lazy_static;
 use native_fn::Native_Fn;
+use pyo3::prelude::*;
+use pyo3::types::IntoPyDict;
 /**语言内部自带的函数 */
-use std::collections::HashMap;
+use std::{collections::HashMap, ffi::CString};
 type Native_Fn_Trait=dyn Fn(Vec<Value>)->Value+Send+Sync+'static;
 lazy_static! {
         ///内置函数列表 使用hashmap存储 存储一个元组 0为函数名 1为参数数量 2为函数实现
@@ -20,7 +22,20 @@ lazy_static! {
             (1, Box::new(|arguments: Vec<Value>| {
                 Value::Str(arguments[0].to_string())
             }) as Box<Native_Fn_Trait>)
-        ),(
+        ),(String::from("Py"),(1,Box::new(|arguments: Vec<Value>|{
+           pyo3::Python::with_gil(|py| {
+                if let Value::Str(code) = &arguments[0] {
+                    if let Ok(c_code) = CString::new(code.as_str()) {
+                        let _=py.run(&c_code, None, None);
+                    } else {
+                        panic!("The input string contains null bytes");
+                    }
+                } else {
+                    panic!("Py函数的参数必须是字符串")
+                }
+            });
+            Value::Nil
+        }))),(
             String::from("TypeOf"),
             (1, Box::new(|arguments: Vec<Value>| {
                 arguments[0].get_type()
@@ -46,6 +61,7 @@ pub(crate) enum Func {
     Native(Native_Fn),
     Decl(Decl_Fn),
 }
+///调用的trait
 pub(crate) trait Call {
     //检查参数数量
     fn arity(&self) -> usize;

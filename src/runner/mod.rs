@@ -24,7 +24,7 @@ fn run(bytes: String)->Result<(),X_Err> {
 }
 #[wasm_bindgen]
 pub fn run_program(bytes: String) {
-    let _=run(bytes);
+    run(bytes);
 }
 pub fn run_file(path: String) {
     //判断文件是否存在

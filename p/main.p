@@ -1,6 +1,2 @@
-fn printf(num){
-    print num;
-}
-let p=printf;
-p(TypeOf(now()));
-PP();
+Py("print('py:hello world!')");
+print "P:hello word!";

@@ -7,7 +7,6 @@ pub(crate) mod env;
 pub(crate) mod interpreter;
 pub(crate) mod value;
 pub(crate) mod prototype;
-pub(crate) mod instance;
 pub mod call;
 
 #[derive(Debug)]

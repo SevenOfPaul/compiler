@@ -205,7 +205,7 @@ impl expr::Visitor<Result<Value, X_Err>> for Interpreter {
         }
     }
         ///在作用于中声明class
-    fn visitor_struct(&mut self, name: &Token, fields: &Vec<Token>) -> Result<Value, X_Err> {
+    fn visitor_struct(&mut self, name: &Token, _fields: &Vec<Token>) -> Result<Value, X_Err> {
         self.env.borrow_mut().add(name, Value::Nil)?;
         //这里需要真正声明class
         let r#struct = Value::Struct { name: name.clone() };

@@ -24,4 +24,4 @@ for a in range(100000):
 end = int(time.time() * 1000)
 
 # 计算并打印耗时
-print(f"{end - start}ms")
+print(f"py:{end - start}ms")
