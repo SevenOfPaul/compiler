@@ -6,7 +6,7 @@ mod runner;
 mod parse;
 mod tools;
 mod interpret;
-use crate::runner::run::{run_file, run_program};
+use crate::runner::run::{run_file, run_line, run_program};
 fn main() {
     let mut args = env::args();
     //获取命令行参数
@@ -18,7 +18,7 @@ fn main() {
         // runner file
         run_file(args.nth(1).unwrap());
     } else {
-        run_program(String::new());
-        error::log(0, "", "暂不支持命令行");
+        println!("欢迎使用 P 脚本语言\n >>>");
+        run_line();
     }
 }
