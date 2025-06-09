@@ -1,4 +1,3 @@
-pub(crate) mod run;
 use crate::ast::scanner;
 use crate::error;
 use crate::interpret::env::resolve::Resolver;
